@@ -1,0 +1,24 @@
+/* Custom Slick Carousel Styling */
+.slick-dots li button:before {
+  color: #f3bb27;
+  opacity: 0.4;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #f3bb27;
+  opacity: 1;
+}
+
+.slick-dots {
+  bottom: 20px;
+}
+
+/* Animated Title Inline Images */
+.slider-title-wrapper h1 {
+  line-height: 1.3;
+}
+
+.slider-title-wrapper .image_box {
+  display: inline-block;
+  vertical-align: middle;
+}

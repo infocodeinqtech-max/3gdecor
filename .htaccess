@@ -1,0 +1,23 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Sanctum Bearer tokens (Apache often strips Authorization)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Optional: /api/* → Laravel (frontend normally uses /backend/public/api)
+    RewriteCond %{REQUEST_URI} ^/api/ [NC]
+    RewriteRule ^api/(.*)$ backend/public/index.php [QSA,L]
+
+    # Laravel lives under /backend — do not SPA-rewrite it
+    RewriteRule ^backend(?:/|$) - [L]
+
+    # Real files (assets, images, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # React Router (/admin, /about, /services, ...)
+    RewriteRule ^ index.html [L]
+</IfModule>

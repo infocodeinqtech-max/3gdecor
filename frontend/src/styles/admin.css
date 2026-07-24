@@ -1,0 +1,135 @@
+/* Admin panel — luxury interior theme */
+
+.admin-shell {
+  min-height: 100vh;
+  background: #f5f1ea;
+  color: #332c26;
+  font-family: "Parkinsans", sans-serif;
+}
+
+.admin-sidebar {
+  background: #faf7f2;
+  border-color: #e8dfd2;
+  box-shadow: 2px 0 24px rgba(51, 44, 38, 0.06);
+}
+
+.admin-sidebar-title {
+  color: #c4973b;
+  letter-spacing: 0.2em;
+}
+
+.admin-nav-link {
+  color: #6e655c;
+}
+
+.admin-nav-link:hover {
+  color: #332c26;
+  background: #f0e9df;
+}
+
+.admin-nav-link--active {
+  background: linear-gradient(135deg, rgba(244, 178, 35, 0.14), rgba(234, 122, 18, 0.1));
+  color: #8a5a12;
+  border: 1px solid rgba(212, 166, 75, 0.35);
+}
+
+.admin-card {
+  background: #ffffff;
+  border: 1px solid #e8dfd2;
+  box-shadow: 0 4px 24px rgba(51, 44, 38, 0.05);
+}
+
+.admin-card-muted {
+  color: #8a8177;
+}
+
+.admin-table-wrap {
+  background: #ffffff;
+  border: 1px solid #e8dfd2;
+  box-shadow: 0 4px 20px rgba(51, 44, 38, 0.04);
+}
+
+.admin-table-head {
+  background: #faf7f2;
+  border-color: #e8dfd2;
+}
+
+.admin-table-head th {
+  color: #8a8177;
+}
+
+.admin-table-row {
+  border-color: #f0e9df;
+}
+
+.admin-table-row:hover {
+  background: #faf7f2;
+}
+
+.admin-input {
+  background: #ffffff;
+  border: 1px solid #e0d5c8;
+  color: #332c26;
+}
+
+.admin-input:focus {
+  border-color: #d4a64b;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 166, 75, 0.18);
+}
+
+.admin-input::placeholder {
+  color: #b0a69a;
+}
+
+.admin-modal-overlay {
+  background: rgba(42, 33, 28, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.admin-mobile-menu-btn {
+  background: #faf7f2;
+  border: 1px solid #e8dfd2;
+  color: #332c26;
+  box-shadow: 0 4px 16px rgba(51, 44, 38, 0.08);
+}
+
+.admin-page-title {
+  color: #2a211c;
+}
+
+.admin-login-shell {
+  background: linear-gradient(135deg, #f8f4ee 0%, #f5f1ea 50%, #f0e6d6 100%);
+  color: #332c26;
+}
+
+.admin-login-card {
+  background: #ffffff;
+  border: 1px solid #e8dfd2;
+  box-shadow: 0 24px 64px rgba(42, 33, 28, 0.1);
+}
+
+.admin-btn-gold {
+  background: linear-gradient(135deg, #f4b223 0%, #ea7a12 100%);
+  color: #1e1a17;
+}
+
+.admin-btn-gold:hover {
+  filter: brightness(1.05);
+}
+
+.admin-badge-super {
+  background: rgba(244, 178, 35, 0.15);
+  color: #8a5a12;
+}
+
+.admin-badge-admin {
+  background: #f0e9df;
+  color: #6e655c;
+}
+
+.admin-note {
+  background: #faf7f2;
+  border: 1px dashed #d4a64b;
+  color: #8a8177;
+}

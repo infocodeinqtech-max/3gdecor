@@ -1,0 +1,17 @@
+/* Custom interaction cursor — desktop only */
+@media (min-width: 769px) and (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+.custom-cursor-arrow {
+  will-change: transform;
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+  .custom-cursor-arrow {
+    display: none !important;
+  }
+}

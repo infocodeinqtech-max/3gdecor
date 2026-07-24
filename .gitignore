@@ -1,0 +1,60 @@
+# =============================================================================
+# 3gdeco — Git ignore (GitHub → Hostinger)
+# =============================================================================
+
+# --- Dependencies (install on server / local: npm i, composer install) ---
+node_modules/
+frontend/node_modules/
+backend/vendor/
+
+# --- Secrets / environment (Hostinger e alada .env banan) ---
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# --- Frontend build cache (root index.html + assets/ DEPLOY e commit hobe) ---
+frontend/dist/
+backend/public/build/
+backend/public/hot
+
+# --- Laravel runtime / cache ---
+backend/bootstrap/cache/*.php
+!backend/bootstrap/cache/.gitignore
+backend/storage/logs/*
+!backend/storage/logs/.gitignore
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/*.key
+backend/storage/pail
+
+# --- Archives / junk ---
+*.zip
+assets/assets.zip
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+.cursor/
+.codex/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# --- Test / misc ---
+.phpunit.result.cache
+backend/.phpunit.cache
+Homestead.json
+Homestead.yaml
+auth.json

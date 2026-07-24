@@ -1,0 +1,49 @@
+<?php
+
+use App\Http\Controllers\Api\AdminUserController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CmsResourceController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\EnquiryController;
+use Illuminate\Support\Facades\Route;
+
+// Auth (public)
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+// Public CMS reads
+Route::get('/cms-lists/{resource}', [CmsResourceController::class, 'listIndex']);
+Route::get('/cms-singletons/{resource}', [CmsResourceController::class, 'singletonShow']);
+Route::get('/cms-sections/{storageKey}', [CmsResourceController::class, 'sectionShow']);
+Route::post('/enquiries', [EnquiryController::class, 'store']);
+
+// Protected admin
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // CMS lists CRUD
+    Route::post('/cms-lists/{resource}', [CmsResourceController::class, 'listStore']);
+    Route::put('/cms-lists/{resource}/sync', [CmsResourceController::class, 'listSync']);
+    Route::put('/cms-lists/{resource}/{id}', [CmsResourceController::class, 'listUpdate']);
+    Route::delete('/cms-lists/{resource}/{id}', [CmsResourceController::class, 'listDestroy']);
+
+    // CMS singletons
+    Route::put('/cms-singletons/{resource}', [CmsResourceController::class, 'singletonUpsert']);
+
+    // Section headers
+    Route::put('/cms-sections/{storageKey}', [CmsResourceController::class, 'sectionUpsert']);
+
+    // Enquiries
+    Route::get('/enquiries', [EnquiryController::class, 'index']);
+    Route::patch('/enquiries/{id}', [EnquiryController::class, 'update']);
+    Route::delete('/enquiries/{id}', [EnquiryController::class, 'destroy']);
+
+    // Admin users (superadmin)
+    Route::get('/admin/users', [AdminUserController::class, 'index']);
+    Route::post('/admin/users', [AdminUserController::class, 'store']);
+    Route::put('/admin/users/{id}', [AdminUserController::class, 'update']);
+    Route::delete('/admin/users/{id}', [AdminUserController::class, 'destroy']);
+});

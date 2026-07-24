@@ -1,0 +1,51 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Parkinsans:wght@300;400;500;600;700;800&family=Mona+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap'); */
+
+/* =========================
+   PARKINSANS
+========================= */
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../assets/fonts/Parkinsans-Light.ttf') format('truetype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../assets/fonts/Parkinsans-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../assets/fonts/Parkinsans-Medium.ttf') format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../assets/fonts/Parkinsans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../assets/fonts/Parkinsans-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../assets/fonts/Parkinsans-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+}
+
+/* =========================
+   GLOBAL FONT RENDERING
+========================= */
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+}
