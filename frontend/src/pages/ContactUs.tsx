@@ -80,8 +80,30 @@ const inquiryOptions = [
 
 type InquiryValue = (typeof inquiryOptions)[number]["value"];
 
-const inputClass =
-  "contact-field w-full px-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-300";
+const inputClass = `
+w-full
+px-5
+py-4
+
+rounded-2xl
+
+bg-white/5
+
+border
+border-[#D7A24B]/20
+
+text-white
+placeholder:text-white/50
+
+transition-all
+duration-300
+
+focus:border-[#D7A24B]
+focus:ring-4
+focus:ring-[#D7A24B]/10
+focus:outline-none
+`;
+// "contact-field w-full px-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-300";
 
 function FormField({
   index,
@@ -366,14 +388,17 @@ export default function Contact() {
       window.open(`https://wa.me/${company.whatsapp}?text=${waBody}`, "_blank");
       setTimeout(() => setSubmitted(false), 4000);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to send enquiry");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to send enquiry",
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="w-full overflow-x-hidden bg-[#F5F1EA]">
+    // className="w-full overflow-x-hidden bg-[#F5F1EA]"
+    <div className="w-full overflow-x-hidden bg-[#F7F3EE]">
       <Navbar activeNav="contact" />
       <div
         className="w-full overflow-x-hidden"
@@ -483,162 +508,199 @@ export default function Contact() {
                 </div>
 
                 <div className="flex flex-col flex-1 min-h-0">
-                <AnimatePresence mode="wait">
-                  {(() => {
-                    const office =
-                      offices.find((o) => o.id === activeOfficeId) ??
-                      offices[0];
-                    if (!office) {
+                  <AnimatePresence mode="wait">
+                    {(() => {
+                      const office =
+                        offices.find((o) => o.id === activeOfficeId) ??
+                        offices[0];
+                      if (!office) {
+                        return (
+                          <motion.div
+                            key="empty"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="rounded-2xl border border-[#f3bb27]/25 bg-white/70 p-6 text-sm text-[#6B625C]"
+                          >
+                            No office locations yet. Add them from the admin
+                            dashboard.
+                          </motion.div>
+                        );
+                      }
                       return (
                         <motion.div
-                          key="empty"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="rounded-2xl border border-[#f3bb27]/25 bg-white/70 p-6 text-sm text-[#6B625C]"
-                        >
-                          No office locations yet. Add them from the admin
-                          dashboard.
-                        </motion.div>
-                      );
-                    }
-                    return (
-                      <motion.div
-                        key={office.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="flex flex-col gap-3.5 flex-1 min-h-0 h-full"
-                      >
-                        <motion.div
-                          className="contact-details-card relative overflow-hidden rounded-2xl p-5 md:p-6 space-y-3.5 border border-[#f3bb27]/25 bg-white/70 backdrop-blur-sm shadow-[0_16px_48px_rgba(51,44,38,0.08)] shrink-0"
-                          whileHover={{
-                            borderColor: "rgba(243, 187, 39, 0.5)",
+                          key={office.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{
+                            duration: 0.3,
+                            ease: [0.22, 1, 0.36, 1],
                           }}
+                          className="flex flex-col gap-3.5 flex-1 min-h-0 h-full"
                         >
                           <motion.div
-                            className="absolute -top-14 -right-14 w-32 h-32 rounded-full bg-[#f3bb27]/15 blur-3xl pointer-events-none"
-                            animate={{
-                              scale: [1, 1.2, 1],
-                              opacity: [0.4, 0.65, 0.4],
-                            }}
-                            transition={{
-                              duration: 5,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                            }}
-                          />
+                            // className="contact-details-card relative overflow-hidden rounded-2xl p-5 md:p-6 space-y-3.5 border border-[#f3bb27]/25 bg-white/70 backdrop-blur-sm shadow-[0_16px_48px_rgba(51,44,38,0.08)] shrink-0"
+                            className="
+                              relative
+                              overflow-hidden
+                              rounded-[28px]
+                              p-5
+                              md:p-6
 
-                          <div className="relative z-[1]">
-                            <p className="text-[10px] uppercase tracking-[0.28em] text-[#ea7a12] mb-1.5">
-                              {company.name}
-                            </p>
-                            <h3
-                              className="text-[#332C26] text-xl md:text-[22px]"
-                              style={{ fontWeight: 400 }}
-                            >
-                              {office.studioTitle}
-                            </h3>
-                          </div>
+                              bg-gradient-to-b
+                              from-white
+                              to-[#FAF5EE]
 
-                          {(
-                            [
-                              {
-                                Icon: MapPin,
-                                label: "Address",
-                                text: office.address,
-                              },
-                              {
-                                Icon: Phone,
-                                label: "Phone",
-                                text: office.phone,
-                                href: `tel:${office.phone.replace(/\s/g, "")}`,
-                              },
-                              {
-                                Icon: Mail,
-                                label: "Email",
-                                text: office.email,
-                                href: `mailto:${office.email}`,
-                              },
-                              ...(office.hours?.trim()
-                                ? [
-                                    {
-                                      Icon: Clock,
-                                      label: "Working Hours",
-                                      text: office.hours,
-                                    },
-                                  ]
-                                : []),
-                            ] as {
-                              Icon: typeof MapPin;
-                              label: string;
-                              text: string;
-                              href?: string;
-                            }[]
-                          ).map(({ Icon, label, text, href }, i) => (
+                              border
+                              border-[#D7A24B]/20
+
+                              shadow-[0_20px_60px_rgba(51,44,38,.08)]
+                              "
+                            whileHover={{
+                              borderColor: "rgba(243, 187, 39, 0.5)",
+                            }}
+                          >
                             <motion.div
-                              key={label}
-                              className="flex items-start gap-3 relative z-[1] rounded-xl p-2 -mx-0.5"
-                              initial={{ opacity: 0, x: 12 }}
-                              animate={{ opacity: 1, x: 0 }}
+                              className="absolute -top-14 -right-14 w-32 h-32 rounded-full bg-[#f3bb27]/15 blur-3xl pointer-events-none"
+                              animate={{
+                                scale: [1, 1.2, 1],
+                                opacity: [0.4, 0.65, 0.4],
+                              }}
                               transition={{
-                                delay: i * 0.06 + 0.05,
-                                duration: 0.35,
+                                duration: 5,
+                                repeat: Infinity,
+                                ease: "easeInOut",
                               }}
-                              whileHover={{
-                                x: 4,
-                                backgroundColor: "rgba(243, 187, 39, 0.06)",
-                              }}
-                            >
-                              <div
-                                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 shadow-[0_6px_16px_rgba(234,122,18,0.18)]"
-                                style={{
-                                  background:
-                                    "linear-gradient(135deg,#f3bb27,#ea7a12)",
+                            />
+
+                            <div className="relative z-[1]">
+                              <p className="text-[12px] font-semibold uppercase tracking-[0.28em] text-[#ea7a12] mb-1.5">
+                                {company.name}
+                              </p>
+                              <h3
+                                // className="text-[#332C26] text-[18px] md:text-[20px] "
+                                style={{ fontWeight: 400 }}
+                              >
+                                {office.studioTitle}
+                              </h3>
+                              <div className="mt-4 mb-7 flex items-center">
+                                <div className="w-14 h-[2px] rounded-full bg-[#D7A24B]" />
+                              </div>
+                            </div>
+
+                            {(
+                              [
+                                {
+                                  Icon: MapPin,
+                                  label: "Address",
+                                  text: office.address,
+                                },
+                                {
+                                  Icon: Phone,
+                                  label: "Phone",
+                                  text: office.phone,
+                                  href: `tel:${office.phone.replace(/\s/g, "")}`,
+                                },
+                                {
+                                  Icon: Mail,
+                                  label: "Email",
+                                  text: office.email,
+                                  href: `mailto:${office.email}`,
+                                },
+                                ...(office.hours?.trim()
+                                  ? [
+                                      {
+                                        Icon: Clock,
+                                        label: "Working Hours",
+                                        text: office.hours,
+                                      },
+                                    ]
+                                  : []),
+                              ] as {
+                                Icon: typeof MapPin;
+                                label: string;
+                                text: string;
+                                href?: string;
+                              }[]
+                            ).map(({ Icon, label, text, href }, i) => (
+                              <motion.div
+                                key={label}
+                                className="flex items-start gap-3 relative z-[1] rounded-xl p-2 -mx-0.5"
+                                initial={{ opacity: 0, x: 12 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{
+                                  delay: i * 0.06 + 0.05,
+                                  duration: 0.35,
+                                }}
+                                whileHover={{
+                                  x: 4,
+                                  backgroundColor: "rgba(243, 187, 39, 0.06)",
                                 }}
                               >
-                                <Icon className="w-3.5 h-3.5 text-[#332C26]" />
-                              </div>
-                              <div className="pt-0.5 min-w-0">
-                                <p className="text-[9px] uppercase tracking-[0.2em] text-[#ea7a12] mb-0.5">
-                                  {label}
-                                </p>
-                                {href ? (
-                                  <a
-                                    href={href}
-                                    className="text-[13px] text-[#332C26] hover:text-[#ea7a12] transition-colors leading-relaxed break-words"
-                                  >
-                                    {text}
-                                  </a>
-                                ) : (
-                                  <p className="text-[13px] text-[#6B625C] leading-relaxed">
-                                    {text}
+                                <div
+                                  className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 shadow-[0_6px_16px_rgba(234,122,18,0.18)]"
+                                  style={{
+                                    background:
+                                      "linear-gradient(135deg,#f3bb27,#ea7a12)",
+                                  }}
+                                >
+                                  <Icon className="w-3.5 h-3.5 text-[#332C26]" />
+                                </div>
+                                <div className="pt-0.5 min-w-0">
+                                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#ea7a12] mb-0.5">
+                                    {label}
                                   </p>
-                                )}
-                              </div>
-                            </motion.div>
-                          ))}
-                        </motion.div>
+                                  {href ? (
+                                    <a
+                                      href={href}
+                                      className="text-[13px] text-[#332C26] hover:text-[#ea7a12] transition-colors leading-relaxed break-words"
+                                    >
+                                      {text}
+                                    </a>
+                                  ) : (
+                                    <p className="text-[13px] text-[#6B625C] leading-relaxed">
+                                      {text}
+                                    </p>
+                                  )}
+                                </div>
+                              </motion.div>
+                            ))}
+                          </motion.div>
 
-                        <div className="rounded-2xl overflow-hidden relative flex-1 min-h-[280px] sm:min-h-[340px] border border-[#f3bb27]/25 shadow-[0_12px_32px_rgba(51,44,38,0.1)]">
-                          <iframe
-                            title={`${office.heading} map`}
-                            src={officeMapSrc(office.mapEmbed, office.address)}
-                            className="absolute inset-0 w-full h-full border-0"
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                          />
-                        </div>
-                      </motion.div>
-                    );
-                  })()}
-                </AnimatePresence>
+                          <div className="rounded-2xl overflow-hidden relative flex-1 min-h-[280px] sm:min-h-[340px] border border-[#f3bb27]/25 shadow-[0_12px_32px_rgba(51,44,38,0.1)]">
+                            <iframe
+                              title={`${office.heading} map`}
+                              src={officeMapSrc(
+                                office.mapEmbed,
+                                office.address,
+                              )}
+                              className="absolute inset-0 w-full h-full border-0"
+                              loading="lazy"
+                              referrerPolicy="no-referrer-when-downgrade"
+                            />
+                          </div>
+                        </motion.div>
+                      );
+                    })()}
+                  </AnimatePresence>
                 </div>
               </motion.div>
 
               {/* Right — Contact form */}
               <motion.div
-                className="contact-form-shell order-1 lg:order-2 h-full flex flex-col"
+                // className="contact-form-shell order-1 lg:order-2 h-full flex flex-col"
+                className="
+                order-1
+                lg:order-2
+                h-full
+                flex
+                flex-col
+                rounded-[32px]
+                overflow-hidden
+                shadow-[0_30px_80px_rgba(0,0,0,.18)]
+                border
+                border-[#D7A24B]/20
+                "
                 initial={{ opacity: 0, x: 28 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -646,7 +708,25 @@ export default function Contact() {
               >
                 <form
                   onSubmit={handleSubmit}
-                  className="contact-form-inner contact-form-shine p-5 sm:p-8 md:p-10 space-y-5 overflow-hidden h-full"
+                  // className="contact-form-inner contact-form-shine p-5 sm:p-8 md:p-10 space-y-5 overflow-hidden h-full"
+                  className="
+                    relative
+                    overflow-hidden
+                    rounded-[32px]
+                    p-5
+                    sm:p-8
+                    md:p-10
+
+                    bg-[#171311]
+
+                    before:absolute
+                    before:inset-0
+                    before:bg-[radial-gradient(circle_at_top_right,rgba(243,187,39,.12),transparent_40%)]
+
+                    after:absolute
+                    after:inset-0
+                    after:bg-[radial-gradient(circle_at_bottom_left,rgba(243,187,39,.08),transparent_40%)]
+                    "
                 >
                   <motion.div
                     className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[#f3bb27]/20 blur-2xl pointer-events-none"
@@ -672,23 +752,23 @@ export default function Contact() {
 
                   <div className="relative z-[1] space-y-5">
                     <FormField index={0}>
-                      <p className="text-[10px] uppercase tracking-[0.22em] text-[#ea7a12] mb-4">
+                      <p className="text-[14px] font-semibold uppercase tracking-[0.22em] text-[#ea7a12] mb-4">
                         Send an Inquiry
                       </p>
                       <h3
-                        className="text-[#332C26] text-xl mb-1"
+                        className="text-white text-xl mb-1"
                         style={{ fontWeight: 400 }}
                       >
                         Tell us about your project
                       </h3>
-                      <p className="text-sm text-[#6B625C] mb-5">
+                      <p className="text-white/60 mb-5">
                         Fields marked with your details help us respond faster.
                       </p>
                     </FormField>
 
                     <div className="grid sm:grid-cols-2 gap-5">
                       <FormField index={1}>
-                        <label className="block text-[10px] uppercase tracking-[0.18em] text-[#6B625C] mb-2">
+                        <label className="block text-[10px] uppercase tracking-[0.18em] text-white/70 mb-2">
                           Your Name
                         </label>
                         <input
@@ -716,7 +796,7 @@ export default function Contact() {
                         )}
                       </FormField>
                       <FormField index={2}>
-                        <label className="block text-[10px] uppercase tracking-[0.18em] text-[#6B625C] mb-2">
+                        <label className="block text-[10px] uppercase tracking-[0.18em] text-white/70 mb-2">
                           Email Address
                         </label>
                         <input
@@ -745,7 +825,8 @@ export default function Contact() {
                             emailHint ? "text-red-600" : "text-[#8A8177]"
                           }`}
                         >
-                          {emailHint || "Use a valid email like name@domain.com"}
+                          {emailHint ||
+                            "Use a valid email like name@domain.com"}
                         </p>
                         {focused === "email" && (
                           <motion.span
@@ -762,7 +843,7 @@ export default function Contact() {
                     </div>
 
                     <FormField index={3}>
-                      <label className="block text-[10px] uppercase tracking-[0.18em] text-[#6B625C] mb-2">
+                      <label className="block text-[10px] uppercase tracking-[0.18em] text-white/70 mb-2">
                         Mobile Number
                       </label>
                       <input
@@ -795,13 +876,15 @@ export default function Contact() {
                           phoneHint ? "text-red-600" : "text-[#8A8177]"
                         }`}
                       >
-                        {phoneHint || "Exactly 10 digits (starts with 6–9). No letters."}
+                        {phoneHint ||
+                          "Exactly 10 digits (starts with 6–9). No letters."}
                       </p>
                       {focused === "phone" && (
                         <motion.span
                           className="block h-0.5 mt-1 rounded-full"
                           style={{
-                            background: "linear-gradient(90deg,#f3bb27,#ea7a12)",
+                            background:
+                              "linear-gradient(90deg,#f3bb27,#ea7a12)",
                           }}
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
@@ -810,7 +893,7 @@ export default function Contact() {
                     </FormField>
 
                     <FormField index={4}>
-                      <label className="block text-[10px] uppercase tracking-[0.18em] text-[#6B625C] mb-3">
+                      <label className="block text-[10px] uppercase tracking-[0.18em] text-white/70 mb-3">
                         Regarding Your Enquiry
                       </label>
                       <div className="grid sm:grid-cols-2 gap-3">
@@ -832,12 +915,18 @@ export default function Contact() {
                               whileTap={{ scale: 0.98 }}
                               className="text-left p-4 rounded-xl border transition-all duration-300 cursor-pointer"
                               style={{
+                                // borderColor: selected
+                                //   ? "rgba(243,187,39,0.85)"
+                                //   : "rgba(180,120,30,0.25)",
                                 borderColor: selected
-                                  ? "rgba(243,187,39,0.85)"
-                                  : "rgba(180,120,30,0.25)",
+                                  ? "rgba(243,187,39,.85)"
+                                  : "rgba(255,255,255,.08)",
+                                // background: selected
+                                //   ? "linear-gradient(135deg,rgba(243,187,39,0.12),rgba(234,122,18,0.08))"
+                                //   : "rgba(255,255,255,0.85)",
                                 background: selected
-                                  ? "linear-gradient(135deg,rgba(243,187,39,0.12),rgba(234,122,18,0.08))"
-                                  : "rgba(255,255,255,0.85)",
+                                  ? "linear-gradient(135deg,rgba(243,187,39,.15),rgba(234,122,18,.08))"
+                                  : "rgba(255,255,255,.04)",
                                 boxShadow: selected
                                   ? "0 8px 24px rgba(234,122,18,0.15)"
                                   : "none",
@@ -860,10 +949,10 @@ export default function Contact() {
                                   />
                                 </div>
                                 <div>
-                                  <p className="text-sm font-medium text-[#332C26]">
+                                  <p className="text-sm font-medium text-white/70">
                                     {option.label}
                                   </p>
-                                  <p className="text-[11px] text-[#6B625C] mt-0.5 leading-snug">
+                                  <p className="text-[11px] text-white/70 mt-0.5 leading-snug">
                                     {option.description}
                                   </p>
                                 </div>
@@ -875,7 +964,7 @@ export default function Contact() {
                     </FormField>
 
                     <FormField index={5}>
-                      <label className="block text-[10px] uppercase tracking-[0.18em] text-[#6B625C] mb-2">
+                      <label className="block text-[10px] uppercase tracking-[0.18em] text-white/70 mb-2">
                         Project Details
                       </label>
                       <textarea
@@ -894,7 +983,8 @@ export default function Contact() {
                         <motion.span
                           className="block h-0.5 mt-1 rounded-full"
                           style={{
-                            background: "linear-gradient(90deg,#f3bb27,#ea7a12)",
+                            background:
+                              "linear-gradient(90deg,#f3bb27,#ea7a12)",
                           }}
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
@@ -912,14 +1002,15 @@ export default function Contact() {
                           boxShadow: "0 16px 48px rgba(243,187,39,0.35)",
                         }}
                         whileTap={{ scale: 0.97 }}
-                        className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 text-white font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+                        className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 text-[#332C26] font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-wait"
                         style={{
                           borderRadius: "100px",
                           fontSize: "13.5px",
                           letterSpacing: "0.06em",
                           fontFamily: "'Parkinsans', sans-serif",
-                          background:
-                            "linear-gradient(135deg,#332C26 0%,#1e1a17 50%,#332C26 100%)",
+                          // background:
+                          //   "linear-gradient(135deg,#332C26 0%,#1e1a17 50%,#332C26 100%)",
+                          background: "linear-gradient(135deg,#F3BB27,#EA7A12)",
                           backgroundSize: "200% 100%",
                           boxShadow: "0 8px 32px rgba(51,44,38,0.22)",
                         }}
@@ -940,6 +1031,7 @@ export default function Contact() {
                   </div>
                 </form>
               </motion.div>
+              {/* Right — Contact form Ends*/}
             </div>
           </div>
         </section>
