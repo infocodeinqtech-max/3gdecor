@@ -168,7 +168,7 @@ function HeroSection() {
       }}
     >
       <div
-          className="
+        className="
           relative
           overflow-hidden
           rounded-[20px] md:rounded-[32px]

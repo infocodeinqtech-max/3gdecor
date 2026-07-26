@@ -22,13 +22,13 @@ type NavItem = {
 function navKeyFromLink(link: string): string {
   const path = link.split("#")[0] || "/";
   if (path === "/" && link.includes("features")) return "features";
-  if (path === "/" && link.includes("projects")) return "projects";
+  // if (path === "/" && link.includes("projects")) return "projects";
   if (path === "/" || path === "") return "home";
   if (path.includes("about")) return "about";
   if (path.includes("services")) return "services";
   if (path.includes("contact")) return "contact";
   if (link.includes("features")) return "features";
-  if (link.includes("projects")) return "projects";
+  if (path.includes("projects")) return "projects";
   return path.replace(/^\//, "") || "home";
 }
 
@@ -64,9 +64,11 @@ export default function Navbar({ activeNav }: NavbarProps) {
       ? "about"
       : location.pathname === "/services"
         ? "services"
-        : location.pathname === "/contact"
-          ? "contact"
-          : "home");
+        : location.pathname === "/projects"
+          ? "projects"
+          : location.pathname === "/contact"
+            ? "contact"
+            : "home");
 
   useEffect(() => {
     setOpen(false);
