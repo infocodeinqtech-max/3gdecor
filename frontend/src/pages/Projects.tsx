@@ -2,8 +2,26 @@ import { motion } from "framer-motion";
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, Briefcase, Building2, Award } from "lucide-react";
+import {
+  ChevronRight,
+  Briefcase,
+  Building2,
+  Award,
+  Building,
+  Landmark,
+  ArrowRight,
+} from "lucide-react";
 import projectBanner from "../assets/images/project-banner.png"; // your image
+import corporateCategory from "../assets/images/project-category-corporate.png";
+import civilCategory from "../assets/images/project-category-corporate.png";
+
+import office1 from "../assets/images/cp_int-1.jpeg";
+import office2 from "../assets/images/cp-int-2.jpeg";
+import office3 from "../assets/images/cp-int-3.jpeg";
+import office4 from "../assets/images/cp-int-4.jpeg";
+import office5 from "../assets/images/cp-int-5.jpeg";
+import FeaturedProjects from "../app/components/FeaturedProjects";
+
 const projectStats = [
   {
     icon: Briefcase,
@@ -22,92 +40,223 @@ const projectStats = [
   },
 ];
 
+const projectCategories = [
+  {
+    id: 1,
+    title: "Corporate Interiors",
+    image: corporateCategory,
+    icon: Building2,
+
+    subtitle:
+      "Workspaces that inspire. Interiors that perform. Environments that elevate everyday experiences.",
+
+    tags: ["Workspaces", "Offices", "Showrooms", "Banks"],
+
+    button: "View Projects",
+
+    link: "/projects/corporate",
+  },
+
+  {
+    id: 2,
+    title: "Civil Structures",
+    image: civilCategory,
+    icon: Landmark,
+
+    subtitle:
+      "Strong foundations. Timeless structures. Built to shape skylines and empower communities.",
+
+    tags: ["Residential", "Commercial", "Industrial", "Infrastructure"],
+
+    button: "View Projects",
+
+    link: "/projects/civil",
+  },
+];
+
+const corporateProjects = [
+  {
+    id: 1,
+    title: "Tech Mahindra Office",
+    location: "Kolkata, India",
+    image: office1,
+    slug: "tech-mahindra",
+  },
+  {
+    id: 2,
+    title: "Siemens Innovation Hub",
+    location: "Kolkata, India",
+    image: office2,
+    slug: "siemens",
+  },
+  {
+    id: 3,
+    title: "Executive Dining Space",
+    location: "Kolkata, India",
+    image: office3,
+    slug: "executive-dining",
+  },
+  {
+    id: 4,
+    title: "Creative Studio Workspace",
+    location: "Kolkata, India",
+    image: office4,
+    slug: "creative-workspace",
+  },
+  {
+    id: 5,
+    title: "Corporate Reception",
+    location: "Kolkata, India",
+    image: office5,
+    slug: "reception",
+  },
+];
+
+// const civilProjects = [
+//   {
+//     id: 1,
+//     title: "Luxury Villa",
+//     location: "Bhubaneswar, India",
+//     image: villa1,
+//     slug: "luxury-villa",
+//   },
+//   {
+//     id: 2,
+//     title: "Commercial Complex",
+//     location: "Bhubaneswar, India",
+//     image: building1,
+//     slug: "commercial-complex",
+//   },
+//   {
+//     id: 3,
+//     title: "Residential Building",
+//     location: "Kolkata, India",
+//     image: apartment1,
+//     slug: "residential-building",
+//   },
+//   {
+//     id: 4,
+//     title: "Industrial Facility",
+//     location: "Bhubaneswar, India",
+//     image: factory1,
+//     slug: "industrial-facility",
+//   },
+// ];
+
 function HeroSection() {
   const navigate = useNavigate();
   return (
-    <section className="px-4 lg:px-5 py-4 bg-[#F5F1EA]">
-      <div className="relative overflow-hidden rounded-b-[34px] rounded-t-none min-h-[760px]">
-        {/* Background Image */}
-
-        <motion.img
-          src={projectBanner}
-          alt="Projects"
-          className="absolute inset-0 w-full h-full object-cover object-right"
-          initial={{ scale: 1.12 }}
-          animate={{ scale: 1 }}
-          transition={{
-            duration: 10,
-            ease: "easeOut",
-          }}
-          style={{
-            filter: "brightness(1.08) contrast(1.08) saturate(1.08)",
-          }}
-        />
-
-        {/* Luxury Overlay */}
-
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-                linear-gradient(
-                90deg,
-                rgba(10,9,8,.92) 0%,
-                rgba(10,9,8,.82) 18%,
-                rgba(18,15,12,.72) 36%,
-                rgba(25,20,15,.48) 55%,
-                rgba(30,25,18,.20) 75%,
-                rgba(255,255,255,.03) 100%
-                )
-                `,
-          }}
-        />
-
-        {/* Warm Gold Glow */}
-
-        <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-          }}
-          className="absolute -left-36 top-44 w-[550px] h-[550px] rounded-full blur-[100px]"
-          style={{
-            background: `
+    <section
+      className="bg-[#F5F1EA] px-4 lg:px-5"
+      style={{
+        position: "relative",
+      }}
+    >
+      <div
+        className="
+          relative
+          overflow-hidden
+          rounded-[20px] md:rounded-[32px]
+          w-full
+          min-h-[70svh]
+          h-auto
+          lg:min-h-[760px]
+          "
+      >
+        {/* ── Full-bleed background image ── */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={projectBanner}
+            alt="3G Decorative Group reception"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{
+              filter: "brightness(1.45) contrast(1.08) saturate(1.1)",
+            }}
+          />
+          {/* Left-heavy dark overlay — text readable, image glows through on right  -- Dark Gradient */}
+          {/* Dark Overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `
                 radial-gradient(
-                ellipse at 18% 40%,
-                rgba(244,178,35,.30),
-                rgba(244,178,35,.12) 35%,
-                transparent 68%
+                    circle at 18% 88%,
+                    rgba(6,5,4,0.98) 0%,
+                    rgba(8,6,5,0.92) 22%,
+                    rgba(10,8,6,0.75) 42%,
+                    rgba(10,8,6,0.28) 65%,
+                    rgba(10,8,6,0) 100%
+                ),
+
+                linear-gradient(
+                    90deg,
+                    rgba(8,6,5,0.92) 0%,
+                    rgba(8,6,5,0.72) 24%,
+                    rgba(8,6,5,0.35) 46%,
+                    rgba(8,6,5,0.12) 70%,
+                    rgba(8,6,5,0) 100%
+                ),
+                linear-gradient(
+                      270deg,
+                      rgba(8,6,5,0.22) 0%,
+                      rgba(8,6,5,0.14) 18%,
+                      rgba(8,6,5,0.08) 35%,
+                      rgba(8,6,5,0) 60%
+                  ),
+
+                linear-gradient(
+                    180deg,
+                    rgba(8,6,5,0.10) 0%,
+                    rgba(8,6,5,0) 45%,
+                    rgba(8,6,5,0.08) 65%,
+                    rgba(8,6,5,0.45) 100%
                 )
                 `,
-          }}
-        />
+            }}
+          />
+        </div>
 
-        {/* Top Gold Line */}
-
+        {/* Gold top bar */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2 }}
-          className="absolute top-0 left-0 right-0 h-[3px] origin-left"
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
           style={{
-            background: "linear-gradient(90deg,#f4b223,#ea7a12,#f4b223)",
+            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
           }}
         />
 
-        {/* Content */}
+        {/* Ambient orb — warm left */}
+        <motion.div
+          className="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full pointer-events-none z-0"
+          style={{
+            background:
+              "radial-gradient(circle,rgba(243,187,39,0.06) 0%,transparent 65%)",
+            filter: "blur(80px)",
+          }}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
 
-        <div className="relative z-20 max-w-7xl mx-auto px-6 lg:px-14 pt-36">
+        {/* ── Main text content ── */}
+        <div
+          className="relative z-10 max-w-7xl mx-auto px-5 md:px-8 lg:px-16"
+          style={{
+            paddingTop: "clamp(100px, 18vw, 160px)",
+            paddingBottom: "80px",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           {/* Breadcrumb */}
-
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-3"
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="flex items-center gap-3 mb-8"
           >
             <a
               href="./"
@@ -116,14 +265,10 @@ function HeroSection() {
             >
               Home
             </a>
-
-            <ChevronRight className="w-3 h-3 text-[#f4b223]" />
-
+            <ChevronRight className="size-3 text-[#f3bb27]/30" />
             <span
-              className="uppercase tracking-[0.25em] text-[11px] text-[#f4b223]"
-              style={{
-                fontFamily: "Parkinsans",
-              }}
+              className="text-[#f3bb27] text-[11px] uppercase tracking-[0.25em]"
+              style={{ fontFamily: "'Parkinsans', sans-serif" }}
             >
               Projects
             </span>
@@ -145,58 +290,71 @@ function HeroSection() {
             </span>
           </motion.div>
 
-          {/* Heading */}
+          {/* Main heading — matches reference: Design. Build. Deliver Excellence. */}
 
-          <motion.h1
-            initial={{ opacity: 0, y: 70 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="leading-none mt-10"
-            style={{ fontFamily: "Cormorant Garamond" }}
-          >
-            <span
-              className="block text-white"
-              style={{
-                fontSize: "clamp(52px,4.5vw,68px)",
-              }}
-            >
-              Our
-            </span>
+          <div className="max-w-2xl mb-7">
+            <div style={{ overflow: "hidden" }}>
+              <motion.h1
+                initial={{ y: "110%", opacity: 0 }}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.48,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                style={{
+                  fontFamily: "'Parkinsans', sans-serif",
+                  fontSize: "clamp(56px, 7vw, 96px)",
+                  fontWeight: 400,
+                  lineHeight: "92%",
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                <span className="text-[#F5F1EA]">Our </span>
 
-            <span
-              className="block -mt-2 text-transparent bg-clip-text"
-              style={{
-                fontSize: "clamp(82px,8vw,118px)",
-                backgroundImage: "linear-gradient(90deg,#f4b223,#ea7a12)",
-              }}
-            >
-              Projects
-            </span>
-          </motion.h1>
-          {/* Description */}
-
+                <span
+                  style={{
+                    background: "linear-gradient(90deg,#f3bb27,#ea7a12)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  Projects
+                </span>
+              </motion.h1>
+            </div>
+          </div>
           <motion.p
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: 0.7,
-            }}
-            className="max-w-xl mt-8 text-[#F1ECE5]"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.92 }}
+            className="text-[#D5D0C8] max-w-xl"
             style={{
-              fontFamily: "Parkinsans",
-              fontSize: "17px",
-              lineHeight: 1.9,
+              fontFamily: "'Parkinsans', sans-serif",
+              fontSize: "15px",
+              lineHeight: 1.75,
             }}
           >
             Explore a curated collection of premium corporate interiors and
             civil infrastructure projects that reflect our passion for
             craftsmanship, precision, and timeless architectural excellence.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.02 }}
+            className="text-[#BEB6AD] max-w-xl mt-7"
+            style={{
+              fontFamily: "'Parkinsans', sans-serif",
+              fontSize: "15px",
+              lineHeight: 1.9,
+            }}
+          >
+            From collaborative workspaces and executive offices to reception
+            lounges and business environments, we combine creativity, precision,
+            and timeless design to create spaces that leave a lasting
+            impression.
           </motion.p>
 
           {/* Statistics */}
@@ -259,16 +417,194 @@ function HeroSection() {
               );
             })}
           </motion.div>
+
+          {/* Bottom Fade */}
+
+          <div
+            className="absolute bottom-0 left-0 right-0 h-44"
+            style={{
+              background: "linear-gradient(to top,rgba(0,0,0,.35),transparent)",
+            }}
+          />
         </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* Bottom Fade */}
+function ProjectCategories() {
+  const navigate = useNavigate();
 
-        <div
-          className="absolute bottom-0 left-0 right-0 h-44"
-          style={{
-            background: "linear-gradient(to top,rgba(0,0,0,.35),transparent)",
-          }}
-        />
+  return (
+    <section className="bg-[#F5F1EA] py-20 lg:py-28">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
+        {/* Heading */}
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center"
+        >
+          <span className="uppercase tracking-[.28em] text-[#D49A2D] text-xs font-semibold">
+            OUR PROJECT CATEGORIES
+          </span>
+
+          <h2
+            className="mt-5 text-[#2A231D]"
+            style={{
+              fontFamily: "Cormorant Garamond",
+              fontSize: "clamp(42px,5vw,68px)",
+              lineHeight: 1.1,
+            }}
+          >
+            Two Domains.
+            <br className="sm:hidden" />
+            Endless Possibilities.
+          </h2>
+
+          <p
+            className="mx-auto mt-6 max-w-2xl text-[#7C756F]"
+            style={{
+              fontFamily: "Parkinsans",
+              lineHeight: 1.8,
+            }}
+          >
+            From inspiring interiors to iconic structures, our work spans across
+            two core domains.
+          </p>
+        </motion.div>
+
+        {/* Cards */}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-16">
+          {projectCategories.map((item, index) => {
+            const Icon = item.icon;
+
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.7,
+                  delay: index * 0.15,
+                }}
+                onClick={() => navigate(item.link)}
+                className="group cursor-pointer"
+              >
+                <div className="relative overflow-hidden rounded-[22px] h-[430px] xl:h-[450px]">
+                  <img
+                    src={item.image}
+                    className="absolute inset-0 w-full h-full object-cover transition duration-700 transition-all duration-1000 group-hover:scale-[1.04]"
+                    style={{
+                      filter: "brightness(1.12) contrast(1.05) saturate(1.05)",
+                    }}
+                  />
+
+                  {/* Overlay */}
+
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `
+                        linear-gradient(
+                              90deg,
+                              rgba(5,5,5,.92) 0%,
+                              rgba(5,5,5,.82) 22%,
+                              rgba(5,5,5,.55) 38%,
+                              rgba(5,5,5,.15) 65%,
+                              rgba(5,5,5,.05) 100%
+                          ),
+                        radial-gradient(
+                          circle at bottom left,
+                          rgba(212,154,45,.22),
+                          transparent 55%
+                        )
+                      `,
+                    }}
+                  />
+
+                  {/* Content */}
+
+                  <div className="absolute inset-0 flex flex-col justify-between">
+                    {/* Top */}
+                    <div className="p-7 md:p-9 lg:p-10">
+                      <div
+                        className="
+                          w-16
+                          h-16
+                          rounded-full
+                          border
+                          border-[#D49A2D]
+                          bg-black/20
+                          backdrop-blur-md
+                          flex
+                          items-center
+                          justify-center
+                          "
+                      >
+                        <Icon
+                          className="w-8 h-8 text-[#D49A2D]"
+                          strokeWidth={1.4}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bottom */}
+                    <div className="px-7 md:px-9 lg:px-10 pb-10">
+                      <h3
+                        className="text-white"
+                        style={{
+                          fontFamily: "Cormorant Garamond",
+                          fontSize: "clamp(32px,3vw,46px)",
+                          lineHeight: 1.05,
+                        }}
+                      >
+                        {item.title}
+                      </h3>
+
+                      <div
+                        className="flex flex-wrap items-center mt-5"
+                        style={{ fontFamily: "Parkinsans" }}
+                      >
+                        {item.tags.map((tag, index) => (
+                          <span
+                            key={tag}
+                            className="text-[#E6E0D8] text-[15px]"
+                          >
+                            {tag}
+                            {index !== item.tags.length - 1 && (
+                              <span className="mx-3 text-[#D49A2D]">•</span>
+                            )}
+                          </span>
+                        ))}
+                      </div>
+
+                      <button
+                        className="
+                          mt-8
+                          flex
+                          items-center
+                          gap-3
+                          text-[#D49A2D]
+                          font-medium
+                          group-hover:gap-5
+                          transition-all
+                          "
+                      >
+                        {item.button}
+                        <ArrowRight size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -279,18 +615,36 @@ export default function Projects() {
     <>
       <Navbar activeNav="projects" />
 
-      <main className="pt-[72px] bg-[#F5F1EA]">
+      <div
+        className="w-full overflow-x-hidden"
+        style={{ fontFamily: "'Parkinsans', sans-serif" }}
+      >
         {/* Hero Section */}
         <HeroSection />
 
         {/* Category Section */}
+        <ProjectCategories />
 
         {/* Corporate Projects */}
+        <FeaturedProjects
+          subtitle="CORPORATE INTERIORS"
+          title="Featured Projects"
+          description="Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences."
+          button="View All Corporate Projects"
+          projects={corporateProjects}
+        />
 
         {/* Civil Projects */}
 
+        {/* <FeaturedProjects
+          title="Featured Projects"
+          subtitle="CIVIL STRUCTURES"
+          button="View All Civil Projects"
+          projects={civilProjects}
+        /> */}
+
         {/* CTA */}
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -64,18 +64,18 @@ const inquiryOptions = [
     description: "Warehouses, sheds & industrial builds",
     icon: Hammer,
   },
-  {
-    value: "domestic-interior",
-    label: "Domestic Interior",
-    description: "Residential & bespoke home design",
-    icon: Sofa,
-  },
-  {
-    value: "turnkey",
-    label: "Turnkey Project",
-    description: "End-to-end design & construction",
-    icon: Briefcase,
-  },
+  // {
+  //   value: "domestic-interior",
+  //   label: "Domestic Interior",
+  //   description: "Residential & bespoke home design",
+  //   icon: Sofa,
+  // },
+  // {
+  //   value: "turnkey",
+  //   label: "Turnkey Project",
+  //   description: "End-to-end design & construction",
+  //   icon: Briefcase,
+  // },
 ] as const;
 
 type InquiryValue = (typeof inquiryOptions)[number]["value"];

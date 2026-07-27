@@ -189,25 +189,7 @@ function HeroSection() {
             }}
           />
           {/* Left-heavy dark overlay — text readable, image glows through on right  -- Dark Gradient */}
-          {/* <div
-            className="absolute inset-0"
-            style={{
-              background: `
-                linear-gradient(
-                100deg,
-                rgba(10,8,6,0.97) 0%,
-                rgba(10,8,6,0.92) 30%,
-                rgba(8,6,5,.35) 40%,
-                rgba(10,8,6,0.70) 55%,
-                rgba(255,255,255,.08) 75%,
-                rgba(255,255,255,.20) 90%,
-                rgba(255,255,255,.28) 100%
-               
-                )
-                `,
-            }}
-          />
-        </div> */}
+
           {/* Dark Overlay */}
           <div
             className="absolute inset-0"
