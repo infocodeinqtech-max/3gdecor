@@ -20,6 +20,11 @@ import office2 from "../assets/images/cp-int-2.jpeg";
 import office3 from "../assets/images/cp-int-3.jpeg";
 import office4 from "../assets/images/cp-int-4.jpeg";
 import office5 from "../assets/images/cp-int-5.jpeg";
+
+import civil1 from "../assets/images/cv_1.png";
+import civil2 from "../assets/images/cv_2.png";
+import civil3 from "../assets/images/cv_3.png";
+import civil4 from "../assets/images/cv_4.png";
 import FeaturedProjects from "../app/components/FeaturedProjects";
 
 const projectStats = [
@@ -112,36 +117,36 @@ const corporateProjects = [
   },
 ];
 
-// const civilProjects = [
-//   {
-//     id: 1,
-//     title: "Luxury Villa",
-//     location: "Bhubaneswar, India",
-//     image: villa1,
-//     slug: "luxury-villa",
-//   },
-//   {
-//     id: 2,
-//     title: "Commercial Complex",
-//     location: "Bhubaneswar, India",
-//     image: building1,
-//     slug: "commercial-complex",
-//   },
-//   {
-//     id: 3,
-//     title: "Residential Building",
-//     location: "Kolkata, India",
-//     image: apartment1,
-//     slug: "residential-building",
-//   },
-//   {
-//     id: 4,
-//     title: "Industrial Facility",
-//     location: "Bhubaneswar, India",
-//     image: factory1,
-//     slug: "industrial-facility",
-//   },
-// ];
+const civilProjects = [
+  {
+    id: 1,
+    title: "Luxury Villa",
+    location: "Bhuvaneshwar, India",
+    image: civil1,
+    slug: "luxury-villa",
+  },
+  {
+    id: 2,
+    title: "Flender Drives",
+    location: "Kharagpur, India",
+    image: civil2,
+    slug: "industrial-facility",
+  },
+  {
+    id: 3,
+    title: "Residential",
+    location: "Kolkata, India",
+    image: civil3,
+    slug: "residential-building",
+  },
+  {
+    id: 4,
+    title: "Industrial Complex",
+    location: "Bhubaneswar, India",
+    image: civil4,
+    slug: "industrial-complex",
+  },
+];
 
 function HeroSection() {
   const navigate = useNavigate();
@@ -636,12 +641,13 @@ export default function Projects() {
 
         {/* Civil Projects */}
 
-        {/* <FeaturedProjects
+        <FeaturedProjects
           title="Featured Projects"
+          description="Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality."
           subtitle="CIVIL STRUCTURES"
           button="View All Civil Projects"
           projects={civilProjects}
-        /> */}
+        />
 
         {/* CTA */}
       </div>

@@ -1,7 +1,4 @@
-import {
-  getContent,
-  getListContent,
-} from "../admin/utils/contentStorage";
+import { getContent, getListContent } from "../admin/utils/contentStorage";
 import {
   seedAbout,
   seedExpertiseSection,
@@ -24,7 +21,10 @@ import about4 from "../assets/images/about4.jpg";
 import badge3G from "../assets/images/3g-badge.png";
 
 /** Resolve DB/media paths; keep Vite-bundled assets and data URLs untouched. */
-export function resolveImage(stored: string | undefined, fallback: string): string {
+export function resolveImage(
+  stored: string | undefined,
+  fallback: string,
+): string {
   const value = (stored?.trim() || fallback || "").trim();
   if (!value) return fallback || "";
   if (value.startsWith("data:") || value.startsWith("blob:")) return value;
@@ -38,7 +38,10 @@ export function resolveImage(stored: string | undefined, fallback: string): stri
 
 const BROKEN_PROJECT_IMAGE_IDS = ["1699239116624"];
 
-function resolveProjectImage(stored: string | undefined, fallback: string): string {
+function resolveProjectImage(
+  stored: string | undefined,
+  fallback: string,
+): string {
   const value = stored?.trim();
   if (!value) return resolveImage(undefined, fallback);
   if (BROKEN_PROJECT_IMAGE_IDS.some((id) => value.includes(id))) {

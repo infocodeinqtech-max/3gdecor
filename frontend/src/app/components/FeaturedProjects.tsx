@@ -42,35 +42,54 @@ export default function FeaturedProjects({
   const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <section className="py-24 bg-[#F5F1EA]">
+    <section className="py-16 sm:py-20 lg:py-24 xl:py-28 bg-[#F5F1EA]">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-8 xl:gap-10 items-start">
+        <div
+          className="
+            grid
+            grid-cols-1
+            lg:grid-cols-[380px_minmax(0,1fr)]
+            xl:grid-cols-[420px_minmax(0,1fr)]
+            gap-12
+            items-start
+            "
+        >
           {/* Left */}
 
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="w-full lg:w-[320px] xl:w-[360px] shrink-0"
+            className="w-full max-w-sm lg:max-w-none"
           >
-            <p className="uppercase tracking-[.25em] text-[#D49A2D] text-xs font-semibold">
+            <p className="uppercase tracking-[.25em] text-[#D49A2D] text-sm font-semibold">
               {subtitle}
             </p>
-
             <h2
-              className="mt-5 text-[#2A231D]"
+              className="
+                mt-5
+                text-[#2A231D]
+                whitespace-pre-line
+              "
               style={{
                 fontFamily: "Cormorant Garamond",
-                fontSize: "clamp(48px,4vw,62px)",
-                lineHeight: 1.05,
-                fontWeight: 500,
+                fontSize: "clamp(42px, 3.5vw, 54px)",
+                lineHeight: 0.95,
+                fontWeight: 400,
               }}
             >
-              {title}
+              Featured{"\n"}Projects
             </h2>
 
             <p
-              className="mt-5 max-w-[320px] text-[#6F6862]"
+              className="
+                mt-5
+                max-w-full
+                sm:max-w-[26rem]
+                lg:max-w-[22rem]
+                xl:max-w-[24rem]
+                text-[#6F6862]
+                "
               style={{
                 fontFamily: "Parkinsans",
                 lineHeight: 1.9,
@@ -82,18 +101,19 @@ export default function FeaturedProjects({
             <button
               onClick={() => navigate("/projects/corporate")}
               className="
-              mt-10
-              bg-[#D49A2D]
-              hover:bg-[#c48d28]
-              text-white
-              rounded-xl
-              px-7
-              py-4
-              flex
-              items-center
-              gap-3
-              transition
-              "
+                mt-8
+                inline-flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-[#D49A2D]
+                hover:bg-[#C98F22]
+                text-white
+                px-6
+                sm:px-8
+                py-3.5
+                transition-all
+                "
             >
               {button}
 
@@ -114,8 +134,9 @@ export default function FeaturedProjects({
                 mb-6
                 lg:absolute
                 lg:right-0
-                lg:-top-16
+                lg:-top-20
                 lg:mb-0
+                z-30
               "
             >
               <button
@@ -127,13 +148,14 @@ export default function FeaturedProjects({
                 bg-white
                 border
                 border-[#E5D9C8]
-                shadow-sm
-                flex
+                shadow-md
+                inline-flex
                 items-center
                 justify-center
+                text-[#2A231D]
                 hover:bg-[#D49A2D]
                 hover:text-white
-                transition
+                transition-all
                 "
               >
                 <ChevronLeft className="mx-auto" />
@@ -148,20 +170,21 @@ export default function FeaturedProjects({
                   bg-white
                   border
                   border-[#E5D9C8]
-                  shadow-sm
-                  flex
+                  shadow-md
+                  inline-flex
                   items-center
                   justify-center
+                  text-[#2A231D]
                   hover:bg-[#D49A2D]
                   hover:text-white
-                  transition
+                  transition-all
                   "
               >
                 <ChevronRight className="mx-auto" />
               </button>
             </div>
 
-            <div className="overflow-hidden" ref={emblaRef}>
+            <div className="overflow-hidden relative z-0" ref={emblaRef}>
               <div className="flex sm:-mx-3">
                 {projects.map((project) => (
                   <div
@@ -177,22 +200,52 @@ export default function FeaturedProjects({
                     sm:px-3"
                   >
                     <motion.div
-                      whileHover={{ y: -8 }}
+                      whileHover={{
+                        boxShadow: "0 18px 40px rgba(0,0,0,.12)",
+                      }}
                       transition={{ duration: 0.35 }}
                       className="group cursor-pointer"
                     >
-                      <div className="rounded-[20px] overflow-hidden w-full">
-                        <motion.img
+                      <div
+                        className="
+                          relative
+                          overflow-hidden
+                          rounded-[20px]
+                          w-full
+                          isolate
+                          bg-[#F5F1EA]
+                        "
+                      >
+                        {/* <motion.img
                           src={project.image}
                           whileHover={{ scale: 1.06 }}
                           transition={{ duration: 0.5 }}
+                          //   className="
+                          //   w-full
+                          //   h-[220px]
+                          //   sm:h-[240px]
+                          //   xl:h-[270px]
+                          //   object-cover
+                          // "
                           className="
-                          w-full
-                          h-[220px]
-                          sm:h-[240px]
-                          xl:h-[270px]
-                          object-cover
-                        "
+                            w-full
+                            aspect-[4/3]
+                            object-cover
+                            transition-transform
+                            duration-700
+                            group-hover:scale-105
+                            "
+                        /> */}
+                        <img
+                          src={project.image}
+                          className="
+                            w-full
+                            aspect-[4/3]
+                            object-cover
+                            transition-transform
+                            duration-700
+                            group-hover:scale-105
+                          "
                         />
                       </div>
 
