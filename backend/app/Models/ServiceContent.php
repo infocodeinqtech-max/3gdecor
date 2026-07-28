@@ -9,7 +9,7 @@ class ServiceContent extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'services_contents';
+    protected $table = 'home_services_contents';
 
     protected $guarded = [];
 

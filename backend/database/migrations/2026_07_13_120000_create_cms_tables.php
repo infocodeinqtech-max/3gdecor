@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('navigation_menus', function (Blueprint $table) {
+        Schema::create('home_navigation_menus', function (Blueprint $table) {
             $table->id();
             $table->string('label');
             $table->string('link');
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('hero_contents', function (Blueprint $table) {
+        Schema::create('home_hero_contents', function (Blueprint $table) {
             $table->id();
             $table->string('tagline')->nullable();
             $table->string('headline_line1')->nullable();
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('about_contents', function (Blueprint $table) {
+        Schema::create('home_about_contents', function (Blueprint $table) {
             $table->id();
             $table->string('label')->nullable();
             $table->string('title_line1')->nullable();
@@ -51,10 +51,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('section_headers', function (Blueprint $table) {
+        Schema::create('home_section_headers', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique(); // expertise|projects|services|process|testimonials
-            /** Related list table name, e.g. expertise_contents — kept in sync via CmsRegistry */
+            /** Related list table name, e.g. home_expertise_contents — kept in sync via CmsRegistry */
             $table->string('content_table')->nullable();
             $table->string('label')->nullable();
             $table->string('title')->nullable();
@@ -67,7 +67,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('expertise_contents', function (Blueprint $table) {
+        Schema::create('home_expertise_contents', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
@@ -77,7 +77,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('projects_contents', function (Blueprint $table) {
+        Schema::create('home_projects_contents', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('category')->nullable();
@@ -88,7 +88,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('services_contents', function (Blueprint $table) {
+        Schema::create('home_services_contents', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('category')->nullable();
@@ -99,7 +99,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('process_contents', function (Blueprint $table) {
+        Schema::create('home_process_contents', function (Blueprint $table) {
             $table->id();
             $table->string('step', 20)->nullable();
             $table->string('title');
@@ -109,7 +109,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('testimonials_contents', function (Blueprint $table) {
+        Schema::create('home_testimonials_contents', function (Blueprint $table) {
             $table->id();
             $table->text('quote');
             $table->string('author');
@@ -140,14 +140,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('footer_contents');
-        Schema::dropIfExists('testimonials_contents');
-        Schema::dropIfExists('process_contents');
-        Schema::dropIfExists('services_contents');
-        Schema::dropIfExists('projects_contents');
-        Schema::dropIfExists('expertise_contents');
-        Schema::dropIfExists('section_headers');
-        Schema::dropIfExists('about_contents');
-        Schema::dropIfExists('hero_contents');
-        Schema::dropIfExists('navigation_menus');
+        Schema::dropIfExists('home_testimonials_contents');
+        Schema::dropIfExists('home_process_contents');
+        Schema::dropIfExists('home_services_contents');
+        Schema::dropIfExists('home_projects_contents');
+        Schema::dropIfExists('home_expertise_contents');
+        Schema::dropIfExists('home_section_headers');
+        Schema::dropIfExists('home_about_contents');
+        Schema::dropIfExists('home_hero_contents');
+        Schema::dropIfExists('home_navigation_menus');
     }
 };

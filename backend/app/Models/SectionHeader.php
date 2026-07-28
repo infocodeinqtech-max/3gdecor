@@ -9,7 +9,7 @@ class SectionHeader extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'section_headers';
+    protected $table = 'home_section_headers';
 
     protected $guarded = [];
 

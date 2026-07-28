@@ -9,7 +9,7 @@ class NavigationMenu extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'navigation_menus';
+    protected $table = 'home_navigation_menus';
 
     protected $guarded = [];
 

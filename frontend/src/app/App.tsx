@@ -60,7 +60,27 @@ export default function App() {
           <Route path="enquiries" element={<ManageEnquiries />} />
         </Route>
       </Routes>
-      <Toaster position="top-right" richColors closeButton />
+      <Toaster
+        position="top-right"
+        closeButton
+        expand
+        visibleToasts={4}
+        toastOptions={{
+          unstyled: false,
+          classNames: {
+            toast: "threeg-toast",
+            title: "threeg-toast__title",
+            description: "threeg-toast__description",
+            closeButton: "threeg-toast__close",
+            actionButton: "threeg-toast__action",
+            cancelButton: "threeg-toast__cancel",
+            success: "threeg-toast--success",
+            error: "threeg-toast--error",
+            warning: "threeg-toast--warning",
+            info: "threeg-toast--info",
+          },
+        }}
+      />
     </BrowserRouter>
   );
 }

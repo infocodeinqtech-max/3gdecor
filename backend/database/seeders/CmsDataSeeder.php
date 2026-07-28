@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AboutContent;
 use App\Models\ContactOfficeContent;
+use App\Models\ContactPageContent;
 use App\Models\Enquiry;
 use App\Models\ExpertiseContent;
 use App\Models\FooterContent;
@@ -248,6 +249,25 @@ class CmsDataSeeder extends Seeder
                 'active' => true,
             ]);
         }
+
+        // Contact page (banner + written sections)
+        ContactPageContent::query()->delete();
+        ContactPageContent::query()->create([
+            'banner_image' => MediaPath::path('pages/contact', 'contact-banner.jpg'),
+            'hero_eyebrow' => 'Get In Touch',
+            'hero_title_line1' => "Let's Build",
+            'hero_title_line2' => 'Something',
+            'hero_title_highlight' => 'Remarkable.',
+            'hero_description' => 'Share your vision for corporate interiors, civil structures, or turnkey projects — our team responds within 24 hours.',
+            'details_eyebrow' => 'Reach Us',
+            'details_title' => 'Company Details &',
+            'details_title_highlight' => 'Inquiry Form',
+            'details_description' => 'Find our studios on the map or send us a message — tell us what your project is regarding and we will guide you from there.',
+            'form_eyebrow' => 'Send an Inquiry',
+            'form_title' => 'Tell us about your project',
+            'form_description' => 'Fields marked with your details help us respond faster.',
+            'active' => true,
+        ]);
 
         // Footer
         FooterContent::query()->delete();

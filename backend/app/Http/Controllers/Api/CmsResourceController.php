@@ -68,6 +68,10 @@ class CmsResourceController extends Controller
             ->active()
             ->orderBy($cfg['order_by'] ?? 'id');
 
+        if (! empty($cfg['item_type'])) {
+            $query->where('item_type', $cfg['item_type']);
+        }
+
         $rows = $query->get();
 
         return response()->json([
@@ -107,6 +111,9 @@ class CmsResourceController extends Controller
         $this->ensurePermission($request, $cfg['permission']);
 
         $row = $cfg['model']::query()->findOrFail($id);
+        if (! empty($cfg['item_type']) && $row->item_type !== $cfg['item_type']) {
+            abort(404);
+        }
         $this->validateListPayload($request, $resource);
         $payload = $cfg['map_in']($request->all());
         if ($resource === 'contact-offices') {
@@ -133,6 +140,9 @@ class CmsResourceController extends Controller
         $this->ensurePermission($request, $cfg['permission']);
 
         $row = $cfg['model']::query()->findOrFail($id);
+        if (! empty($cfg['item_type']) && $row->item_type !== $cfg['item_type']) {
+            abort(404);
+        }
         $row->deactivate();
 
         return response()->json([
@@ -155,7 +165,11 @@ class CmsResourceController extends Controller
         ])['data'];
 
         $model = $cfg['model'];
-        $model::query()->update(['active' => false]);
+        $deactivate = $model::query();
+        if (! empty($cfg['item_type'])) {
+            $deactivate->where('item_type', $cfg['item_type']);
+        }
+        $deactivate->update(['active' => false]);
 
         $out = [];
         foreach ($items as $i => $item) {

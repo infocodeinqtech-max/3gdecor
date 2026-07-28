@@ -4,7 +4,13 @@ import { Plus, X, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { ASSIGNABLE_MENUS, ROLES } from "../data/permissions";
+import {
+  ASSIGNABLE_MENUS,
+  HOME_PAGE_SECTION_GROUP,
+  HOME_PAGE_SECTION_MENU_IDS,
+  ROLES,
+  STANDALONE_ASSIGNABLE_MENUS,
+} from "../data/permissions";
 import type { PublicAdminUser } from "../utils/adminStorage";
 import { apiRequest } from "../../api/client";
 import AdminTable from "../components/AdminTable";
@@ -294,21 +300,47 @@ export default function ManageAdmins() {
                 </div>
                 <div>
                   <p className="text-sm mb-2 text-[#6E655C]">Menu Permissions</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {ASSIGNABLE_MENUS.map((m) => (
-                      <label
-                        key={m.id}
-                        className="flex items-center gap-2 text-sm cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={form.permissions.includes(m.id)}
-                          onChange={() => togglePermission(m.id)}
-                          className="accent-amber-500"
-                        />
-                        {m.label}
-                      </label>
-                    ))}
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      {STANDALONE_ASSIGNABLE_MENUS.map((m) => (
+                        <label
+                          key={m.id}
+                          className="flex items-center gap-2 text-sm cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={form.permissions.includes(m.id)}
+                            onChange={() => togglePermission(m.id)}
+                            className="accent-amber-500"
+                          />
+                          {m.label}
+                        </label>
+                      ))}
+                    </div>
+
+                    <div className="rounded-xl border border-[#E8DFD2] bg-[#FAF7F2] p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[#8A8177] mb-2">
+                        {HOME_PAGE_SECTION_GROUP.label}
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {ASSIGNABLE_MENUS.filter((m) =>
+                          HOME_PAGE_SECTION_MENU_IDS.includes(m.id),
+                        ).map((m) => (
+                          <label
+                            key={m.id}
+                            className="flex items-center gap-2 text-sm cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={form.permissions.includes(m.id)}
+                              onChange={() => togglePermission(m.id)}
+                              className="accent-amber-500"
+                            />
+                            {m.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <button

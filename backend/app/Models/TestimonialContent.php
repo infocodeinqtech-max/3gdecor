@@ -9,7 +9,7 @@ class TestimonialContent extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'testimonials_contents';
+    protected $table = 'home_testimonials_contents';
 
     protected $guarded = [];
 

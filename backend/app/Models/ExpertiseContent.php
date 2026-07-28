@@ -9,7 +9,7 @@ class ExpertiseContent extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'expertise_contents';
+    protected $table = 'home_expertise_contents';
 
     protected $guarded = [];
 

@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\AboutContent;
 use App\Models\ContactOfficeContent;
+use App\Models\ContactPageContent;
 use App\Models\ExpertiseContent;
 use App\Models\FooterContent;
 use App\Models\HeroContent;
@@ -16,7 +17,7 @@ use App\Models\TestimonialContent;
 
 /**
  * Maps frontend storage keys → backend resources.
- * content_table values on section_headers are derived from list models here.
+ * content_table values on home_section_headers are derived from list models here.
  */
 class CmsRegistry
 {
@@ -271,6 +272,42 @@ class CmsRegistry
                     'active' => (bool) $row->active,
                 ],
             ],
+            'contact-page' => [
+                'model' => ContactPageContent::class,
+                'permission' => 'contact-offices',
+                'map_in' => fn (array $d) => [
+                    'banner_image' => $d['bannerImage'] ?? '',
+                    'hero_eyebrow' => $d['heroEyebrow'] ?? '',
+                    'hero_title_line1' => $d['heroTitleLine1'] ?? '',
+                    'hero_title_line2' => $d['heroTitleLine2'] ?? '',
+                    'hero_title_highlight' => $d['heroTitleHighlight'] ?? '',
+                    'hero_description' => $d['heroDescription'] ?? '',
+                    'details_eyebrow' => $d['detailsEyebrow'] ?? '',
+                    'details_title' => $d['detailsTitle'] ?? '',
+                    'details_title_highlight' => $d['detailsTitleHighlight'] ?? '',
+                    'details_description' => $d['detailsDescription'] ?? '',
+                    'form_eyebrow' => $d['formEyebrow'] ?? '',
+                    'form_title' => $d['formTitle'] ?? '',
+                    'form_description' => $d['formDescription'] ?? '',
+                    'active' => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+                'map_out' => fn ($row) => [
+                    'bannerImage' => $row->banner_image,
+                    'heroEyebrow' => $row->hero_eyebrow,
+                    'heroTitleLine1' => $row->hero_title_line1,
+                    'heroTitleLine2' => $row->hero_title_line2,
+                    'heroTitleHighlight' => $row->hero_title_highlight,
+                    'heroDescription' => $row->hero_description,
+                    'detailsEyebrow' => $row->details_eyebrow,
+                    'detailsTitle' => $row->details_title,
+                    'detailsTitleHighlight' => $row->details_title_highlight,
+                    'detailsDescription' => $row->details_description,
+                    'formEyebrow' => $row->form_eyebrow,
+                    'formTitle' => $row->form_title,
+                    'formDescription' => $row->form_description,
+                    'active' => (bool) $row->active,
+                ],
+            ],
         ];
     }
 
@@ -311,7 +348,7 @@ class CmsRegistry
         ];
     }
 
-    /** Keep section_headers.content_table aligned with current model table names. */
+    /** Keep home_section_headers.content_table aligned with current model table names. */
     public static function syncSectionContentTables(): void
     {
         foreach (self::sectionHeaderKeys() as $meta) {

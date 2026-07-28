@@ -35,7 +35,7 @@ export const seedHero: HeroContent = {
   headlineLine2: "Civil Structures.",
   scriptText: "Built to Elevate.",
   description:
-    "From modern workplaces to industrial landmarks — we design and build spaces that drive productivity, efficiency and sustainable growth.",
+    "From modern workplaces to industrial landmarks â€” we design and build spaces that drive productivity, efficiency and sustainable growth.",
   leftCardTitle: "Corporate\nInteriors",
   rightCardTitle: "Civil\nStructures",
   ctaCorporateText: "Explore Corporate Projects",
@@ -297,7 +297,41 @@ export const seedFooter = {
   newsletterTitle: "STAY INSPIRED",
   newsletterText:
     "Subscribe to our newsletter and be the first to know about our latest projects and ideas.",
-  copyright: "© 2025 3G Decorative Group. All Rights Reserved.",
+  copyright: "Â© 2025 3G Decorative Group. All Rights Reserved.",
+};
+
+export interface ContactPageContent {
+  bannerImage: string;
+  heroEyebrow: string;
+  heroTitleLine1: string;
+  heroTitleLine2: string;
+  heroTitleHighlight: string;
+  heroDescription: string;
+  detailsEyebrow: string;
+  detailsTitle: string;
+  detailsTitleHighlight: string;
+  detailsDescription: string;
+  formEyebrow: string;
+  formTitle: string;
+  formDescription: string;
+}
+
+export const seedContactPage: ContactPageContent = {
+  bannerImage: "",
+  heroEyebrow: "Get In Touch",
+  heroTitleLine1: "Let's Build",
+  heroTitleLine2: "Something",
+  heroTitleHighlight: "Remarkable.",
+  heroDescription:
+    "Share your vision for corporate interiors, civil structures, or turnkey projects â€” our team responds within 24 hours.",
+  detailsEyebrow: "Reach Us",
+  detailsTitle: "Company Details &",
+  detailsTitleHighlight: "Inquiry Form",
+  detailsDescription:
+    "Find our studios on the map or send us a message â€” tell us what your project is regarding and we'll guide you from there.",
+  formEyebrow: "Send an Inquiry",
+  formTitle: "Tell us about your project",
+  formDescription: "Fields marked with your details help us respond faster.",
 };
 
 const sharedOfficeAddress =
@@ -326,7 +360,7 @@ export const seedContactOffices: ContactOfficeItem[] = [
     address: sharedOfficeAddress,
     phone: "8167028450",
     email: "info@3gdecorative.com",
-    hours: "Mon – Sat, 9:00 AM – 7:00 PM",
+    hours: "Mon â€“ Sat, 9:00 AM â€“ 7:00 PM",
     mapEmbed: sharedMapEmbed,
   },
   {
@@ -337,7 +371,7 @@ export const seedContactOffices: ContactOfficeItem[] = [
     address: sharedOfficeAddress,
     phone: "8167028450",
     email: "info@3gdecorative.com",
-    hours: "Mon – Sat, 9:00 AM – 7:00 PM",
+    hours: "Mon â€“ Sat, 9:00 AM â€“ 7:00 PM",
     mapEmbed: sharedMapEmbed,
   },
   {
@@ -348,7 +382,7 @@ export const seedContactOffices: ContactOfficeItem[] = [
     address: sharedOfficeAddress,
     phone: "8167028450",
     email: "info@3gdecorative.com",
-    hours: "Mon – Sat, 9:00 AM – 7:00 PM",
+    hours: "Mon â€“ Sat, 9:00 AM â€“ 7:00 PM",
     mapEmbed: sharedMapEmbed,
   },
 ];
@@ -374,4 +408,319 @@ export const seedEnquiries = [
     date: "2025-05-16",
     status: "In Review",
   },
+];
+
+/* â”€â”€â”€ /services page CMS seeds â”€â”€â”€ */
+
+export type ServicePageContent = {
+  heroBannerImage: string;
+  heroEyebrow: string;
+  heroTitleLine1: string;
+  heroTitleLine2: string;
+  heroTitleHighlight: string;
+  heroDescription: string;
+  heroCtaText: string;
+  offerEyebrow: string;
+  offerTitle: string;
+  offerTitleHighlight: string;
+  processEyebrow: string;
+  processTitle: string;
+  processTitleHighlight: string;
+  whyEyebrow: string;
+  whyTitle: string;
+  whyTitleHighlight: string;
+  whyCommitmentEyebrow: string;
+  whyCommitmentTitleLine1: string;
+  whyCommitmentTitleLine2: string;
+  whyCommitmentTitleHighlight: string;
+  whyCommitmentDescription: string;
+  whyCtaText: string;
+};
+
+export type ServiceOfferItem = {
+  id: number;
+  icon: string;
+  category: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  tag: string;
+};
+
+export type ServiceProcessItem = {
+  id: number;
+  stepNumber: string;
+  icon: string;
+  label: string;
+  tagline: string;
+  description: string;
+  image: string;
+  accentColor: string;
+};
+
+export type ServiceWhyStatItem = {
+  id: number;
+  icon: string;
+  stat: string;
+  label: string;
+  detail: string;
+};
+
+export type ServiceWhyFeatureItem = {
+  id: number;
+  text: string;
+};
+
+/** @deprecated Use ServicePageContent slices instead */
+export type ServicePageHero = {
+  bannerImage: string;
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2: string;
+  titleHighlight: string;
+  description: string;
+  ctaText: string;
+};
+
+/** @deprecated */
+export type ServiceOfferSection = {
+  eyebrow: string;
+  title: string;
+  titleHighlight: string;
+};
+
+/** @deprecated */
+export type ServiceProcessSection = {
+  eyebrow: string;
+  title: string;
+  titleHighlight: string;
+};
+
+/** @deprecated */
+export type ServiceWhySection = {
+  eyebrow: string;
+  title: string;
+  titleHighlight: string;
+  commitmentEyebrow: string;
+  commitmentTitleLine1: string;
+  commitmentTitleLine2: string;
+  commitmentTitleHighlight: string;
+  commitmentDescription: string;
+  ctaText: string;
+};
+
+export const seedServicePage: ServicePageContent = {
+  heroBannerImage: "",
+  heroEyebrow: "Our Services",
+  heroTitleLine1: "Design. Build.",
+  heroTitleLine2: "Deliver ",
+  heroTitleHighlight: "Excellence.",
+  heroDescription:
+    "At 3G Deco, we offer end-to-end design and construction solutions that combine creativity, functionality, and precision to create spaces that truly inspire.",
+  heroCtaText: "Explore Our Services",
+  offerEyebrow: "What We Offer",
+  offerTitle: "Services",
+  offerTitleHighlight: "Crafted",
+  processEyebrow: "How We Work",
+  processTitle: "From Brief to",
+  processTitleHighlight: "Handover",
+  whyEyebrow: "The 3G Advantage",
+  whyTitle: "Why Choose",
+  whyTitleHighlight: "3G Decorative Group?",
+  whyCommitmentEyebrow: "Our Commitment",
+  whyCommitmentTitleLine1: "One Partner.",
+  whyCommitmentTitleLine2: "Every Stage.",
+  whyCommitmentTitleHighlight: "Zero Gaps.",
+  whyCommitmentDescription:
+    "We built 3G Deco to eliminate the fragmentation that kills most fit-out projects. One team, one contract, one point of accountability â€” from the first sketch to the final handover.",
+  whyCtaText: "Book a Consultation",
+};
+
+export const seedServicePageHero: ServicePageHero = {
+  bannerImage: seedServicePage.heroBannerImage,
+  eyebrow: seedServicePage.heroEyebrow,
+  titleLine1: seedServicePage.heroTitleLine1,
+  titleLine2: seedServicePage.heroTitleLine2,
+  titleHighlight: seedServicePage.heroTitleHighlight,
+  description: seedServicePage.heroDescription,
+  ctaText: seedServicePage.heroCtaText,
+};
+
+export const seedServiceOfferSection: ServiceOfferSection = {
+  eyebrow: seedServicePage.offerEyebrow,
+  title: seedServicePage.offerTitle,
+  titleHighlight: seedServicePage.offerTitleHighlight,
+};
+
+export const seedServiceOffers: ServiceOfferItem[] = [
+  {
+    id: 1,
+    icon: "PenTool",
+    category: "Interior",
+    title: "Corporate Interior Design",
+    subtitle: "Offices Â· Lounges Â· Open Plans",
+    description:
+      "Bespoke workspace environments designed to elevate productivity and reflect your corporate identity â€” from executive suites to open-plan floors.",
+    image: "/uploads/pages/services/gallery-1.jpg",
+    tag: "Most Popular",
+  },
+  {
+    id: 2,
+    icon: "Sparkles",
+    category: "Hospitality",
+    title: "Cafeteria & Canteen Design",
+    subtitle: "Dining Â· Food Courts Â· Pantries",
+    description:
+      "Vibrant, functional dining spaces that boost employee morale â€” from compact pantry zones to multi-floor corporate cafeterias with full fit-out.",
+    image: "/uploads/pages/services/gallery-2.jpg",
+    tag: "",
+  },
+  {
+    id: 3,
+    icon: "Building2",
+    category: "Architecture",
+    title: "Architectural Planning",
+    subtitle: "Blueprints Â· Layouts Â· Approvals",
+    description:
+      "End-to-end architectural design services â€” structural layouts, space planning, regulatory approvals, and coordination with civil teams on site.",
+    image: "/uploads/pages/services/gallery-3.jpg",
+    tag: "",
+  },
+  {
+    id: 4,
+    icon: "Hammer",
+    category: "Civil",
+    title: "Civil & Industrial Builds",
+    subtitle: "Warehouses Â· Factories Â· Sheds",
+    description:
+      "Heavy-duty civil construction for industrial clients â€” warehouses, factory sheds, PEB structures, and large-span buildings built to last.",
+    image: "/uploads/pages/services/gallery-4.jpg",
+    tag: "Civil Specialists",
+  },
+  {
+    id: 5,
+    icon: "Briefcase",
+    category: "Turnkey",
+    title: "Turnkey Project Delivery",
+    subtitle: "Concept to Handover Â· Zero Gaps",
+    description:
+      "We own the entire project lifecycle â€” design, procurement, civil, MEP, furniture, and handover â€” so you never have to manage multiple vendors.",
+    image: "/uploads/pages/services/gallery-5.jpg",
+    tag: "",
+  },
+  {
+    id: 6,
+    icon: "Sofa",
+    category: "Furniture",
+    title: "Custom Furniture & Fit-out",
+    subtitle: "Joinery Â· Modular Â· FF&E",
+    description:
+      "Custom-crafted workstations, cabinets, reception counters, and soft furnishings â€” all specified, sourced, and installed by our in-house team.",
+    image: "/uploads/pages/services/gallery-6.jpg",
+    tag: "",
+  },
+];
+
+export const seedServiceProcessSection: ServiceProcessSection = {
+  eyebrow: seedServicePage.processEyebrow,
+  title: seedServicePage.processTitle,
+  titleHighlight: seedServicePage.processTitleHighlight,
+};
+
+export const seedServiceProcess: ServiceProcessItem[] = [
+  {
+    id: 1,
+    stepNumber: "01",
+    icon: "Users",
+    label: "Discovery",
+    tagline: "We Listen First",
+    description:
+      "Site visit, brief deep-dive, stakeholder alignment. We map out your requirements, constraints, and vision before a single line is drawn.",
+    image: "/uploads/pages/services/process-1.jpg",
+    accentColor: "#f3bb27",
+  },
+  {
+    id: 2,
+    stepNumber: "02",
+    icon: "PenTool",
+    label: "Concept Design",
+    tagline: "Vision on Paper",
+    description:
+      "Mood boards, space plans, 3D visualisations and material palettes â€” refined through collaborative review until every detail is right.",
+    image: "/uploads/pages/services/process-2.jpg",
+    accentColor: "#ea7a12",
+  },
+  {
+    id: 3,
+    stepNumber: "03",
+    icon: "Hammer",
+    label: "Execution",
+    tagline: "Built to Spec",
+    description:
+      "Civil works, MEP coordination, furniture installation â€” our in-house teams execute every stage with precision and zero subcontractor gaps.",
+    image: "/uploads/pages/services/process-3.jpg",
+    accentColor: "#f3bb27",
+  },
+  {
+    id: 4,
+    stepNumber: "04",
+    icon: "Award",
+    label: "Handover",
+    tagline: "Zero Defects",
+    description:
+      "Thorough QA walkthrough, snag resolution, as-built documentation, and post-handover support. We don't leave until you're completely satisfied.",
+    image: "/uploads/pages/services/process-4.jpg",
+    accentColor: "#ea7a12",
+  },
+];
+
+export const seedServiceWhy: ServiceWhySection = {
+  eyebrow: seedServicePage.whyEyebrow,
+  title: seedServicePage.whyTitle,
+  titleHighlight: seedServicePage.whyTitleHighlight,
+  commitmentEyebrow: seedServicePage.whyCommitmentEyebrow,
+  commitmentTitleLine1: seedServicePage.whyCommitmentTitleLine1,
+  commitmentTitleLine2: seedServicePage.whyCommitmentTitleLine2,
+  commitmentTitleHighlight: seedServicePage.whyCommitmentTitleHighlight,
+  commitmentDescription: seedServicePage.whyCommitmentDescription,
+  ctaText: seedServicePage.whyCtaText,
+};
+
+export const seedServiceWhyStats: ServiceWhyStatItem[] = [
+  {
+    id: 1,
+    icon: "Award",
+    stat: "15+",
+    label: "Years of Excellence",
+    detail: "Trusted since 2009",
+  },
+  {
+    id: 2,
+    icon: "CheckCircle2",
+    stat: "200+",
+    label: "Projects Delivered",
+    detail: "On time, on budget",
+  },
+  {
+    id: 3,
+    icon: "Users",
+    stat: "98%",
+    label: "Client Retention",
+    detail: "Repeat & referral business",
+  },
+  {
+    id: 4,
+    icon: "Clock",
+    stat: "100%",
+    label: "Turnkey Capability",
+    detail: "Single-vendor solution",
+  },
+];
+
+export const seedServiceWhyFeatures: ServiceWhyFeatureItem[] = [
+  { id: 1, text: "Single-vendor accountability from concept to handover" },
+  { id: 2, text: "In-house civil, interior, and furniture teams" },
+  { id: 3, text: "ISO-compliant project management processes" },
+  { id: 4, text: "Transparent costing with no hidden extras" },
 ];

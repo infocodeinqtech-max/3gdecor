@@ -27,9 +27,20 @@ interface AuthContextValue {
     role: LoginRole,
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  changePassword: (
+  sendChangePasswordOtp: (
     currentPassword: string,
     newPassword: string,
+  ) => Promise<{
+    success: boolean;
+    error?: string;
+    verificationToken?: string;
+    expiresIn?: number;
+    email?: string;
+    testMode?: boolean;
+  }>;
+  verifyChangePasswordOtp: (
+    verificationToken: string,
+    otp: string,
   ) => Promise<{ success: boolean; error?: string }>;
   refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
@@ -124,12 +135,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const changePassword = async (
+  const sendChangePasswordOtp = async (
     currentPassword: string,
     newPassword: string,
   ) => {
     try {
-      await apiRequest("/auth/change-password", {
+      const res = await apiRequest<{
+        success: boolean;
+        verification_token: string;
+        expires_in: number;
+        email?: string;
+        test_mode?: boolean;
+      }>("/auth/change-password/otp/send", {
         method: "POST",
         body: {
           current_password: currentPassword,
@@ -137,11 +154,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password_confirmation: newPassword,
         },
       });
+      return {
+        success: true,
+        verificationToken: res.verification_token,
+        expiresIn: res.expires_in,
+        email: res.email,
+        testMode: Boolean(res.test_mode),
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error:
+          err instanceof Error ? err.message : "Could not send password OTP",
+      };
+    }
+  };
+
+  const verifyChangePasswordOtp = async (
+    verificationToken: string,
+    otp: string,
+  ) => {
+    try {
+      await apiRequest("/auth/change-password/otp/verify", {
+        method: "POST",
+        body: {
+          verification_token: verificationToken,
+          otp,
+        },
+      });
       return { success: true };
     } catch (err) {
       return {
         success: false,
-        error: err instanceof Error ? err.message : "Could not change password",
+        error:
+          err instanceof Error ? err.message : "OTP verification failed",
       };
     }
   };
@@ -166,7 +212,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         login,
         logout,
-        changePassword,
+        sendChangePasswordOtp,
+        verifyChangePasswordOtp,
         refreshUser,
         isAuthenticated: !!user,
         isSuperAdmin,

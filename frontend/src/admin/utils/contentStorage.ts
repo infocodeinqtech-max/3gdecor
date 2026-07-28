@@ -13,7 +13,12 @@ const LIST_KEYS = new Set([
 ]);
 
 /** Singleton resources */
-const SINGLETON_KEYS = new Set(["hero", "about", "footer"]);
+const SINGLETON_KEYS = new Set([
+  "hero",
+  "about",
+  "footer",
+  "contact-page",
+]);
 
 /** Section header keys */
 const SECTION_KEYS = new Set([

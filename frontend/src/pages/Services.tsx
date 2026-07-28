@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "motion/react";
+import { motion, useInView } from "motion/react";
 import servicesBanner from "../assets/images/services.png";
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
@@ -18,118 +18,43 @@ import {
   Users,
   Clock,
   Shield,
+  type LucideIcon,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
 import { mediaUrl } from "../utils/mediaUrl";
+import type {
+  ServiceOfferItem,
+  ServicePageContent,
+  ServiceProcessItem,
+  ServiceWhyFeatureItem,
+  ServiceWhyStatItem,
+} from "../admin/data/seedContent";
+import {
+  seedServiceOffers,
+  seedServicePage,
+  seedServiceProcess,
+  seedServiceWhyFeatures,
+  seedServiceWhyStats,
+} from "../admin/data/seedContent";
 
-/* ─── Service Data ─── */
-const services = [
-  {
-    id: 1,
-    icon: <PenTool className="size-6" />,
-    category: "Interior",
-    title: "Corporate Interior Design",
-    subtitle: "Offices · Lounges · Open Plans",
-    description:
-      "Bespoke workspace environments designed to elevate productivity and reflect your corporate identity — from executive suites to open-plan floors.",
-    image: mediaUrl("/uploads/pages/services/gallery-1.jpg"),
-    tag: "Most Popular",
-  },
-  {
-    id: 2,
-    icon: <Sparkles className="size-6" />,
-    category: "Hospitality",
-    title: "Cafeteria & Canteen Design",
-    subtitle: "Dining · Food Courts · Pantries",
-    description:
-      "Vibrant, functional dining spaces that boost employee morale — from compact pantry zones to multi-floor corporate cafeterias with full fit-out.",
-    image: mediaUrl("/uploads/pages/services/gallery-2.jpg"),
-    tag: null,
-  },
-  {
-    id: 3,
-    icon: <Building2 className="size-6" />,
-    category: "Architecture",
-    title: "Architectural Planning",
-    subtitle: "Blueprints · Layouts · Approvals",
-    description:
-      "End-to-end architectural design services — structural layouts, space planning, regulatory approvals, and coordination with civil teams on site.",
-    image: mediaUrl("/uploads/pages/services/gallery-3.jpg"),
-    tag: null,
-  },
-  {
-    id: 4,
-    icon: <Hammer className="size-6" />,
-    category: "Civil",
-    title: "Civil & Industrial Builds",
-    subtitle: "Warehouses · Factories · Sheds",
-    description:
-      "Heavy-duty civil construction for industrial clients — warehouses, factory sheds, PEB structures, and large-span buildings built to last.",
-    image: mediaUrl("/uploads/pages/services/gallery-4.jpg"),
-    tag: "Civil Specialists",
-  },
-  {
-    id: 5,
-    icon: <Briefcase className="size-6" />,
-    category: "Turnkey",
-    title: "Turnkey Project Delivery",
-    subtitle: "Concept to Handover · Zero Gaps",
-    description:
-      "We own the entire project lifecycle — design, procurement, civil, MEP, furniture, and handover — so you never have to manage multiple vendors.",
-    image: mediaUrl("/uploads/pages/services/gallery-5.jpg"),
-    tag: null,
-  },
-  {
-    id: 6,
-    icon: <Sofa className="size-6" />,
-    category: "Furniture",
-    title: "Custom Furniture & Fit-out",
-    subtitle: "Joinery · Modular · FF&E",
-    description:
-      "Custom-crafted workstations, cabinets, reception counters, and soft furnishings — all specified, sourced, and installed by our in-house team.",
-    image: mediaUrl("/uploads/pages/services/gallery-6.jpg"),
-    tag: null,
-  },
-];
+const SERVICE_ICONS: Record<string, LucideIcon> = {
+  PenTool,
+  Building2,
+  Sofa,
+  Briefcase,
+  Sparkles,
+  Hammer,
+  CheckCircle2,
+  Award,
+  Users,
+  Clock,
+  Shield,
+};
 
-const whyUs = [
-  {
-    icon: <Award className="size-6" />,
-    stat: "15+",
-    label: "Years of Excellence",
-    detail: "Trusted since 2009",
-  },
-  {
-    icon: <CheckCircle2 className="size-6" />,
-    stat: "200+",
-    label: "Projects Delivered",
-    detail: "On time, on budget",
-  },
-  {
-    icon: <Users className="size-6" />,
-    stat: "98%",
-    label: "Client Retention",
-    detail: "Repeat & referral business",
-  },
-  {
-    icon: <Clock className="size-6" />,
-    stat: "100%",
-    label: "Turnkey Capability",
-    detail: "Single-vendor solution",
-  },
-];
-
-const marqueeItems = [
-  "Conference Rooms",
-  "Corporate Cafeterias",
-  "Open Office Fit-out",
-  "Factory Sheds",
-  "Warehouse Builds",
-  "Turnkey Projects",
-  "Custom Joinery",
-  "PEB Structures",
-];
+function ServiceIcon({ name, className = "size-6" }: { name?: string; className?: string }) {
+  const Icon = SERVICE_ICONS[name || ""] || PenTool;
+  return <Icon className={className} />;
+}
 
 /* ─── Animated Counter ─── */
 function AnimCounter({ target }: { target: string }) {
@@ -152,37 +77,8 @@ function AnimCounter({ target }: { target: string }) {
   return <span ref={ref}>{val}</span>;
 }
 
-/* ─── Marquee ─── */
-function Marquee() {
-  return (
-    <div
-      className="overflow-hidden py-4 border-y border-[#f3bb27]/15"
-      style={{ background: "#1a1714" }}
-    >
-      <motion.div
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 30, ease: "linear", repeat: Infinity }}
-        className="flex whitespace-nowrap"
-      >
-        {[...marqueeItems, ...marqueeItems].map((item, i) => (
-          <span key={i} className="inline-flex items-center gap-6 px-8">
-            <span
-              className="text-[#F5F1EA]/30 text-[11px] uppercase tracking-[0.28em]"
-              style={{ fontFamily: "'Parkinsans', sans-serif" }}
-            >
-              {item}
-            </span>
-            <span className="text-[#f3bb27]/50 text-base">✦</span>
-          </span>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
-
 /* ─── Hero — reference layout: full-bleed image + left text + bottom strip ─── */
-function Hero() {
-  const navigate = useNavigate();
+function Hero({ data }: { data: ServicePageContent }) {
   return (
     <section
       className="bg-[#F5F1EA] px-4 lg:px-5"
@@ -197,7 +93,7 @@ function Hero() {
         {/* ── Full-bleed background image ── */}
         <div className="absolute inset-0 z-0">
           <img
-            src={servicesBanner}
+            src={data.heroBannerImage ? mediaUrl(data.heroBannerImage) : servicesBanner}
             alt="3G Decorative Group reception"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
@@ -305,15 +201,15 @@ function Hero() {
               className="text-[#f3bb27] text-[11px] uppercase tracking-[0.32em]"
               style={{ fontFamily: "'Parkinsans', sans-serif" }}
             >
-              Our Services
+              {data.heroEyebrow}
             </span>
           </motion.div>
 
           {/* Main heading — matches reference: Design. Build. Deliver Excellence. */}
           <div className="max-w-2xl mb-7">
             {[
-              { text: "Design. Build.", gold: false },
-              { text: "Deliver ", gold: false },
+              { text: data.heroTitleLine1, gold: false },
+              { text: data.heroTitleLine2, gold: false },
             ].map(({ text }, i) => (
               <div
                 key={i}
@@ -338,7 +234,6 @@ function Hero() {
                   }}
                 >
                   {text}
-                  {/* Excellence inline on second line */}
                   {i === 1 && (
                     <span
                       style={{
@@ -348,7 +243,7 @@ function Hero() {
                         WebkitTextFillColor: "transparent",
                       }}
                     >
-                      Excellence.
+                      {data.heroTitleHighlight}
                     </span>
                   )}
                 </motion.span>
@@ -368,9 +263,7 @@ function Hero() {
               lineHeight: 1.82,
             }}
           >
-            At 3G Deco, we offer end-to-end design and construction solutions
-            that combine creativity, functionality, and precision to create
-            spaces that truly inspire.
+            {data.heroDescription}
           </motion.p>
 
           {/* CTA button */}
@@ -396,7 +289,7 @@ function Hero() {
                 fontWeight: 500,
               }}
             >
-              Explore Our Services <ArrowRight className="size-3.5" />
+              {data.heroCtaText} <ArrowRight className="size-3.5" />
             </motion.button>
           </motion.div>
         </div>
@@ -410,7 +303,7 @@ function ServiceCard({
   svc,
   index,
 }: {
-  svc: (typeof services)[0];
+  svc: ServiceOfferItem;
   index: number;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -435,7 +328,7 @@ function ServiceCard({
     >
       {/* Background image with zoom */}
       <motion.img
-        src={svc.image}
+        src={mediaUrl(svc.image)}
         alt={svc.title}
         className="absolute inset-0 w-full h-full object-cover"
         animate={{ scale: hovered ? 1.09 : 1 }}
@@ -482,7 +375,7 @@ function ServiceCard({
                 : "0 4px 14px rgba(243,187,39,0.2)",
             }}
           >
-            {svc.icon}
+            <ServiceIcon name={svc.icon} />
           </motion.div>
 
           {/* Tag badge */}
@@ -570,7 +463,13 @@ function ServiceCard({
 }
 
 /* ─── Services Grid Section ─── */
-function ServicesGrid() {
+function ServicesGrid({
+  page,
+  services,
+}: {
+  page: ServicePageContent;
+  services: ServiceOfferItem[];
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.08 });
 
@@ -608,7 +507,7 @@ function ServicesGrid() {
                 className="text-[#ea7a12] text-[11px] uppercase tracking-[0.3em]"
                 style={{ fontFamily: "'Mona Sans', sans-serif" }}
               >
-                What We Offer
+                {page.offerEyebrow}
               </span>
             </motion.div>
             <motion.h2
@@ -628,9 +527,9 @@ function ServicesGrid() {
                 letterSpacing: "-0.02em",
               }}
             >
-              Services{" "}
+              {page.offerTitle}{" "}
               <span className="bg-gradient-to-r from-[#f3bb27] to-[#ea7a12] bg-clip-text text-transparent">
-                Crafted
+                {page.offerTitleHighlight}
               </span>{" "}
               For You
             </motion.h2>
@@ -649,16 +548,17 @@ function ServicesGrid() {
 }
 
 /* ─── Why Choose Us — light ivory background ─── */
-function WhyUs() {
+function WhyUs({
+  page,
+  stats,
+  features,
+}: {
+  page: ServicePageContent;
+  stats: ServiceWhyStatItem[];
+  features: ServiceWhyFeatureItem[];
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
-
-  const features = [
-    "Single-vendor accountability from concept to handover",
-    "In-house civil, interior, and furniture teams",
-    "ISO-compliant project management processes",
-    "Transparent costing with no hidden extras",
-  ];
 
   return (
     <section
@@ -704,7 +604,7 @@ function WhyUs() {
               className="text-[#ea7a12] text-[11px] uppercase tracking-[0.3em]"
               style={{ fontFamily: "'Parkinsans', sans-serif" }}
             >
-              The 3G Advantage
+              {page.whyEyebrow}
             </span>
             <div className="w-8 h-px bg-gradient-to-l from-[#f3bb27] to-[#ea7a12]" />
           </motion.div>
@@ -724,9 +624,9 @@ function WhyUs() {
               letterSpacing: "-0.02em",
             }}
           >
-            Why Choose{" "}
+            {page.whyTitle}{" "}
             <span className="bg-gradient-to-r from-[#f3bb27] to-[#ea7a12] bg-clip-text text-transparent">
-              3G Decorative Group?
+              {page.whyTitleHighlight}
             </span>
           </motion.h2>
         </div>
@@ -735,7 +635,7 @@ function WhyUs() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           {/* Left: stat cards 2×2 */}
           <div className="grid grid-cols-2 gap-5">
-            {whyUs.map((w, i) => (
+            {stats.map((w, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 40, scale: 0.95 }}
@@ -790,7 +690,7 @@ function WhyUs() {
                     boxShadow: "0 6px 20px rgba(243,187,39,0.30)",
                   }}
                 >
-                  {w.icon}
+                  <ServiceIcon name={w.icon} />
                 </motion.div>
 
                 {/* Stat counter */}
@@ -838,7 +738,7 @@ function WhyUs() {
                 className="text-[#ea7a12] text-[11px] uppercase tracking-[0.3em]"
                 style={{ fontFamily: "'Parkinsans', sans-serif" }}
               >
-                Our Commitment
+                {page.whyCommitmentEyebrow}
               </span>
             </div>
 
@@ -852,11 +752,11 @@ function WhyUs() {
                 letterSpacing: "-0.01em",
               }}
             >
-              One Partner.
+              {page.whyCommitmentTitleLine1}
               <br />
-              Every Stage.{" "}
+              {page.whyCommitmentTitleLine2}{" "}
               <span className="bg-gradient-to-r from-[#f3bb27] to-[#ea7a12] bg-clip-text text-transparent">
-                Zero Gaps.
+                {page.whyCommitmentTitleHighlight}
               </span>
             </h3>
 
@@ -868,9 +768,7 @@ function WhyUs() {
                 lineHeight: 1.85,
               }}
             >
-              We built 3G Deco to eliminate the fragmentation that kills most
-              fit-out projects. One team, one contract, one point of
-              accountability — from the first sketch to the final handover.
+              {page.whyCommitmentDescription}
             </p>
 
             {/* Feature checklist */}
@@ -906,7 +804,7 @@ function WhyUs() {
                       lineHeight: 1.7,
                     }}
                   >
-                    {f}
+                    {f.text}
                   </span>
                 </motion.div>
               ))}
@@ -930,7 +828,7 @@ function WhyUs() {
                 boxShadow: "0 8px 32px rgba(51,44,38,0.22)",
               }}
             >
-              Book a Consultation <ArrowRight className="size-4" />
+              {page.whyCtaText} <ArrowRight className="size-4" />
             </motion.button>
           </motion.div>
         </div>
@@ -940,49 +838,16 @@ function WhyUs() {
 }
 
 /* ─── Process — cinematic dark cards ─── */
-function ProcessStrip() {
+function ProcessStrip({
+  page,
+  steps,
+}: {
+  page: ServicePageContent;
+  steps: ServiceProcessItem[];
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
   const [activeStep, setActiveStep] = useState<number | null>(null);
-
-  const steps = [
-    {
-      n: "01",
-      icon: <Users className="size-7" />,
-      label: "Discovery",
-      tagline: "We Listen First",
-      desc: "Site visit, brief deep-dive, stakeholder alignment. We map out your requirements, constraints, and vision before a single line is drawn.",
-      img: mediaUrl("/uploads/pages/services/process-1.jpg"),
-      accent: "#f3bb27",
-    },
-    {
-      n: "02",
-      icon: <PenTool className="size-7" />,
-      label: "Concept Design",
-      tagline: "Vision on Paper",
-      desc: "Mood boards, space plans, 3D visualisations and material palettes — refined through collaborative review until every detail is right.",
-      img: mediaUrl("/uploads/pages/services/process-2.jpg"),
-      accent: "#ea7a12",
-    },
-    {
-      n: "03",
-      icon: <Hammer className="size-7" />,
-      label: "Execution",
-      tagline: "Built to Spec",
-      desc: "Civil works, MEP coordination, furniture installation — our in-house teams execute every stage with precision and zero subcontractor gaps.",
-      img: mediaUrl("/uploads/pages/services/process-3.jpg"),
-      accent: "#f3bb27",
-    },
-    {
-      n: "04",
-      icon: <Award className="size-7" />,
-      label: "Handover",
-      tagline: "Zero Defects",
-      desc: "Thorough QA walkthrough, snag resolution, as-built documentation, and post-handover support. We don't leave until you're completely satisfied.",
-      img: mediaUrl("/uploads/pages/services/process-4.jpg"),
-      accent: "#ea7a12",
-    },
-  ];
 
   return (
     <section
@@ -990,7 +855,6 @@ function ProcessStrip() {
       className="relative overflow-hidden py-16 md:py-24 lg:py-36"
       style={{ background: "#131009" }}
     >
-      {/* Top ambient glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[300px] pointer-events-none"
         style={{
@@ -1001,7 +865,6 @@ function ProcessStrip() {
       />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
-        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-10 md:mb-16 lg:mb-20 gap-4 lg:gap-6">
           <div>
             <motion.div
@@ -1015,7 +878,7 @@ function ProcessStrip() {
                 className="text-[#ea7a12] text-[11px] uppercase tracking-[0.3em]"
                 style={{ fontFamily: "'Parkinsans', sans-serif" }}
               >
-                How We Work
+                {page.processEyebrow}
               </span>
             </motion.div>
             <motion.h2
@@ -1035,19 +898,18 @@ function ProcessStrip() {
                 letterSpacing: "-0.02em",
               }}
             >
-              From Brief to{" "}
+              {page.processTitle}{" "}
               <span className="bg-gradient-to-r from-[#f3bb27] to-[#ea7a12] bg-clip-text text-transparent">
-                Handover
+                {page.processTitleHighlight}
               </span>
             </motion.h2>
           </div>
         </div>
 
-        {/* Cards grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {steps.map((s, i) => (
             <motion.div
-              key={i}
+              key={s.id}
               initial={{ opacity: 0, y: 50, scale: 0.95 }}
               animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
               transition={{
@@ -1060,14 +922,13 @@ function ProcessStrip() {
               className="relative overflow-hidden cursor-pointer"
               style={{ borderRadius: "18px", minHeight: "320px" }}
             >
-              {/* Background image — dim by default, vivid on hover */}
               <motion.div
                 className="absolute inset-0 z-0"
                 animate={{ opacity: activeStep === i ? 1 : 0.35 }}
                 transition={{ duration: 0.55 }}
               >
                 <img
-                  src={s.img}
+                  src={mediaUrl(s.image)}
                   alt={s.label}
                   className="w-full h-full object-cover"
                   style={{
@@ -1085,38 +946,35 @@ function ProcessStrip() {
                 />
               </motion.div>
 
-              {/* Gold top border — always visible, brightens on hover */}
               <motion.div
                 className="absolute top-0 left-0 right-0 h-[2px] z-20"
                 animate={{ opacity: activeStep === i ? 1 : 0.35 }}
                 transition={{ duration: 0.4 }}
                 style={{
-                  background: `linear-gradient(90deg,${s.accent},${i % 2 === 0 ? "#ea7a12" : "#f3bb27"})`,
+                  background: `linear-gradient(90deg,${s.accentColor || "#f3bb27"},${i % 2 === 0 ? "#ea7a12" : "#f3bb27"})`,
                 }}
               />
 
-              {/* Corner glow on hover */}
               <motion.div
                 className="absolute top-0 left-0 w-32 h-32 pointer-events-none z-0"
                 animate={{ opacity: activeStep === i ? 1 : 0 }}
                 transition={{ duration: 0.5 }}
                 style={{
-                  background: `radial-gradient(circle at top left,${s.accent}30 0%,transparent 70%)`,
+                  background: `radial-gradient(circle at top left,${s.accentColor || "#f3bb27"}30 0%,transparent 70%)`,
                 }}
               />
 
-              {/* Content */}
               <div
                 className="relative z-10 p-5 md:p-7 h-full flex flex-col justify-between"
                 style={{ minHeight: "320px" }}
               >
-                {/* Top: number + icon */}
                 <div className="flex items-start justify-between mb-6">
-                  {/* Step number — always visible */}
                   <motion.span
                     animate={{
                       color:
-                        activeStep === i ? s.accent : "rgba(255,255,255,0.22)",
+                        activeStep === i
+                          ? s.accentColor || "#f3bb27"
+                          : "rgba(255,255,255,0.22)",
                     }}
                     transition={{ duration: 0.4 }}
                     style={{
@@ -1127,10 +985,9 @@ function ProcessStrip() {
                       display: "block",
                     }}
                   >
-                    {s.n}
+                    {s.stepNumber}
                   </motion.span>
 
-                  {/* Icon — gold ring always, filled on hover */}
                   <div className="relative w-14 h-14 shrink-0">
                     <motion.div
                       animate={{ opacity: activeStep === i ? 0 : 1 }}
@@ -1143,31 +1000,29 @@ function ProcessStrip() {
                       transition={{ duration: 0.35 }}
                       className="absolute inset-0 rounded-2xl"
                       style={{
-                        background: `linear-gradient(135deg,${s.accent},${i % 2 === 0 ? "#ea7a12" : "#f3bb27"})`,
+                        background: `linear-gradient(135deg,${s.accentColor || "#f3bb27"},${i % 2 === 0 ? "#ea7a12" : "#f3bb27"})`,
                       }}
                     />
                     <motion.div
                       animate={{
-                        color: activeStep === i ? "#0e0c0a" : s.accent,
+                        color: activeStep === i ? "#0e0c0a" : s.accentColor || "#f3bb27",
                         scale: activeStep === i ? 1.1 : 1,
                         rotate: activeStep === i ? 8 : 0,
                       }}
                       transition={{ duration: 0.4 }}
                       className="relative z-10 w-full h-full rounded-2xl flex items-center justify-center"
                     >
-                      {s.icon}
+                      <ServiceIcon name={s.icon} className="size-7" />
                     </motion.div>
                   </div>
                 </div>
 
-                {/* Bottom: accent line, label, tagline, desc */}
                 <div>
-                  {/* Gold accent line — always visible */}
                   <motion.div
                     className="w-8 h-[2px] mb-4"
                     animate={{
                       opacity: activeStep === i ? 1 : 0.5,
-                      backgroundColor: activeStep === i ? s.accent : "#f3bb27",
+                      backgroundColor: activeStep === i ? s.accentColor || "#f3bb27" : "#f3bb27",
                     }}
                     transition={{ duration: 0.4 }}
                   />
@@ -1183,11 +1038,12 @@ function ProcessStrip() {
                     {s.label}
                   </h3>
 
-                  {/* Tagline — always visible */}
                   <motion.p
                     animate={{
                       color:
-                        activeStep === i ? s.accent : "rgba(255,255,255,0.55)",
+                        activeStep === i
+                          ? s.accentColor || "#f3bb27"
+                          : "rgba(255,255,255,0.55)",
                     }}
                     transition={{ duration: 0.3 }}
                     className="text-[11px] uppercase tracking-[0.25em] mb-4"
@@ -1196,14 +1052,13 @@ function ProcessStrip() {
                     {s.tagline}
                   </motion.p>
 
-                  {/* Description — always visible, brightens on hover */}
                   <motion.p
                     animate={{ opacity: activeStep === i ? 1 : 0.55 }}
                     transition={{ duration: 0.35 }}
                     className="text-[#b8b0a8] text-[13px] leading-relaxed"
                     style={{ fontFamily: "'Parkinsans', sans-serif" }}
                   >
-                    {s.desc}
+                    {s.description}
                   </motion.p>
                 </div>
               </div>
@@ -1211,7 +1066,6 @@ function ProcessStrip() {
           ))}
         </div>
 
-        {/* Connecting dotted line below cards */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
@@ -1236,6 +1090,12 @@ function ProcessStrip() {
 
 /* ─── Root ─── */
 export default function Services() {
+  const page = seedServicePage;
+  const offers = seedServiceOffers;
+  const processSteps = seedServiceProcess;
+  const whyStats = seedServiceWhyStats;
+  const whyFeatures = seedServiceWhyFeatures;
+
   return (
     <>
       <Navbar activeNav="services" />
@@ -1244,11 +1104,10 @@ export default function Services() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        <Hero />
-        {/* <Marquee /> */}
-        <ServicesGrid />
-        <ProcessStrip />
-        <WhyUs />
+        <Hero data={page} />
+        <ServicesGrid page={page} services={offers} />
+        <ProcessStrip page={page} steps={processSteps} />
+        <WhyUs page={page} stats={whyStats} features={whyFeatures} />
         <Footer />
       </div>
     </>

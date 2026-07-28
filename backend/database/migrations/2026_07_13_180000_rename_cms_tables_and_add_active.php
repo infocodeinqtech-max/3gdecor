@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Renames legacy CMS table names, adds `active` flags, and
- * stores related content table names on section_headers.
+ * stores related content table names on home_section_headers.
  *
  * Safe for DBs that already ran the old create migration.
  * No-ops cleanly when tables already use the new names.
@@ -15,34 +15,44 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     private array $renames = [
-        'navigation_items' => 'navigation_menus',
-        'expertise_items' => 'expertise_contents',
-        'projects' => 'projects_contents',
-        'services' => 'services_contents',
-        'process_steps' => 'process_contents',
-        'testimonials' => 'testimonials_contents',
+        'navigation_items' => 'home_navigation_menus',
+        'expertise_items' => 'home_expertise_contents',
+        'projects' => 'home_projects_contents',
+        'services' => 'home_services_contents',
+        'process_steps' => 'home_process_contents',
+        'testimonials' => 'home_testimonials_contents',
+        // Intermediate names (pre-home_ prefix)
+        'navigation_menus' => 'home_navigation_menus',
+        'hero_contents' => 'home_hero_contents',
+        'about_contents' => 'home_about_contents',
+        'section_headers' => 'home_section_headers',
+        'expertise_contents' => 'home_expertise_contents',
+        'projects_contents' => 'home_projects_contents',
+        'services_contents' => 'home_services_contents',
+        'process_contents' => 'home_process_contents',
+        'testimonials_contents' => 'home_testimonials_contents',
     ];
 
     private array $cmsTables = [
-        'navigation_menus',
-        'hero_contents',
-        'about_contents',
-        'section_headers',
-        'expertise_contents',
-        'projects_contents',
-        'services_contents',
-        'process_contents',
-        'testimonials_contents',
+        'home_navigation_menus',
+        'home_hero_contents',
+        'home_about_contents',
+        'home_section_headers',
+        'home_expertise_contents',
+        'home_projects_contents',
+        'home_services_contents',
+        'home_process_contents',
+        'home_testimonials_contents',
         'footer_contents',
         'enquiries',
     ];
 
     private array $sectionContentTables = [
-        'expertise' => 'expertise_contents',
-        'projects' => 'projects_contents',
-        'services' => 'services_contents',
-        'process' => 'process_contents',
-        'testimonials' => 'testimonials_contents',
+        'expertise' => 'home_expertise_contents',
+        'projects' => 'home_projects_contents',
+        'services' => 'home_services_contents',
+        'process' => 'home_process_contents',
+        'testimonials' => 'home_testimonials_contents',
     ];
 
     public function up(): void
@@ -64,15 +74,15 @@ return new class extends Migration
             });
         }
 
-        if (Schema::hasTable('section_headers') && ! Schema::hasColumn('section_headers', 'content_table')) {
-            Schema::table('section_headers', function (Blueprint $table) {
+        if (Schema::hasTable('home_section_headers') && ! Schema::hasColumn('home_section_headers', 'content_table')) {
+            Schema::table('home_section_headers', function (Blueprint $table) {
                 $table->string('content_table')->nullable()->after('key');
             });
         }
 
-        if (Schema::hasTable('section_headers') && Schema::hasColumn('section_headers', 'content_table')) {
+        if (Schema::hasTable('home_section_headers') && Schema::hasColumn('home_section_headers', 'content_table')) {
             foreach ($this->sectionContentTables as $key => $contentTable) {
-                DB::table('section_headers')
+                DB::table('home_section_headers')
                     ->where('key', $key)
                     ->update(['content_table' => $contentTable]);
             }
@@ -81,8 +91,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (Schema::hasTable('section_headers') && Schema::hasColumn('section_headers', 'content_table')) {
-            Schema::table('section_headers', function (Blueprint $table) {
+        if (Schema::hasTable('home_section_headers') && Schema::hasColumn('home_section_headers', 'content_table')) {
+            Schema::table('home_section_headers', function (Blueprint $table) {
                 $table->dropColumn('content_table');
             });
         }

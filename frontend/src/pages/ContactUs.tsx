@@ -6,11 +6,13 @@ import Navbar from "../app/components/Navbar";
 import contactBanner from "../assets/images/contact_4.png";
 import { apiRequest } from "../api/client";
 import { notifyCmsUpdated, subscribeCmsUpdated } from "../content/cmsSync";
-import { WHATSAPP_NUMBER } from "../config/whatsapp";
 import {
+  seedContactPage,
   seedContactOffices,
+  type ContactPageContent,
   type ContactOfficeItem,
 } from "../admin/data/seedContent";
+import { getContent } from "../admin/utils/contentStorage";
 import { getListContent } from "../admin/utils/contentStorage";
 import {
   MapPin,
@@ -33,6 +35,7 @@ import {
   phoneKeyupHint,
   sanitizeMobileInput,
 } from "../utils/validation";
+import { mediaUrl } from "../utils/mediaUrl";
 
 const fieldVariants = {
   hidden: { opacity: 0, y: 20, filter: "blur(6px)" },
@@ -48,7 +51,6 @@ type ContactOffice = ContactOfficeItem;
 
 const company = {
   name: "3G Decorative Group",
-  whatsapp: WHATSAPP_NUMBER,
 };
 
 const inquiryOptions = [
@@ -79,6 +81,21 @@ const inquiryOptions = [
 ] as const;
 
 type InquiryValue = (typeof inquiryOptions)[number]["value"];
+type EnquiryPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  service: string;
+  message: string;
+};
+
+type OtpSendResponse = {
+  success: boolean;
+  message: string;
+  verification_token: string;
+  expires_in: number;
+  test_mode?: boolean;
+};
 
 const inputClass = `
 w-full
@@ -128,13 +145,17 @@ function FormField({
   );
 }
 
-function ContactHero() {
+function ContactHero({ content }: { content: ContactPageContent }) {
+  const bannerImage = content.bannerImage?.trim()
+    ? mediaUrl(content.bannerImage) || contactBanner
+    : contactBanner;
+
   return (
     <section className="bg-[#F5F1EA] px-4 lg:px-5 overflow-x-hidden">
       <div className="relative overflow-hidden rounded-[20px] md:rounded-[32px] w-full max-w-full min-h-[480px] h-[min(760px,78svh)] md:h-[640px] lg:h-[760px]">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
-            src={contactBanner}
+            src={bannerImage}
             alt="Contact 3G Decorative Group — premium reception desk"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
@@ -226,12 +247,12 @@ function ContactHero() {
               className="text-[#f3bb27] text-[11px] uppercase tracking-[0.32em]"
               style={{ fontFamily: "'Parkinsans', sans-serif" }}
             >
-              Get In Touch
+              {content.heroEyebrow}
             </span>
           </motion.div>
 
           <div className="max-w-2xl mb-7">
-            {["Let's Build", "Something"].map((text, i) => (
+            {[content.heroTitleLine1, content.heroTitleLine2].map((text, i) => (
               <div
                 key={text}
                 style={{ overflow: "hidden", paddingBottom: "10px" }}
@@ -265,7 +286,7 @@ function ContactHero() {
                       }}
                     >
                       {" "}
-                      Remarkable.
+                      {content.heroTitleHighlight}
                     </span>
                   )}
                 </motion.span>
@@ -284,8 +305,7 @@ function ContactHero() {
               lineHeight: 1.82,
             }}
           >
-            Share your vision for corporate interiors, civil structures, or
-            turnkey projects — our team responds within 24 hours.
+            {content.heroDescription}
           </motion.p>
         </div>
       </div>
@@ -310,6 +330,22 @@ export default function Contact() {
   );
   const [phoneHint, setPhoneHint] = useState<string | null>(null);
   const [emailHint, setEmailHint] = useState<string | null>(null);
+  const [contactPageContent, setContactPageContent] =
+    useState<ContactPageContent>(seedContactPage);
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpExpiresIn, setOtpExpiresIn] = useState(0);
+  const [verificationToken, setVerificationToken] = useState<string | null>(null);
+  const [pendingPayload, setPendingPayload] = useState<EnquiryPayload | null>(null);
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    getContent<ContactPageContent>("contact-page", seedContactPage).then(
+      setContactPageContent,
+    );
+  }, []);
 
   useEffect(() => {
     const load = () => {
@@ -327,12 +363,70 @@ export default function Contact() {
     return subscribeCmsUpdated(load);
   }, []);
 
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = window.setTimeout(() => {
+      setResendCooldown((current) => Math.max(0, current - 1));
+    }, 1000);
+    return () => window.clearTimeout(timer);
+  }, [resendCooldown]);
+
   const selectedInquiry = inquiryOptions.find((o) => o.value === form.inquiry);
+
+  const handleEnquirySubmitted = () => {
+    notifyCmsUpdated("enquiry:create");
+    setSubmitted(true);
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      inquiry: "corporate-interior",
+      message: "",
+    });
+    setPhoneHint(null);
+    setEmailHint(null);
+    toast.success("Inquiry submitted — our team will contact you soon.");
+    setTimeout(() => setSubmitted(false), 4000);
+  };
+
+  const requestOtp = async (payload: EnquiryPayload) => {
+    setOtpSending(true);
+    try {
+      const res = await apiRequest<OtpSendResponse>("/enquiries/otp/send", {
+        method: "POST",
+        auth: false,
+        body: {
+          name: payload.name,
+          email: payload.email,
+          phone: payload.phone || null,
+          service: payload.service,
+          message: payload.message,
+        },
+      });
+      setVerificationToken(res.verification_token);
+      setOtpExpiresIn(res.expires_in);
+      setPendingPayload(payload);
+      setOtpCode("");
+      setOtpModalOpen(true);
+      setResendCooldown(30);
+      toast.success(
+        res.test_mode
+          ? "Test OTP ready. Use 999999 to verify your inquiry."
+          : "OTP sent to your email. Please verify to submit inquiry.",
+      );
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to send OTP. Please retry.",
+      );
+    } finally {
+      setOtpSending(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const inquiryLabel = selectedInquiry?.label ?? form.inquiry;
-    const payload = {
+    const payload: EnquiryPayload = {
       name: form.name.trim(),
       email: form.email.trim(),
       phone: form.phone.trim(),
@@ -356,44 +450,46 @@ export default function Contact() {
     }
 
     setSubmitting(true);
+    await requestOtp(payload);
+    setSubmitting(false);
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!verificationToken || otpCode.trim().length !== 6) {
+      toast.error("Enter the 6-digit OTP");
+      return;
+    }
+
+    setOtpVerifying(true);
     try {
-      await apiRequest("/enquiries", {
+      await apiRequest("/enquiries/otp/verify", {
         method: "POST",
         auth: false,
         body: {
-          name: payload.name,
-          email: payload.email,
-          phone: payload.phone || null,
-          service: payload.service,
-          message: payload.message,
+          verification_token: verificationToken,
+          otp: otpCode.trim(),
         },
       });
 
-      notifyCmsUpdated("enquiry:create");
-      setSubmitted(true);
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        inquiry: "corporate-interior",
-        message: "",
-      });
-      setPhoneHint(null);
-      setEmailHint(null);
-      toast.success("Inquiry submitted — our team will contact you soon.");
-
-      const waBody = encodeURIComponent(
-        `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nRegarding: ${payload.service}\n\n${payload.message}`,
-      );
-      window.open(`https://wa.me/${company.whatsapp}?text=${waBody}`, "_blank");
-      setTimeout(() => setSubmitted(false), 4000);
+      setOtpModalOpen(false);
+      setOtpCode("");
+      setVerificationToken(null);
+      if (pendingPayload) handleEnquirySubmitted();
+      setPendingPayload(null);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to send enquiry",
-      );
+      toast.error(err instanceof Error ? err.message : "OTP verification failed");
     } finally {
-      setSubmitting(false);
+      setOtpVerifying(false);
     }
+  };
+
+  const handleResendOtp = async () => {
+    if (!pendingPayload) {
+      toast.error("Please submit the inquiry form again.");
+      return;
+    }
+    if (resendCooldown > 0 || otpSending) return;
+    await requestOtp(pendingPayload);
   };
 
   return (
@@ -404,7 +500,7 @@ export default function Contact() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        <ContactHero />
+        <ContactHero content={contactPageContent} />
 
         <section
           id="contact"
@@ -424,7 +520,7 @@ export default function Contact() {
               <div className="flex items-center justify-center gap-4 mb-5">
                 <div className="w-10 h-px bg-gradient-to-r from-transparent to-[#f3bb27]" />
                 <span className="text-[#ea7a12] text-[11px] uppercase tracking-[0.32em]">
-                  Reach Us
+                  {contactPageContent.detailsEyebrow}
                 </span>
                 <div className="w-10 h-px bg-gradient-to-l from-transparent to-[#f3bb27]" />
               </div>
@@ -436,14 +532,13 @@ export default function Contact() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                Company Details &{" "}
+                {contactPageContent.detailsTitle}{" "}
                 <span className="bg-gradient-to-r from-[#f3bb27] to-[#ea7a12] bg-clip-text text-transparent">
-                  Inquiry Form
+                  {contactPageContent.detailsTitleHighlight}
                 </span>
               </h2>
               <p className="text-[#6B625C] max-w-xl mx-auto text-[15px] leading-relaxed">
-                Find our studios on the map or send us a message — tell us what
-                your project is regarding and we&apos;ll guide you from there.
+                {contactPageContent.detailsDescription}
               </p>
             </motion.div>
 
@@ -753,16 +848,16 @@ export default function Contact() {
                   <div className="relative z-[1] space-y-5">
                     <FormField index={0}>
                       <p className="text-[14px] font-semibold uppercase tracking-[0.22em] text-[#ea7a12] mb-4">
-                        Send an Inquiry
+                        {contactPageContent.formEyebrow}
                       </p>
                       <h3
                         className="text-white text-xl mb-1"
                         style={{ fontWeight: 400 }}
                       >
-                        Tell us about your project
+                        {contactPageContent.formTitle}
                       </h3>
                       <p className="text-white/60 mb-5">
-                        Fields marked with your details help us respond faster.
+                        {contactPageContent.formDescription}
                       </p>
                     </FormField>
 
@@ -995,7 +1090,7 @@ export default function Contact() {
                     <FormField index={6}>
                       <motion.button
                         type="submit"
-                        disabled={submitting}
+                        disabled={submitting || otpSending}
                         whileHover={{
                           scale: 1.02,
                           y: -2,
@@ -1020,8 +1115,8 @@ export default function Contact() {
                             : { backgroundPosition: "0% 0" }
                         }
                       >
-                        {submitting
-                          ? "Sending…"
+                        {submitting || otpSending
+                          ? "Sending OTP…"
                           : submitted
                             ? "Inquiry sent!"
                             : "Send Inquiry"}
@@ -1035,6 +1130,123 @@ export default function Contact() {
             </div>
           </div>
         </section>
+
+        <AnimatePresence>
+          {otpModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-[120] flex items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div
+                className="absolute inset-0 bg-[#0E0A08]/70 backdrop-blur-sm"
+                onClick={() => {
+                  if (!otpVerifying) setOtpModalOpen(false);
+                }}
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.96 }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className="relative w-full max-w-md rounded-[30px] border border-[#D7A24B]/25 bg-[#171311] p-6 sm:p-7 shadow-[0_28px_70px_rgba(0,0,0,0.45)]"
+              >
+                <motion.div
+                  className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-[#f3bb27]/20 blur-2xl pointer-events-none"
+                  animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.div
+                  className="absolute -bottom-10 -left-8 h-20 w-20 rounded-full bg-[#ea7a12]/20 blur-2xl pointer-events-none"
+                  animate={{ scale: [1.1, 1, 1.1], opacity: [0.35, 0.55, 0.35] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                />
+
+                <div className="relative z-[1]">
+                  <p className="text-[11px] uppercase tracking-[0.24em] text-[#ea7a12]">
+                    OTP Verification
+                  </p>
+                  <h4 className="mt-2 text-[24px] text-white" style={{ fontWeight: 400 }}>
+                    Verify your email
+                  </h4>
+                  <p className="mt-2 text-sm text-white/65 leading-relaxed">
+                    We sent a 6-digit OTP to your provided email. Enter it below to
+                    submit your inquiry.
+                  </p>
+                  <p className="mt-1 text-[12px] text-[#f3bb27]/90">
+                    OTP expires in {Math.max(1, Math.ceil(otpExpiresIn / 60))} minutes.
+                  </p>
+                  <p className="mt-2 text-[12px] text-white/55">
+                    Temporary OTP for testing: <span className="text-[#f3bb27]">999999</span>
+                  </p>
+
+                  <div className="mt-5">
+                    <label className="mb-2 block text-[10px] uppercase tracking-[0.18em] text-white/70">
+                      Enter OTP
+                    </label>
+                    <input
+                      value={otpCode}
+                      onChange={(e) =>
+                        setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (!otpVerifying) void handleVerifyOtp();
+                        }
+                      }}
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="000000"
+                      className={`${inputClass} text-center text-[20px] tracking-[0.45em]`}
+                    />
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={() => void handleResendOtp()}
+                      disabled={resendCooldown > 0 || otpSending || otpVerifying}
+                      className="text-xs uppercase tracking-[0.18em] text-[#f3bb27] transition disabled:cursor-not-allowed disabled:text-white/30"
+                    >
+                      {otpSending
+                        ? "Resending..."
+                        : resendCooldown > 0
+                          ? `Resend in ${resendCooldown}s`
+                          : "Resend OTP"}
+                    </button>
+                  </div>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!otpVerifying) setOtpModalOpen(false);
+                      }}
+                      className="rounded-full border border-[#D7A24B]/30 px-4 py-3 text-sm text-white/85 transition hover:border-[#D7A24B]/60 hover:bg-white/5"
+                      disabled={otpVerifying}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleVerifyOtp()}
+                      disabled={otpVerifying}
+                      className="rounded-full px-4 py-3 text-sm font-semibold text-[#332C26] transition disabled:opacity-60"
+                      style={{
+                        background: "linear-gradient(135deg,#F3BB27,#EA7A12)",
+                        boxShadow: "0 8px 30px rgba(243,187,39,0.25)",
+                      }}
+                    >
+                      {otpVerifying ? "Verifying…" : "Verify OTP"}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <Footer />
       </div>

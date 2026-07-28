@@ -9,7 +9,7 @@ class AboutContent extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'about_contents';
+    protected $table = 'home_about_contents';
 
     protected $guarded = [];
 

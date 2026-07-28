@@ -14,13 +14,16 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/cms-lists/{resource}', [CmsResourceController::class, 'listIndex']);
 Route::get('/cms-singletons/{resource}', [CmsResourceController::class, 'singletonShow']);
 Route::get('/cms-sections/{storageKey}', [CmsResourceController::class, 'sectionShow']);
+Route::post('/enquiries/otp/send', [EnquiryController::class, 'sendOtp']);
+Route::post('/enquiries/otp/verify', [EnquiryController::class, 'verifyOtp']);
 Route::post('/enquiries', [EnquiryController::class, 'store']);
 
 // Protected admin
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
-    Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/auth/change-password/otp/send', [AuthController::class, 'sendChangePasswordOtp']);
+    Route::post('/auth/change-password/otp/verify', [AuthController::class, 'verifyChangePasswordOtp']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
 

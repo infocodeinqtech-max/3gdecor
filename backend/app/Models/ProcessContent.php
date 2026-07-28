@@ -9,7 +9,7 @@ class ProcessContent extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'process_contents';
+    protected $table = 'home_process_contents';
 
     protected $guarded = [];
 

@@ -9,7 +9,7 @@ class ProjectContent extends Model
 {
     use HasCmsActive;
 
-    protected $table = 'projects_contents';
+    protected $table = 'home_projects_contents';
 
     protected $guarded = [];
 

@@ -44,6 +44,12 @@ export interface AdminMenuItem {
   end?: boolean;
 }
 
+export interface AdminMenuGroup {
+  id: "home-page-section";
+  label: string;
+  items: AdminMenuItem[];
+}
+
 export const ASSIGNABLE_MENUS: AdminMenuItem[] = [
   { id: "dashboard", path: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { id: "navigation", path: "/admin/navigation", label: "Navigation Menu", icon: Menu },
@@ -62,6 +68,29 @@ export const ASSIGNABLE_MENUS: AdminMenuItem[] = [
 export const SUPERADMIN_MENUS: AdminMenuItem[] = [
   { id: "users", path: "/admin/users", label: "Admin Users", icon: Users },
 ];
+
+export const HOME_PAGE_SECTION_MENU_IDS: MenuId[] = [
+  "navigation",
+  "hero",
+  "about",
+  "expertise",
+  "projects",
+  "services",
+  "process",
+  "testimonials",
+];
+
+export const HOME_PAGE_SECTION_GROUP: AdminMenuGroup = {
+  id: "home-page-section",
+  label: "Home Page Section",
+  items: ASSIGNABLE_MENUS.filter((menu) =>
+    HOME_PAGE_SECTION_MENU_IDS.includes(menu.id),
+  ),
+};
+
+export const STANDALONE_ASSIGNABLE_MENUS: AdminMenuItem[] = ASSIGNABLE_MENUS.filter(
+  (menu) => !HOME_PAGE_SECTION_MENU_IDS.includes(menu.id),
+);
 
 export function getMenuIdFromPath(pathname: string): MenuId | null {
   if (!pathname.startsWith("/admin")) return null;
