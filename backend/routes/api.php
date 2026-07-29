@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CmsPublicController;
 use App\Http\Controllers\Api\CmsResourceController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EnquiryController;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 // Public CMS reads
+Route::get('/cms-public/site', [CmsPublicController::class, 'site']);
 Route::get('/cms-lists/{resource}', [CmsResourceController::class, 'listIndex']);
 Route::get('/cms-singletons/{resource}', [CmsResourceController::class, 'singletonShow']);
 Route::get('/cms-sections/{storageKey}', [CmsResourceController::class, 'sectionShow']);

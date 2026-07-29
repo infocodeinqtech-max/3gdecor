@@ -95,7 +95,7 @@ export default function Dashboard() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold admin-page-title">Dashboard</h1>
         <p className="text-sm admin-card-muted mt-1">
-          Live counts from the MySQL database.
+          Welcome to the admin dashboard. Here you can manage your website content, view recent enquiries, and monitor key metrics.
         </p>
       </div>
 

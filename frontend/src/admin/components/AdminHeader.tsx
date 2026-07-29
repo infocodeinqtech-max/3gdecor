@@ -44,7 +44,7 @@ export default function AdminHeader() {
       <header className="sticky top-0 z-30 -mx-6 lg:-mx-10 px-6 lg:px-10 py-4 mb-6 bg-[#F5F1EA]/90 backdrop-blur-md border-b border-[#E8DFD2]/80">
         <div className="flex items-center justify-between">
           <p className="text-sm text-[#8A8177] hidden sm:block">
-            Manage website content — data will sync to database when backend is connected.
+            Logged in as {user.name}
           </p>
           <div className="relative ml-auto" ref={dropdownRef}>
             <button

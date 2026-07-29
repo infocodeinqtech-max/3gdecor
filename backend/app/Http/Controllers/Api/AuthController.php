@@ -113,7 +113,7 @@ class AuthController extends Controller
         }
 
         $ttlMinutes = max(1, (int) env('CHANGE_PASSWORD_OTP_TTL_MINUTES', env('ENQUIRY_OTP_TTL_MINUTES', 10)));
-        $testOtp = trim((string) env('CHANGE_PASSWORD_TEST_OTP', env('ENQUIRY_TEST_OTP', '999999')));
+        $testOtp = trim((string) env('CHANGE_PASSWORD_TEST_OTP', env('ENQUIRY_TEST_OTP', '')));
         $otp = $testOtp !== '' ? $testOtp : (string) random_int(100000, 999999);
         $verificationToken = (string) Str::uuid();
 
@@ -127,18 +127,23 @@ class AuthController extends Controller
         Cache::put($rateKey, $sentCount + 1, now()->addHour());
 
         if ($testOtp === '') {
-            Mail::raw(
-                "Your OTP for changing admin password is: {$otp}\n\nThis OTP is valid for {$ttlMinutes} minutes.\nIf you did not request this, ignore this email.",
-                function ($message) use ($user): void {
-                    $message
-                        ->to($user->email)
-                        ->from(
-                            env('CHANGE_PASSWORD_OTP_FROM_ADDRESS', env('ENQUIRY_OTP_FROM_ADDRESS', env('MAIL_FROM_ADDRESS', 'hello@example.com'))),
-                            env('CHANGE_PASSWORD_OTP_FROM_NAME', env('ENQUIRY_OTP_FROM_NAME', env('APP_NAME', '3G Decorative Group')))
-                        )
-                        ->subject('Change Password OTP Verification');
+            $toEmail = $user->email;
+            $fromAddress = (string) env('CHANGE_PASSWORD_OTP_FROM_ADDRESS', env('ENQUIRY_OTP_FROM_ADDRESS', env('MAIL_FROM_ADDRESS', 'info.codeinqtech@gmail.com')));
+            $fromName = (string) env('CHANGE_PASSWORD_OTP_FROM_NAME', env('ENQUIRY_OTP_FROM_NAME', env('MAIL_FROM_NAME', env('APP_NAME', '3G Decorative Group'))));
+            $body = "Your OTP for changing admin password is: {$otp}\n\nThis OTP is valid for {$ttlMinutes} minutes.\nIf you did not request this, ignore this email.";
+
+            dispatch(function () use ($toEmail, $fromAddress, $fromName, $body): void {
+                try {
+                    Mail::raw($body, function ($message) use ($toEmail, $fromAddress, $fromName): void {
+                        $message
+                            ->to($toEmail)
+                            ->from($fromAddress, $fromName)
+                            ->subject('Change Password OTP Verification');
+                    });
+                } catch (\Throwable $e) {
+                    report($e);
                 }
-            );
+            })->afterResponse();
         }
 
         return response()->json([

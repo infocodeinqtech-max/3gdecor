@@ -13,6 +13,7 @@ import {
   seedTestimonials,
 } from "../admin/data/seedContent";
 import { mediaUrl } from "../utils/mediaUrl";
+import { loadPublicSiteCms } from "./publicCms";
 
 import about1 from "../assets/images/about1.jpg";
 import about2 from "../assets/images/about2.jpg";
@@ -175,45 +176,198 @@ export async function getTestimonialsItems() {
   }));
 }
 
-/** Load all homepage CMS blocks once */
+function mergeAboutFromSite(stored: Record<string, unknown> | null | undefined) {
+  const about = {
+    ...seedAbout,
+    ...(stored ?? {}),
+    images: (stored?.images as string[] | undefined) ?? seedAbout.images,
+  };
+  const defaults = [about1, about2, about3, about4];
+  const images = (about.images?.length ? about.images : defaults).map(
+    (img, i) => resolveImage(img, defaults[i] ?? defaults[0]),
+  );
+
+  return {
+    ...about,
+    images,
+    badgeImage: resolveImage(
+      typeof about.badgeImage === "string" ? about.badgeImage : undefined,
+      badge3G,
+    ),
+  };
+}
+
+function mergeProjectsFromSite(stored: Array<Record<string, unknown>>) {
+  const merged = seedProjects.map((seedItem, index) => {
+    const storedItem =
+      (stored.find((item) => item.id === seedItem.id) as typeof seedItem | undefined) ??
+      (stored[index] as typeof seedItem | undefined);
+    if (!storedItem) return seedItem;
+
+    return {
+      ...seedItem,
+      ...storedItem,
+      image: resolveProjectImage(
+        typeof storedItem.image === "string" ? storedItem.image : undefined,
+        seedItem.image,
+      ),
+    };
+  });
+
+  const extras = stored.filter(
+    (item) => !merged.some((mergedItem) => mergedItem.id === item.id),
+  ) as typeof seedProjects;
+
+  return [...merged, ...extras].sort(
+    (a, b) => Number(!!b.featured) - Number(!!a.featured),
+  );
+}
+
+function mergeServicesFromSite(stored: Array<Record<string, unknown>>) {
+  const merged = seedServices.map((seedItem, index) => {
+    const storedItem =
+      (stored.find((item) => item.id === seedItem.id) as typeof seedItem | undefined) ??
+      (stored[index] as typeof seedItem | undefined);
+    if (!storedItem) return seedItem;
+
+    return {
+      ...seedItem,
+      ...storedItem,
+      backgroundImage: resolveImage(
+        typeof storedItem.backgroundImage === "string"
+          ? storedItem.backgroundImage
+          : undefined,
+        seedItem.backgroundImage,
+      ),
+    };
+  });
+
+  const extras = stored.filter(
+    (item) => !merged.some((mergedItem) => mergedItem.id === item.id),
+  ) as typeof seedServices;
+
+  return [...merged, ...extras].map((item) => ({
+    ...item,
+    backgroundImage: resolveImage(item.backgroundImage, item.backgroundImage),
+  }));
+}
+
+/** Load all homepage CMS blocks once (single /cms-public/site request). */
 export async function loadHomepageCms() {
-  const [
-    about,
-    expertiseSection,
-    expertiseItems,
-    projectsSection,
-    projectsItems,
-    servicesSection,
-    servicesItems,
-    processSection,
-    processItems,
-    testimonialsSection,
-    testimonialsItems,
-  ] = await Promise.all([
-    getAboutData(),
-    getExpertiseSection(),
-    getExpertiseItems(),
-    getProjectsSection(),
-    getProjectsItems(),
-    getServicesSection(),
-    getServicesItems(),
-    getProcessSection(),
-    getProcessItems(),
-    getTestimonialsSection(),
-    getTestimonialsItems(),
-  ]);
+  const site = await loadPublicSiteCms();
+
+  const about = mergeAboutFromSite(site.about ?? undefined);
+  const expertiseSection = {
+    ...seedExpertiseSection,
+    ...(site.expertiseSection ?? {}),
+  };
+  const expertiseItems = (
+    (site.expertise as Array<Record<string, unknown>> | undefined) ?? []
+  ).map((item, index) => ({
+    ...item,
+    image: resolveImage(
+      typeof item.image === "string" ? item.image : undefined,
+      seedExpertise[index]?.image || "",
+    ),
+  }));
+  const projectsSection = {
+    ...seedProjectsSection,
+    ...(site.projectsSection ?? {}),
+  };
+  const projectsItems = mergeProjectsFromSite(
+    (site.projects as Array<Record<string, unknown>> | undefined) ?? [],
+  );
+  const servicesSection = {
+    ...seedServicesSection,
+    ...(site.servicesSection ?? {}),
+  };
+  const servicesItems = mergeServicesFromSite(
+    (site.services as Array<Record<string, unknown>> | undefined) ?? [],
+  );
+  const processSection = {
+    ...seedProcessSection,
+    ...(site.processSection ?? {}),
+  };
+  const processItems =
+    (site.process as typeof seedProcess | undefined)?.length
+      ? (site.process as typeof seedProcess)
+      : seedProcess;
+  const testimonialsSection = {
+    ...seedTestimonialsSection,
+    ...(site.testimonialsSection ?? {}),
+  };
+  const testimonialsItems = (
+    (site.testimonials as Array<Record<string, unknown>> | undefined) ?? []
+  ).map((item, index) => ({
+    ...item,
+    image: resolveImage(
+      typeof item.image === "string" ? item.image : undefined,
+      seedTestimonials[index]?.image || "",
+    ),
+  }));
+
+  // Fallback to legacy multi-request path if the bundled endpoint is empty.
+  if (!site.about && !site.expertise?.length && !site.services?.length) {
+    const [
+      aboutFb,
+      expertiseSectionFb,
+      expertiseItemsFb,
+      projectsSectionFb,
+      projectsItemsFb,
+      servicesSectionFb,
+      servicesItemsFb,
+      processSectionFb,
+      processItemsFb,
+      testimonialsSectionFb,
+      testimonialsItemsFb,
+    ] = await Promise.all([
+      getAboutData(),
+      getExpertiseSection(),
+      getExpertiseItems(),
+      getProjectsSection(),
+      getProjectsItems(),
+      getServicesSection(),
+      getServicesItems(),
+      getProcessSection(),
+      getProcessItems(),
+      getTestimonialsSection(),
+      getTestimonialsItems(),
+    ]);
+
+    return {
+      about: aboutFb,
+      expertiseSection: expertiseSectionFb,
+      expertiseItems: expertiseItemsFb,
+      projectsSection: projectsSectionFb,
+      projectsItems: projectsItemsFb,
+      servicesSection: servicesSectionFb,
+      servicesItems: servicesItemsFb,
+      processSection: processSectionFb,
+      processItems: processItemsFb,
+      testimonialsSection: testimonialsSectionFb,
+      testimonialsItems: testimonialsItemsFb,
+    };
+  }
 
   return {
     about,
     expertiseSection,
-    expertiseItems,
+    expertiseItems:
+      expertiseItems.length > 0
+        ? expertiseItems
+        : await getExpertiseItems(),
     projectsSection,
-    projectsItems,
+    projectsItems:
+      projectsItems.length > 0 ? projectsItems : await getProjectsItems(),
     servicesSection,
-    servicesItems,
+    servicesItems:
+      servicesItems.length > 0 ? servicesItems : await getServicesItems(),
     processSection,
     processItems,
     testimonialsSection,
-    testimonialsItems,
+    testimonialsItems:
+      testimonialsItems.length > 0
+        ? testimonialsItems
+        : await getTestimonialsItems(),
   };
 }

@@ -6,6 +6,7 @@ import logo from "../../assets/images/3GDecoLogo-2.png";
 import { getListContent } from "../../admin/utils/contentStorage";
 import { seedNavigation } from "../../admin/data/seedContent";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
+import { loadPublicSiteCms } from "../../content/publicCms";
 
 interface NavbarProps {
   activeNav?: string;
@@ -39,12 +40,24 @@ export default function Navbar({ activeNav }: NavbarProps) {
 
   useEffect(() => {
     const reload = () => {
-      getListContent("navigation", seedNavigation)
-        .then((rows) => {
-          const visible = rows
-            .filter((r) => r.visible !== false)
-            .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
-          if (visible.length) setNavItems(visible);
+      loadPublicSiteCms()
+        .then((site) => {
+          const rows = (site.navigation as NavItem[] | undefined) ?? [];
+          if (rows.length) {
+            const visible = rows
+              .filter((r) => r.visible !== false)
+              .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+            if (visible.length) {
+              setNavItems(visible);
+              return;
+            }
+          }
+          return getListContent("navigation", seedNavigation).then((fallback) => {
+            const visible = fallback
+              .filter((r) => r.visible !== false)
+              .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+            if (visible.length) setNavItems(visible);
+          });
         })
         .catch(() => undefined);
     };

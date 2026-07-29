@@ -15,6 +15,7 @@ import { getHeroContent } from "../../admin/utils/contentStorage";
 import { seedHero, type HeroContent } from "../../admin/data/seedContent";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
+import { loadPublicSiteCms } from "../../content/publicCms";
 
 const STAT_ICONS = [Briefcase, Award, Users] as const;
 
@@ -30,8 +31,14 @@ export default function HeroSection() {
 
   useEffect(() => {
     const reload = () => {
-      getHeroContent(seedHero)
-        .then((data) => setHero(data))
+      loadPublicSiteCms()
+        .then((site) => {
+          if (site.hero && typeof site.hero === "object") {
+            setHero({ ...seedHero, ...(site.hero as HeroContent) });
+            return;
+          }
+          return getHeroContent(seedHero).then(setHero);
+        })
         .catch(() => undefined);
     };
     reload();

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\CmsPublicController;
 use App\Models\SectionHeader;
 use App\Rules\IndianPhone;
 use App\Support\CmsRegistry;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Unified CMS API for admin dashboard sections.
@@ -63,20 +65,21 @@ class CmsResourceController extends Controller
             abort(404, 'Unknown list resource.');
         }
 
-        $model = $cfg['model'];
-        $query = $model::query()
-            ->active()
-            ->orderBy($cfg['order_by'] ?? 'id');
+        $data = Cache::remember("cms.public.list.{$resource}", 90, function () use ($cfg) {
+            $query = $cfg['model']::query()
+                ->active()
+                ->orderBy($cfg['order_by'] ?? 'id');
 
-        if (! empty($cfg['item_type'])) {
-            $query->where('item_type', $cfg['item_type']);
-        }
+            if (! empty($cfg['item_type'])) {
+                $query->where('item_type', $cfg['item_type']);
+            }
 
-        $rows = $query->get();
+            return $query->get()->map($cfg['map_out'])->values()->all();
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $rows->map($cfg['map_out'])->values(),
+            'data' => $data,
         ]);
     }
 
@@ -95,6 +98,7 @@ class CmsResourceController extends Controller
         }
         $payload['active'] = true;
         $row = $cfg['model']::query()->create($payload);
+        $this->bustPublicCache($resource);
 
         return response()->json([
             'success' => true,
@@ -124,6 +128,7 @@ class CmsResourceController extends Controller
             unset($payload['active']);
         }
         $row->update($payload);
+        $this->bustPublicCache($resource);
 
         return response()->json([
             'success' => true,
@@ -144,6 +149,7 @@ class CmsResourceController extends Controller
             abort(404);
         }
         $row->deactivate();
+        $this->bustPublicCache($resource);
 
         return response()->json([
             'success' => true,
@@ -182,6 +188,8 @@ class CmsResourceController extends Controller
             $out[] = ($cfg['map_out'])($row);
         }
 
+        $this->bustPublicCache($resource);
+
         return response()->json([
             'success' => true,
             'data' => $out,
@@ -197,11 +205,15 @@ class CmsResourceController extends Controller
             abort(404);
         }
 
-        $row = $cfg['model']::query()->active()->first();
+        $data = Cache::remember("cms.public.singleton.{$resource}", 90, function () use ($cfg) {
+            $row = $cfg['model']::query()->active()->first();
+
+            return $row ? ($cfg['map_out'])($row) : null;
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $row ? ($cfg['map_out'])($row) : null,
+            'data' => $data,
         ]);
     }
 
@@ -214,11 +226,14 @@ class CmsResourceController extends Controller
         $this->ensurePermission($request, $cfg['permission']);
 
         $input = $request->input('data', $request->all());
-        if ($resource === 'footer') {
+        if ($resource === 'site-contact') {
             $request->merge(is_array($input) ? $input : []);
             $request->validate([
                 'email' => ['required', 'email:filter', 'max:190'],
                 'phone' => ['required', 'string', 'max:40', new IndianPhone(true)],
+                'whatsappNumber' => ['required', 'string', 'size:10', new IndianPhone(false)],
+                'address' => ['required', 'string', 'max:500'],
+                'country' => ['required', 'string', 'max:120'],
             ]);
         }
 
@@ -231,6 +246,8 @@ class CmsResourceController extends Controller
         } else {
             $row = $cfg['model']::query()->create($payload);
         }
+
+        $this->bustPublicCache($resource);
 
         return response()->json([
             'success' => true,
@@ -247,14 +264,18 @@ class CmsResourceController extends Controller
             abort(404);
         }
 
-        $row = SectionHeader::query()
-            ->active()
-            ->where('key', $meta['key'])
-            ->first();
+        $data = Cache::remember("cms.public.section.{$storageKey}", 90, function () use ($meta) {
+            $row = SectionHeader::query()
+                ->active()
+                ->where('key', $meta['key'])
+                ->first();
+
+            return $row ? CmsRegistry::mapSectionOut($row) : null;
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $row ? CmsRegistry::mapSectionOut($row) : null,
+            'data' => $data,
         ]);
     }
 
@@ -277,10 +298,21 @@ class CmsResourceController extends Controller
         );
 
         CmsRegistry::syncSectionContentTables();
+        $this->bustPublicCache($storageKey);
 
         return response()->json([
             'success' => true,
             'data' => CmsRegistry::mapSectionOut($row->fresh()),
         ]);
+    }
+
+    private function bustPublicCache(?string $key = null): void
+    {
+        CmsPublicController::bustCache();
+        if ($key) {
+            Cache::forget("cms.public.list.{$key}");
+            Cache::forget("cms.public.singleton.{$key}");
+            Cache::forget("cms.public.section.{$key}");
+        }
     }
 }
