@@ -14,6 +14,13 @@ function writeRevision(value: string): void {
 
 /** Call after any successful CMS write so public pages can re-fetch. */
 export function notifyCmsUpdated(reason = "save"): void {
+  try {
+    // Soft dependency: avoid circular import issues if publicCms is unused.
+    void import("./publicCms").then((m) => m.clearPublicSiteCmsCache());
+  } catch {
+    /* ignore */
+  }
+
   const next = String(Date.now());
   writeRevision(next);
 
@@ -39,15 +46,9 @@ export function subscribeCmsUpdated(listener: Listener): () => void {
   const onStorage = (e: StorageEvent) => {
     if (e.key === STORAGE_KEY) listener();
   };
-  const onFocus = () => listener();
-  const onVisible = () => {
-    if (document.visibilityState === "visible") listener();
-  };
 
   window.addEventListener(EVENT_NAME, onCustom);
   window.addEventListener("storage", onStorage);
-  window.addEventListener("focus", onFocus);
-  document.addEventListener("visibilitychange", onVisible);
 
   let channel: BroadcastChannel | null = null;
   try {
@@ -62,8 +63,6 @@ export function subscribeCmsUpdated(listener: Listener): () => void {
   return () => {
     window.removeEventListener(EVENT_NAME, onCustom);
     window.removeEventListener("storage", onStorage);
-    window.removeEventListener("focus", onFocus);
-    document.removeEventListener("visibilitychange", onVisible);
     channel?.close();
   };
 }

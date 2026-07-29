@@ -300,6 +300,16 @@ export const seedFooter = {
   copyright: "Â© 2025 3G Decorative Group. All Rights Reserved.",
 };
 
+/** Shared site contact + WhatsApp (footer contact block + homepage WhatsApp button). */
+export const seedSiteContact = {
+  address: "Kolkata, West Bengal",
+  country: "India",
+  phone: "8167028450",
+  email: "info@3gdecorativegroup.com",
+  hours: "Mon - Sat : 10 AM - 7 PM",
+  whatsappNumber: "8167028450",
+};
+
 export interface ContactPageContent {
   bannerImage: string;
   heroEyebrow: string;

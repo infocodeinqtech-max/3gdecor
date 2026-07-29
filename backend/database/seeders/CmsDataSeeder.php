@@ -14,6 +14,7 @@ use App\Models\ProcessContent;
 use App\Models\ProjectContent;
 use App\Models\SectionHeader;
 use App\Models\ServiceContent;
+use App\Models\SiteContactContent;
 use App\Models\TestimonialContent;
 use App\Support\CmsRegistry;
 use App\Support\MediaPath;
@@ -269,7 +270,7 @@ class CmsDataSeeder extends Seeder
             'active' => true,
         ]);
 
-        // Footer
+        // Footer (branding / newsletter only — contact is in site_contact_contents)
         FooterContent::query()->delete();
         FooterContent::query()->create([
             'tagline' => 'Crafting luxurious interiors that blend elegance, innovation and timeless sophistication.',
@@ -281,6 +282,17 @@ class CmsDataSeeder extends Seeder
             'newsletter_title' => 'STAY INSPIRED',
             'newsletter_text' => 'Subscribe to our newsletter and be the first to know about our latest projects and ideas.',
             'copyright' => '© 2025 3G Decorative Group. All Rights Reserved.',
+            'active' => true,
+        ]);
+
+        SiteContactContent::query()->delete();
+        SiteContactContent::query()->create([
+            'address' => 'Kolkata, West Bengal',
+            'country' => 'India',
+            'phone' => '8167028450',
+            'email' => 'info@3gdecorativegroup.com',
+            'hours' => 'Mon - Sat : 10 AM - 7 PM',
+            'whatsapp_number' => '8167028450',
             'active' => true,
         ]);
 

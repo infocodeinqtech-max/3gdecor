@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import Footer from "../app/components/Footer";
@@ -14,6 +14,7 @@ import {
 } from "../admin/data/seedContent";
 import { getContent } from "../admin/utils/contentStorage";
 import { getListContent } from "../admin/utils/contentStorage";
+import { loadPublicSiteCms } from "../content/publicCms";
 import {
   MapPin,
   Phone,
@@ -152,14 +153,13 @@ function ContactHero({ content }: { content: ContactPageContent }) {
 
   return (
     <section className="bg-[#F5F1EA] px-4 lg:px-5 overflow-x-hidden">
-      <div className="relative overflow-hidden rounded-[20px] md:rounded-[32px] w-full max-w-full min-h-[480px] h-[min(760px,78svh)] md:h-[640px] lg:h-[760px]">
+      <div className="relative overflow-hidden rounded-[20px] md:rounded-[32px] w-full max-w-full min-h-[480px] h-[min(760px,78svh)] md:h-[640px] lg:h-[760px] bg-[#0a0806]">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src={bannerImage}
             alt="Contact 3G Decorative Group — premium reception desk"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
-              /* Crop a bit more from top; show more of the desk/table below */
               objectPosition: "55% 34%",
               filter: "brightness(1.42) contrast(1.07) saturate(1.09)",
             }}
@@ -167,17 +167,7 @@ function ContactHero({ content }: { content: ContactPageContent }) {
           <div
             className="absolute inset-0"
             style={{
-              background: `
-                linear-gradient(
-                  100deg,
-                  rgba(10,8,6,0.95) 0%,
-                  rgba(10,8,6,0.82) 26%,
-                  rgba(10,8,6,0.38) 42%,
-                  rgba(10,8,6,0.12) 56%,
-                  rgba(255,255,255,0.06) 78%,
-                  rgba(255,255,255,0.14) 100%
-                )
-              `,
+              background: `linear-gradient(100deg, rgba(10,8,6,0.95) 0%, rgba(10,8,6,0.82) 26%, rgba(10,8,6,0.38) 42%, rgba(10,8,6,0.12) 56%, rgba(255,255,255,0.06) 78%, rgba(255,255,255,0.14) 100%)`,
             }}
           />
         </div>
@@ -332,6 +322,11 @@ export default function Contact() {
   const [emailHint, setEmailHint] = useState<string | null>(null);
   const [contactPageContent, setContactPageContent] =
     useState<ContactPageContent>(seedContactPage);
+  // Separate state for the hero — set only once on first CMS load so subsequent
+  // office/form state changes don't replay banner blur/fade animations.
+  const [heroContent, setHeroContent] =
+    useState<ContactPageContent>(seedContactPage);
+  const heroSet = useRef(false);
   const [otpModalOpen, setOtpModalOpen] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [otpExpiresIn, setOtpExpiresIn] = useState(0);
@@ -342,25 +337,57 @@ export default function Contact() {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
-    getContent<ContactPageContent>("contact-page", seedContactPage).then(
-      setContactPageContent,
-    );
-  }, []);
+    const reload = () => {
+      loadPublicSiteCms()
+        .then((site) => {
+          if (site.contactPage && typeof site.contactPage === "object") {
+            const merged = {
+              ...seedContactPage,
+              ...(site.contactPage as ContactPageContent),
+            };
+            setContactPageContent(merged);
+            if (!heroSet.current) {
+              setHeroContent(merged);
+              heroSet.current = true;
+            }
+          } else {
+            getContent<ContactPageContent>("contact-page", seedContactPage).then(
+              (data) => {
+                setContactPageContent(data);
+                if (!heroSet.current) {
+                  setHeroContent(data);
+                  heroSet.current = true;
+                }
+              },
+            );
+          }
 
-  useEffect(() => {
-    const load = () => {
-      getListContent<ContactOffice>("contact-offices", seedContactOffices).then(
-        (rows) => {
-          const next = rows.length ? rows : seedContactOffices;
-          setOffices(next);
-          setActiveOfficeId((current) =>
-            next.some((o) => o.id === current) ? current : next[0].id,
-          );
-        },
-      );
+          const rows =
+            (site.contactOffices as ContactOffice[] | undefined)?.length
+              ? (site.contactOffices as ContactOffice[])
+              : null;
+          if (rows) {
+            setOffices(rows);
+            setActiveOfficeId((current) =>
+              rows.some((o) => o.id === current) ? current : rows[0].id,
+            );
+            return;
+          }
+          return getListContent<ContactOffice>(
+            "contact-offices",
+            seedContactOffices,
+          ).then((fallback) => {
+            const next = fallback.length ? fallback : seedContactOffices;
+            setOffices(next);
+            setActiveOfficeId((current) =>
+              next.some((o) => o.id === current) ? current : next[0].id,
+            );
+          });
+        })
+        .catch(() => undefined);
     };
-    load();
-    return subscribeCmsUpdated(load);
+    reload();
+    return subscribeCmsUpdated(reload);
   }, []);
 
   useEffect(() => {
@@ -500,7 +527,7 @@ export default function Contact() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        <ContactHero content={contactPageContent} />
+        <ContactHero content={heroContent} />
 
         <section
           id="contact"
@@ -1178,7 +1205,7 @@ export default function Contact() {
                     OTP expires in {Math.max(1, Math.ceil(otpExpiresIn / 60))} minutes.
                   </p>
                   <p className="mt-2 text-[12px] text-white/55">
-                    Temporary OTP for testing: <span className="text-[#f3bb27]">999999</span>
+                    {/* Temporary OTP for testing: <span className="text-[#f3bb27]">999999</span> */}
                   </p>
 
                   <div className="mt-5">

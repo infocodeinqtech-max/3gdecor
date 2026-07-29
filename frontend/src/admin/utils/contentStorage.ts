@@ -17,6 +17,7 @@ const SINGLETON_KEYS = new Set([
   "hero",
   "about",
   "footer",
+  "site-contact",
   "contact-page",
 ]);
 

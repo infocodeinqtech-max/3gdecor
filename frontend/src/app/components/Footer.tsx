@@ -13,16 +13,54 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/3GDecoLogo-2.png";
 import { getContent } from "../../admin/utils/contentStorage";
-import { seedFooter } from "../../admin/data/seedContent";
+import { seedFooter, seedSiteContact } from "../../admin/data/seedContent";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
+import { loadPublicSiteCms } from "../../content/publicCms";
 
 export default function Footer() {
   const [footer, setFooter] = useState(seedFooter);
 
   useEffect(() => {
     const reload = () => {
-      getContent("footer", seedFooter).then(setFooter).catch(() => undefined);
+      loadPublicSiteCms()
+        .then((site) => {
+          const branding =
+            site.footer && typeof site.footer === "object"
+              ? (site.footer as Partial<typeof seedFooter>)
+              : {};
+          const contact =
+            site.siteContact && typeof site.siteContact === "object"
+              ? (site.siteContact as Partial<typeof seedSiteContact>)
+              : {};
+          if (site.footer || site.siteContact) {
+            setFooter({
+              ...seedFooter,
+              ...branding,
+              address: contact.address ?? seedFooter.address,
+              country: contact.country ?? seedFooter.country,
+              phone: contact.phone ?? seedFooter.phone,
+              email: contact.email ?? seedFooter.email,
+              hours: contact.hours ?? seedFooter.hours,
+            });
+            return;
+          }
+          return Promise.all([
+            getContent("footer", seedFooter),
+            getContent("site-contact", seedSiteContact),
+          ]).then(([brand, contactData]) => {
+            setFooter({
+              ...seedFooter,
+              ...brand,
+              address: contactData.address,
+              country: contactData.country,
+              phone: contactData.phone,
+              email: contactData.email,
+              hours: contactData.hours,
+            });
+          });
+        })
+        .catch(() => undefined);
     };
     reload();
     return subscribeCmsUpdated(reload);

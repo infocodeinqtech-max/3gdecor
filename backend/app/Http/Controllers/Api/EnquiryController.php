@@ -78,7 +78,8 @@ class EnquiryController extends Controller
         }
 
         $ttlMinutes = max(1, (int) env('ENQUIRY_OTP_TTL_MINUTES', 10));
-        $testOtp = trim((string) env('ENQUIRY_TEST_OTP', '999999'));
+        // Empty ENQUIRY_TEST_OTP = send real mail; non-empty = fixed OTP, skip SMTP
+        $testOtp = trim((string) env('ENQUIRY_TEST_OTP', ''));
         $otp = $testOtp !== '' ? $testOtp : (string) random_int(100000, 999999);
         $verificationToken = (string) Str::uuid();
 
@@ -90,19 +91,25 @@ class EnquiryController extends Controller
 
         Cache::put($rateKey, $sentCount + 1, now()->addHour());
 
+        // Send mail AFTER the HTTP response so the UI is not blocked by Gmail SMTP.
         if ($testOtp === '') {
-            Mail::raw(
-                "Your OTP for enquiry submission is: {$otp}\n\nThis OTP is valid for {$ttlMinutes} minutes.",
-                function ($message) use ($data): void {
-                    $message
-                        ->to($data['email'])
-                        ->from(
-                            env('ENQUIRY_OTP_FROM_ADDRESS', 'info.codeinqtech@gmail.com'),
-                            env('ENQUIRY_OTP_FROM_NAME', env('APP_NAME', '3G Decorative Group'))
-                        )
-                        ->subject('Enquiry OTP Verification');
+            $toEmail = $data['email'];
+            $fromAddress = (string) env('ENQUIRY_OTP_FROM_ADDRESS', env('MAIL_FROM_ADDRESS', 'info.codeinqtech@gmail.com'));
+            $fromName = (string) env('ENQUIRY_OTP_FROM_NAME', env('MAIL_FROM_NAME', env('APP_NAME', '3G Decorative Group')));
+            $body = "Your OTP for enquiry submission is: {$otp}\n\nThis OTP is valid for {$ttlMinutes} minutes.";
+
+            dispatch(function () use ($toEmail, $fromAddress, $fromName, $body): void {
+                try {
+                    Mail::raw($body, function ($message) use ($toEmail, $fromAddress, $fromName): void {
+                        $message
+                            ->to($toEmail)
+                            ->from($fromAddress, $fromName)
+                            ->subject('Enquiry OTP Verification');
+                    });
+                } catch (\Throwable $e) {
+                    report($e);
                 }
-            );
+            })->afterResponse();
         }
 
         return response()->json([

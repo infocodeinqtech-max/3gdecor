@@ -13,6 +13,7 @@ use App\Models\ProcessContent;
 use App\Models\ProjectContent;
 use App\Models\SectionHeader;
 use App\Models\ServiceContent;
+use App\Models\SiteContactContent;
 use App\Models\TestimonialContent;
 
 /**
@@ -249,11 +250,6 @@ class CmsRegistry
                 'permission' => 'footer',
                 'map_in' => fn (array $d) => [
                     'tagline' => $d['tagline'] ?? '',
-                    'address' => $d['address'] ?? '',
-                    'country' => $d['country'] ?? '',
-                    'phone' => $d['phone'] ?? '',
-                    'email' => $d['email'] ?? '',
-                    'hours' => $d['hours'] ?? '',
                     'newsletter_title' => $d['newsletterTitle'] ?? '',
                     'newsletter_text' => $d['newsletterText'] ?? '',
                     'copyright' => $d['copyright'] ?? '',
@@ -261,14 +257,31 @@ class CmsRegistry
                 ],
                 'map_out' => fn ($row) => [
                     'tagline' => $row->tagline,
+                    'newsletterTitle' => $row->newsletter_title,
+                    'newsletterText' => $row->newsletter_text,
+                    'copyright' => $row->copyright,
+                    'active' => (bool) $row->active,
+                ],
+            ],
+            'site-contact' => [
+                'model' => SiteContactContent::class,
+                'permission' => 'contact-offices',
+                'map_in' => fn (array $d) => [
+                    'address' => $d['address'] ?? '',
+                    'country' => $d['country'] ?? '',
+                    'phone' => preg_replace('/\D+/', '', (string) ($d['phone'] ?? '')) ?: '',
+                    'email' => $d['email'] ?? '',
+                    'hours' => $d['hours'] ?? '',
+                    'whatsapp_number' => preg_replace('/\D+/', '', (string) ($d['whatsappNumber'] ?? '')) ?: '',
+                    'active' => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+                'map_out' => fn ($row) => [
                     'address' => $row->address,
                     'country' => $row->country,
                     'phone' => $row->phone,
                     'email' => $row->email,
                     'hours' => $row->hours,
-                    'newsletterTitle' => $row->newsletter_title,
-                    'newsletterText' => $row->newsletter_text,
-                    'copyright' => $row->copyright,
+                    'whatsappNumber' => $row->whatsapp_number,
                     'active' => (bool) $row->active,
                 ],
             ],
@@ -387,8 +400,8 @@ class CmsRegistry
         }
 
         if ($liveTable && $row->content_table !== $liveTable) {
-            $row->content_table = $liveTable;
-            $row->saveQuietly();
+            // Do not write on public reads — that slows every page load.
+            // content_table is corrected on admin section upsert / seeder sync.
         }
 
         return [

@@ -1,5 +1,9 @@
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { whatsappChatUrl } from "../../config/whatsapp";
+import { whatsappChatUrl, WHATSAPP_NUMBER } from "../../config/whatsapp";
+import { loadPublicSiteCms } from "../../content/publicCms";
+import { subscribeCmsUpdated } from "../../content/cmsSync";
+import { seedSiteContact } from "../../admin/data/seedContent";
 
 function WhatsAppGlyph({ className = "w-7 h-7" }: { className?: string }) {
   return (
@@ -15,8 +19,27 @@ function WhatsAppGlyph({ className = "w-7 h-7" }: { className?: string }) {
 }
 
 export default function FloatingWhatsApp() {
+  const [number, setNumber] = useState(
+    seedSiteContact.whatsappNumber || WHATSAPP_NUMBER,
+  );
+
+  useEffect(() => {
+    const reload = () => {
+      loadPublicSiteCms()
+        .then((site) => {
+          const contact = site.siteContact as { whatsappNumber?: string } | null;
+          const fromCms = contact?.whatsappNumber?.trim();
+          if (fromCms) setNumber(fromCms);
+        })
+        .catch(() => undefined);
+    };
+    reload();
+    return subscribeCmsUpdated(reload);
+  }, []);
+
   const href = whatsappChatUrl(
     "Hi 3G Decorative Group — I’d like to discuss a project.",
+    number,
   );
 
   return (
