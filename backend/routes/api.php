@@ -56,3 +56,4 @@ Route::middleware('auth:sanctum')->group(function () {
 // About page hero
     Route::get('/about-page/hero', [AboutPageController::class, 'hero']);
     Route::put('/about-page/hero', [AboutPageController::class, 'updateHero']);
+    Route::get('/about-page/hero/features', [AboutPageController::class, 'heroFeatures']);

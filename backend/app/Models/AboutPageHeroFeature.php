@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasCmsActive;
+use App\Models\Concerns\HasCmsActive;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

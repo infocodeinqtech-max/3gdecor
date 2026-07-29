@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AboutPageHero;
+use App\Models\AboutPageHeroFeature;
 use Illuminate\Http\Request;
 
 class AboutPageController extends Controller
@@ -43,6 +44,22 @@ class AboutPageController extends Controller
             'success' => true,
             'message' => 'About Hero saved successfully.',
             'data' => $hero,
+        ]);
+    }
+
+    /**
+     * GET /api/about-page/heroFeatures
+     */
+
+    public function heroFeatures()
+    {
+        $features = AboutPageHeroFeature::where('about_page_hero_id',1)
+        ->orderBy('sort_order')
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $features,
         ]);
     }
 }

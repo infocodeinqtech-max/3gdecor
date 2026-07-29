@@ -14,6 +14,7 @@ use App\Models\ProjectContent;
 use App\Models\SectionHeader;
 use App\Models\ServiceContent;
 use App\Models\TestimonialContent;
+use App\Models\AboutPageHero;
 
 /**
  * Maps frontend storage keys → backend resources.
@@ -306,6 +307,26 @@ class CmsRegistry
                     'formTitle' => $row->form_title,
                     'formDescription' => $row->form_description,
                     'active' => (bool) $row->active,
+                ],
+            ],
+            'about-page-hero' => [
+                'model' => AboutPageHero::class,
+                'permission' => 'about-page-hero',
+
+                'map_in' => fn (array $d) => [
+                    'small_title'      => $d['smallTitle'] ?? '',
+                    'title'            => $d['title'] ?? '',
+                    'description'      => $d['description'] ?? '',
+                    'background_image' => $d['backgroundImage'] ?? '',
+                    'active'           => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+
+                'map_out' => fn ($row) => [
+                    'smallTitle'      => $row->small_title,
+                    'title'           => $row->title,
+                    'description'     => $row->description,
+                    'backgroundImage' => $row->background_image,
+                    'active'          => (bool) $row->active,
                 ],
             ],
         ];
