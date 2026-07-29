@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CmsResourceController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EnquiryController;
+use App\Http\Controllers\Api\AboutPageController;
 use Illuminate\Support\Facades\Route;
 
 // Auth (public)
@@ -50,3 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/users/{id}', [AdminUserController::class, 'update']);
     Route::delete('/admin/users/{id}', [AdminUserController::class, 'destroy']);
 });
+
+// Code By Moumita on 29-07-2026
+// About page hero
+    Route::get('/about-page/hero', [AboutPageController::class, 'hero']);
+    Route::put('/about-page/hero', [AboutPageController::class, 'updateHero']);

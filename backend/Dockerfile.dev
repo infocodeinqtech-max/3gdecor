@@ -1,0 +1,45 @@
+FROM php:8.3-fpm
+
+# System Dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    curl \
+    zip \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    default-mysql-client \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        zip
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set Working Directory
+WORKDIR /var/www/html
+
+# Copy Project
+COPY . .
+
+# Install Laravel Dependencies
+RUN composer install
+
+# Set Permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+# Expose Port
+EXPOSE 8000
+
+# Start Laravel Development Server
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
