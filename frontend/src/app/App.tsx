@@ -6,7 +6,8 @@ import Services from "../pages/Services";
 import ContactUs from "../pages/ContactUs";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Projects from "../pages/Projects";
-import ViewProject from "../pages/ViewProject";
+import ProjectList from "../pages/ProjectList";
+// import ViewProject from "../pages/ViewProject";
 import AdminLayout from "../admin/layouts/AdminLayout";
 import AdminLogin from "../admin/pages/AdminLogin";
 import Dashboard from "../admin/pages/Dashboard";
@@ -35,10 +36,11 @@ export default function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/services" element={<Services />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:category" element={<ProjectList />} />
         {/* <Route
-          path="/projects/:category/:projectSlug"
-          element={<ViewProject />}
-        /> */}
+  path="/projects/:category/:slug"
+  element={<ViewProject />}
+/> */}
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
