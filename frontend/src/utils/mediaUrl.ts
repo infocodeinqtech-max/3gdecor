@@ -1,4 +1,5 @@
 import { getMediaBase } from "../api/env";
+import { getCmsRevision } from "../content/cmsSync";
 
 /** Build absolute media URL for paths stored in DB (/uploads/...). */
 export function mediaUrl(path: string | undefined | null): string {
@@ -14,5 +15,13 @@ export function mediaUrl(path: string | undefined | null): string {
       ? `/${value}`
       : `/${value}`;
 
-  return `${getMediaBase()}${normalized}`;
+  const base = `${getMediaBase()}${normalized}`;
+  // Bust browser cache when CMS content is updated (same path, new file).
+  if (normalized.startsWith("/uploads/")) {
+    const rev = getCmsRevision();
+    if (rev && rev !== "0") {
+      return `${base}${base.includes("?") ? "&" : "?"}v=${encodeURIComponent(rev)}`;
+    }
+  }
+  return base;
 }

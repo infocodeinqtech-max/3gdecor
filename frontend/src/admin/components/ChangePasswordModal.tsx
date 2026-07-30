@@ -88,12 +88,12 @@ export default function ChangePasswordModal({
     );
   };
 
-  const handleSubmitForm = async (e: React.FormEvent) => {
+  const handleSubmitForm = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     await requestOtp();
   };
 
-  const handleVerifyOtp = async (e?: React.FormEvent) => {
+  const handleVerifyOtp = async (e?: React.SyntheticEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!verificationToken || otpCode.trim().length !== 6) {
       toast.error("Enter the 6-digit OTP");

@@ -89,7 +89,7 @@ export default function ManageAdmins() {
     }));
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isValidEmail(form.email)) {
       toast.error("Enter a valid email address");

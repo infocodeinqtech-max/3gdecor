@@ -16,16 +16,13 @@ import {
   setToken,
 } from "../api/client";
 
-export type LoginRole = (typeof ROLES)[keyof typeof ROLES];
-
 interface AuthContextValue {
   user: PublicAdminUser | null;
   loading: boolean;
   login: (
     email: string,
     password: string,
-    role: LoginRole,
-  ) => Promise<{ success: boolean; error?: string }>;
+  ) => Promise<{ success: boolean; error?: string; user?: PublicAdminUser }>;
   logout: () => Promise<void>;
   sendChangePasswordOtp: (
     currentPassword: string,
@@ -91,15 +88,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (
     email: string,
     password: string,
-    role: LoginRole,
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; error?: string; user?: PublicAdminUser }> => {
     try {
       // Invalidate any in-flight /auth/me from the login page mount
       authEpochRef.current += 1;
       const res = await apiRequest<LoginResponse>("/auth/login", {
         method: "POST",
         auth: false,
-        body: { email, password, role },
+        body: { email, password },
       });
 
       if (!res?.token || !res?.user) {
@@ -112,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setToken(res.token);
       setUser(res.user);
-      return { success: true };
+      return { success: true, user: res.user };
     } catch (err) {
       return {
         success: false,

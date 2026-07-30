@@ -33,7 +33,7 @@ export default function ManageAbout() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {
@@ -87,8 +87,11 @@ export default function ManageAbout() {
               label="3G Badge Image"
               value={form.badgeImage || ""}
               onChange={(v) => update("badgeImage", v)}
-              maxSizeMb={4}
-              hint="Upload the floating center badge. Empty = default badge."
+              maxSizeMb={2}
+              section="about"
+              recommendedWidth={400}
+              recommendedHeight={400}
+              hint="Floating center badge. Empty = default badge. Prefer transparent PNG."
             />
           </section>
         </div>
@@ -96,16 +99,22 @@ export default function ManageAbout() {
         <section className="admin-card rounded-2xl p-5 space-y-4">
           <h2 className="font-semibold text-[#2A211C]">Collage Images (4 photos)</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {[0, 1, 2, 3].map((index) => (
+            {[0, 1, 2, 3].map((index) => {
+              const landscape = index === 0 || index === 3;
+              return (
               <ImageUpload
                 key={index}
                 label={`Image ${index + 1}`}
                 value={form.images?.[index] || ""}
                 onChange={(v) => updateImage(index, v)}
-                maxSizeMb={6}
+                maxSizeMb={2}
+                section="about"
+                recommendedWidth={landscape ? 900 : 800}
+                recommendedHeight={landscape ? 700 : 800}
                 hint="Empty = default photo"
               />
-            ))}
+            );
+            })}
           </div>
         </section>
 

@@ -2,6 +2,9 @@ import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
 import CustomDropdown from "../app/components/CustomDropdown";
 import { Link, useParams } from "react-router-dom";
+import NotFound from "./NotFound";
+import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import corporateBanner from "../assets/images/corporate-banner.png";
 import civilBanner from "../assets/images/civil-banner.png";
 import { AnimatePresence, motion } from "framer-motion";
@@ -135,12 +138,12 @@ type Project = {
   image: string;
   slug: string;
 };
+} as const;
 
-function HeroSection() {
-  const { category } = useParams();
+type ProjectCategory = keyof typeof projectPages;
 
-  const isCorporate = category === "corporate";
-  const pageData = projectPages[isCorporate ? "corporate" : "civil"];
+function HeroSection({ category }: { category: ProjectCategory }) {
+  const pageData = projectPages[category];
 
   return (
     <section
@@ -418,6 +421,8 @@ function ProjectFilters({
   const { category } = useParams();
 
   const pageData = projectPages[category as "corporate" | "civil"];
+function ProjectFilters({ category }: { category: ProjectCategory }) {
+  const pageData = projectPages[category];
 
   const filters = pageData.filters;
 
@@ -737,6 +742,20 @@ export default function ProjectList() {
     activeFilter === "All Projects"
       ? projects
       : projects.filter((x) => x.category === activeFilter);
+  const valid =
+    category === "corporate" || category === "civil"
+      ? (category as ProjectCategory)
+      : null;
+
+  if (!valid) {
+    return (
+      <NotFound
+        title="Page not found"
+        description="This project category doesn’t exist. Choose Corporate or Civil projects from the portfolio."
+      />
+    );
+  }
+
   return (
     <>
       <Navbar activeNav="projects" />
@@ -763,6 +782,8 @@ export default function ProjectList() {
 
         {/* Pagination */}
         <ProjectPagination />
+        <HeroSection category={valid} />
+        <ProjectFilters category={valid} />
       </div>
 
       <Footer />

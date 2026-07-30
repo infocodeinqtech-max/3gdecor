@@ -40,7 +40,7 @@ export default function Navbar({ activeNav }: NavbarProps) {
 
   useEffect(() => {
     const reload = () => {
-      loadPublicSiteCms()
+      loadPublicSiteCms(true)
         .then((site) => {
           const rows = (site.navigation as NavItem[] | undefined) ?? [];
           if (rows.length) {

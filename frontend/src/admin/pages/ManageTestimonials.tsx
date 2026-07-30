@@ -1,6 +1,7 @@
 import SectionEditor from "../components/SectionEditor";
 import AdminCrudPage from "../components/AdminCrudPage";
 import { seedTestimonialsSection, seedTestimonials } from "../data/seedContent";
+import { mediaUrl } from "../../utils/mediaUrl";
 
 export default function ManageTestimonials() {
   return (
@@ -29,7 +30,7 @@ export default function ManageTestimonials() {
             label: "Photo",
             render: (row) =>
               row.image ? (
-                <img src={row.image} alt="" className="w-10 h-10 rounded-full object-cover border border-[#E8DFD2]" />
+                <img src={mediaUrl(row.image) || row.image} alt="" className="w-10 h-10 rounded-full object-cover border border-[#E8DFD2]" />
               ) : (
                 "—"
               ),
@@ -42,7 +43,7 @@ export default function ManageTestimonials() {
           { name: "author", label: "Client Name" },
           { name: "role", label: "Role / Location" },
           { name: "quote", label: "Testimonial", type: "textarea", rows: 5 },
-          { name: "image", label: "Photo", type: "image" },
+          { name: "image", label: "Photo", type: "image", uploadSection: "testimonials", recommendedWidth: 400, recommendedHeight: 400, imageHint: "Square headshot — shown as a round avatar." },
           { name: "rating", label: "Rating", defaultValue: "4.9 out of 5" },
         ]}
       />

@@ -1,76 +1,62 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { Shield, UserCog } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth, type LoginRole } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { ROLES } from "../data/permissions";
 import { emailKeyupHint, isValidEmail } from "../../utils/validation";
 import logo from "../../assets/images/3GDecoLogo-2.png";
 
-const ROLE_OPTIONS: {
-  role: LoginRole;
-  label: string;
-  description: string;
-  icon: typeof Shield;
-}[] = [
-  {
-    role: ROLES.SUPERADMIN,
-    label: "Super Admin",
-    description: "Full access — manage admins, all sections & settings",
-    icon: Shield,
-  },
-  {
-    role: ROLES.ADMIN,
-    label: "Admin",
-    description: "Limited access — assigned sections only",
-    icon: UserCog,
-  },
-];
+const CAPTCHA_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function generateCaptcha(length = 5): string {
+  let out = "";
+  for (let i = 0; i < length; i += 1) {
+    out += CAPTCHA_CHARS[Math.floor(Math.random() * CAPTCHA_CHARS.length)];
+  }
+  return out;
+}
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [selectedRole, setSelectedRole] = useState<LoginRole>(ROLES.ADMIN);
+  const [showPassword, setShowPassword] = useState(false);
+  const [captchaCode, setCaptchaCode] = useState(() => generateCaptcha());
+  const [captchaInput, setCaptchaInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [emailHint, setEmailHint] = useState<string | null>(null);
   const { login, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Prefill demo credentials by role (seeded DB users)
-    if (selectedRole === ROLES.SUPERADMIN) {
-      setEmail("super@3gdeco.com");
-      setPassword("Super@123");
-    } else {
-      setEmail("admin@3gdeco.com");
-      setPassword("Admin@123");
-    }
-  }, [selectedRole]);
+  const refreshCaptcha = useCallback(() => {
+    setCaptchaCode(generateCaptcha());
+    setCaptchaInput("");
+  }, []);
 
-  const selectRole = (role: LoginRole) => {
-    setSelectedRole(role);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isValidEmail(email)) {
       toast.error("Enter a valid email address");
       return;
     }
+    if (captchaInput.trim().toUpperCase() !== captchaCode) {
+      toast.error("Captcha does not match. Please try again.");
+      refreshCaptcha();
+      return;
+    }
     setSubmitting(true);
-    const result = await login(email.trim(), password, selectedRole);
+    const result = await login(email.trim(), password);
     setSubmitting(false);
 
     if (result.success) {
-      toast.success(
-        selectedRole === ROLES.SUPERADMIN
-          ? "Welcome, Super Admin!"
-          : "Welcome, Admin!",
-      );
+      const roleLabel =
+        result.user?.role === ROLES.SUPERADMIN ? "Super Admin" : "Admin";
+      toast.success(`Welcome, ${roleLabel}!`);
       navigate("/admin", { replace: true });
     } else {
       toast.error(result.error || "Could not sign in");
+      refreshCaptcha();
     }
   };
 
@@ -125,7 +111,9 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm mb-2 text-[#6E655C]">Email / User ID</label>
+            <label className="block text-sm mb-2 text-[#6E655C]">
+              Email / User ID
+            </label>
             <input
               type="email"
               required
@@ -150,56 +138,71 @@ export default function AdminLogin() {
 
           <div>
             <label className="block text-sm mb-2 text-[#6E655C]">Password</label>
-            <input
-              type="password"
-              required
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl admin-input"
-              placeholder="Password"
-            />
-            <p className="mt-1.5 text-[11px] text-[#8A8177]">
-              Demo: Super Admin → Super@123 · Admin → Admin@123
-            </p>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 pr-12 rounded-xl admin-input"
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[#8A8177] hover:text-[#C4973B] hover:bg-[#FAF7F2] transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-[18px] h-[18px]" />
+                ) : (
+                  <Eye className="w-[18px] h-[18px]" />
+                )}
+              </button>
+            </div>
           </div>
 
           <div>
-            <p className="block text-sm mb-2 text-[#6E655C]">Login as</p>
-            <div className="space-y-2">
-              {ROLE_OPTIONS.map((option) => {
-                const Icon = option.icon;
-                const active = selectedRole === option.role;
-                return (
-                  <button
-                    key={option.role}
-                    type="button"
-                    onClick={() => selectRole(option.role)}
-                    className={`w-full text-left p-3 rounded-xl border transition-all ${
-                      active
-                        ? "border-[#D4A64B] bg-amber-50/80 shadow-sm"
-                        : "border-[#E8DFD2] hover:border-[#D4A64B]/40 hover:bg-[#FAF7F2]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`p-1.5 rounded-lg ${
-                          active
-                            ? "bg-[#D4A64B]/20 text-[#8a5a12]"
-                            : "bg-[#F5F1EA] text-[#8A8177]"
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm text-[#2A211C]">{option.label}</p>
-                        <p className="text-xs text-[#8A8177]">{option.description}</p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+            <label className="block text-sm mb-2 text-[#6E655C]">Captcha</label>
+            <div className="flex items-stretch gap-2 mb-2">
+              <div
+                className="flex-1 flex items-center justify-center select-none rounded-xl border border-[#E8DFD2] bg-[#FAF7F2] px-3 py-2.5 tracking-[0.35em] font-bold text-lg text-[#2A211C]"
+                style={{
+                  fontFamily: "'Courier New', monospace",
+                  letterSpacing: "0.35em",
+                  backgroundImage:
+                    "repeating-linear-gradient(135deg, transparent, transparent 8px, rgba(212,166,75,0.08) 8px, rgba(212,166,75,0.08) 16px)",
+                  textDecoration: "line-through",
+                  textDecorationColor: "rgba(196,151,59,0.35)",
+                  fontStyle: "italic",
+                }}
+                aria-hidden
+              >
+                {captchaCode}
+              </div>
+              <button
+                type="button"
+                onClick={refreshCaptcha}
+                className="px-3 rounded-xl border border-[#E8DFD2] text-[#8A8177] hover:text-[#C4973B] hover:border-[#D4A64B]/50 hover:bg-[#FAF7F2] transition-colors"
+                aria-label="Refresh captcha"
+                title="Refresh captcha"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
             </div>
+            <input
+              type="text"
+              required
+              autoComplete="off"
+              value={captchaInput}
+              onChange={(e) => setCaptchaInput(e.target.value.toUpperCase())}
+              className="w-full px-4 py-3 rounded-xl admin-input uppercase tracking-widest"
+              placeholder="Enter captcha"
+              maxLength={8}
+              spellCheck={false}
+            />
           </div>
 
           <button

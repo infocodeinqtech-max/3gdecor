@@ -1,4 +1,8 @@
 import { getApiBase } from "./env";
+import {
+  PUBLIC_SAFE_ERROR,
+  toAdminErrorMessage,
+} from "../utils/publicError";
 
 export { getApiBase } from "./env";
 
@@ -37,38 +41,109 @@ export async function apiRequest<T = unknown>(
   }
 
   const method = options.method || "GET";
-  const res = await fetch(`${getApiBase()}${path}`, {
-    method,
-    headers,
-    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-    cache: method === "GET" ? "no-store" : "default",
-  });
-
-  const contentType = res.headers.get("content-type") || "";
-  const json = contentType.includes("application/json")
-    ? await res.json().catch(() => null)
-    : null;
-
-  // Hostinger misconfig often returns SPA HTML (200) for /api/* —
-  // treat that as a hard failure so login never looks "successful".
-  if (!json || typeof json !== "object") {
-    throw new Error(
-      "API did not return JSON. Check that /api is routed to Laravel (see root .htaccess).",
-    );
+  let res: Response;
+  try {
+    res = await fetch(`${getApiBase()}${path}`, {
+      method,
+      headers,
+      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      cache: method === "GET" ? "no-store" : "default",
+    });
+  } catch {
+    throw new Error(PUBLIC_SAFE_ERROR);
   }
+
+  return parseApiResponse<T>(res);
+}
+
+/** Multipart upload (do not set Content-Type — browser sets boundary). */
+export async function apiUpload<T = unknown>(
+  path: string,
+  formData: FormData,
+  options: { auth?: boolean; method?: string } = {},
+): Promise<T> {
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+
+  if (options.auth !== false) {
+    const token = getToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
+
+  let res: Response;
+  try {
+    res = await fetch(`${getApiBase()}${path}`, {
+      method: options.method || "POST",
+      headers,
+      body: formData,
+    });
+  } catch {
+    throw new Error(PUBLIC_SAFE_ERROR);
+  }
+
+  return parseApiResponse<T>(res);
+}
+
+/** Upload image blob to /uploads/{section}/... and return stored path. */
+export async function uploadMediaFile(
+  section: string,
+  blob: Blob,
+  filename = "image.jpg",
+): Promise<string> {
+  const form = new FormData();
+  form.append("section", section);
+  form.append("file", blob, filename);
+
+  const res = await apiUpload<{
+    success: boolean;
+    data?: { path?: string };
+    message?: string;
+  }>("/media/upload", form);
+
+  const path = res.data?.path?.trim();
+  if (!path) {
+    throw new Error(toAdminErrorMessage(res.message || PUBLIC_SAFE_ERROR));
+  }
+  return path;
+}
+
+async function parseApiResponse<T>(res: Response): Promise<T> {
+  const contentType = res.headers.get("content-type") || "";
+  const text = await res.text();
+  let json: unknown = null;
+
+  if (contentType.includes("application/json") || text.trim().startsWith("{")) {
+    try {
+      // Tolerate accidental PHP warnings/HTML prepended before JSON
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+      const payload =
+        start >= 0 && end > start ? text.slice(start, end + 1) : text;
+      json = JSON.parse(payload);
+    } catch {
+      json = null;
+    }
+  }
+
+  if (!json || typeof json !== "object") {
+    throw new Error(PUBLIC_SAFE_ERROR);
+  }
+
+  const body = json as Record<string, unknown>;
 
   if (!res.ok) {
     const firstFieldError =
-      json?.errors &&
-      typeof json.errors === "object" &&
-      Object.values(json.errors as Record<string, string[]>)
+      body.errors &&
+      typeof body.errors === "object" &&
+      Object.values(body.errors as Record<string, string[]>)
         .flat()
         .find((msg) => typeof msg === "string");
-    const message =
+    const raw =
       (typeof firstFieldError === "string" && firstFieldError) ||
-      (typeof json?.message === "string" && json.message) ||
-      `Request failed (${res.status})`;
-    throw new Error(message);
+      (typeof body.message === "string" && body.message) ||
+      "";
+    throw new Error(toAdminErrorMessage(raw || PUBLIC_SAFE_ERROR));
   }
 
   return json as T;

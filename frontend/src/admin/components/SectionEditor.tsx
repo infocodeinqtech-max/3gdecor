@@ -4,6 +4,8 @@ import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { getContent, setContent } from "../utils/contentStorage";
 import ImageUpload from "./ImageUpload";
+import { MEDIA_MAX_SIZE_MB } from "../utils/mediaUploadRules";
+import { toAdminErrorMessage } from "../../utils/publicError";
 
 export interface SectionField {
   name: string;
@@ -15,6 +17,13 @@ export interface SectionField {
   liveHint?: (value: string) => string | null;
   helperText?: string;
   inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
+  /** Image recommend size / crop target */
+  recommendedWidth?: number;
+  recommendedHeight?: number;
+  aspect?: number | null;
+  imageHint?: string;
+  /** public/uploads/{section}/ folder */
+  uploadSection?: string;
 }
 
 interface SectionEditorProps<T extends Record<string, unknown>> {
@@ -62,7 +71,12 @@ function FieldInput({
         label=""
         value={value}
         onChange={onChange}
-        maxSizeMb={8}
+        maxSizeMb={MEDIA_MAX_SIZE_MB}
+        section={field.uploadSection || "misc"}
+        recommendedWidth={field.recommendedWidth}
+        recommendedHeight={field.recommendedHeight}
+        aspect={field.aspect}
+        hint={field.imageHint}
       />
     );
   }
@@ -119,7 +133,7 @@ export default function SectionEditor<T extends Record<string, unknown>>({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationError = validateForm?.(form);
     if (validationError) {
@@ -131,7 +145,7 @@ export default function SectionEditor<T extends Record<string, unknown>>({
       await setContent(storageKey, form);
       toast.success("Section saved to database");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Save failed");
+      toast.error(toAdminErrorMessage(err));
     } finally {
       setSaving(false);
     }

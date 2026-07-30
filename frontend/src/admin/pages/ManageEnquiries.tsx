@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pencil, Trash2, Mail, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -7,6 +7,10 @@ import {
   updateListItem,
 } from "../utils/contentStorage";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
+import AdminPagination, {
+  getTotalPages,
+  paginateItems,
+} from "../components/AdminPagination";
 
 type EnquiryRow = {
   id: string | number;
@@ -20,6 +24,7 @@ type EnquiryRow = {
 };
 
 const STATUS_OPTIONS = ["New", "In Review", "Closed"] as const;
+const PAGE_SIZE = 10;
 
 export default function ManageEnquiries() {
   const [rows, setRows] = useState<EnquiryRow[]>([]);
@@ -27,12 +32,14 @@ export default function ManageEnquiries() {
   const [selected, setSelected] = useState<EnquiryRow | null>(null);
   const [status, setStatus] = useState("New");
   const [saving, setSaving] = useState(false);
+  const [page, setPage] = useState(1);
 
   const load = async () => {
     setLoading(true);
     try {
       const data = await getListContent<EnquiryRow>("enquiries", []);
       setRows(Array.isArray(data) ? data : []);
+      setPage(1);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load enquiries");
       setRows([]);
@@ -45,6 +52,16 @@ export default function ManageEnquiries() {
     load();
     return subscribeCmsUpdated(load);
   }, []);
+
+  const totalPages = getTotalPages(rows.length, PAGE_SIZE);
+  useEffect(() => {
+    setPage((p) => Math.min(Math.max(1, p), totalPages));
+  }, [totalPages, rows.length]);
+
+  const pageRows = useMemo(
+    () => paginateItems(rows, page, PAGE_SIZE),
+    [rows, page],
+  );
 
   const openEdit = (row: EnquiryRow) => {
     setSelected(row);
@@ -112,65 +129,83 @@ export default function ManageEnquiries() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-[#332C26]">
-              <thead>
-                <tr className="border-b admin-table-head">
-                  {["Name", "Email", "Phone", "Service", "Status", "Date", ""].map(
-                    (h) => (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-[#332C26]">
+                <thead>
+                  <tr className="border-b admin-table-head">
+                    {[
+                      "Name",
+                      "Email",
+                      "Phone",
+                      "Service",
+                      "Status",
+                      "Date",
+                      "",
+                    ].map((h) => (
                       <th
                         key={h || "actions"}
                         className="text-left px-5 py-3 font-medium uppercase tracking-wider text-xs text-[#8A8177]"
                       >
                         {h}
                       </th>
-                    ),
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => (
-                  <tr key={row.id} className="border-b admin-table-row">
-                    <td className="px-5 py-4 font-medium">{row.name}</td>
-                    <td className="px-5 py-4">{row.email}</td>
-                    <td className="px-5 py-4">{row.phone || "—"}</td>
-                    <td className="px-5 py-4">{row.service || "—"}</td>
-                    <td className="px-5 py-4">
-                      <span className="text-[#C4973B]">{row.status || "New"}</span>
-                    </td>
-                    <td className="px-5 py-4 whitespace-nowrap">
-                      {row.date || "—"}
-                    </td>
-                    <td className="px-5 py-4 text-right whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={() => openEdit(row)}
-                        className="p-2 rounded-lg hover:bg-amber-50 text-[#8a5a12]"
-                        aria-label="View"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(row)}
-                        className="p-2 rounded-lg hover:bg-red-50 text-red-600"
-                        aria-label="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {pageRows.map((row) => (
+                    <tr key={row.id} className="border-b admin-table-row">
+                      <td className="px-5 py-4 font-medium">{row.name}</td>
+                      <td className="px-5 py-4">{row.email}</td>
+                      <td className="px-5 py-4">{row.phone || "—"}</td>
+                      <td className="px-5 py-4">{row.service || "—"}</td>
+                      <td className="px-5 py-4">
+                        <span className="text-[#C4973B]">
+                          {row.status || "New"}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        {row.date || "—"}
+                      </td>
+                      <td className="px-5 py-4 text-right whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={() => openEdit(row)}
+                          className="p-2 rounded-lg hover:bg-amber-50 text-[#8a5a12]"
+                          aria-label="View"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(row)}
+                          className="p-2 rounded-lg hover:bg-red-50 text-red-600"
+                          aria-label="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <AdminPagination
+              page={page}
+              pageSize={PAGE_SIZE}
+              totalItems={rows.length}
+              onPageChange={setPage}
+            />
+          </>
         )}
       </div>
 
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center admin-modal-overlay p-4">
           <div className="w-full max-w-lg p-8 rounded-2xl admin-card space-y-4">
-            <h2 className="text-xl font-semibold text-[#2A211C]">Enquiry details</h2>
+            <h2 className="text-xl font-semibold text-[#2A211C]">
+              Enquiry details
+            </h2>
             <div className="space-y-2 text-sm text-[#332C26]">
               <p>
                 <span className="text-[#8A8177]">Name:</span> {selected.name}
@@ -187,7 +222,8 @@ export default function ManageEnquiries() {
                 {selected.service || "—"}
               </p>
               <p>
-                <span className="text-[#8A8177]">Date:</span> {selected.date || "—"}
+                <span className="text-[#8A8177]">Date:</span>{" "}
+                {selected.date || "—"}
               </p>
               <div>
                 <p className="text-[#8A8177] mb-1">Message:</p>

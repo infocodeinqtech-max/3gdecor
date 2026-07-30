@@ -23,7 +23,7 @@ export default function Footer() {
 
   useEffect(() => {
     const reload = () => {
-      loadPublicSiteCms()
+      loadPublicSiteCms(true)
         .then((site) => {
           const branding =
             site.footer && typeof site.footer === "object"

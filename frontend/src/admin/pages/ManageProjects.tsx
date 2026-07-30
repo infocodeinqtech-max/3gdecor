@@ -1,6 +1,7 @@
 import SectionEditor from "../components/SectionEditor";
 import AdminCrudPage from "../components/AdminCrudPage";
 import { seedProjectsSection, seedProjects } from "../data/seedContent";
+import { mediaUrl } from "../../utils/mediaUrl";
 
 export default function ManageProjects() {
   return (
@@ -29,7 +30,7 @@ export default function ManageProjects() {
             label: "Image",
             render: (row) =>
               row.image ? (
-                <img src={row.image} alt="" className="w-14 h-10 rounded-lg object-cover border border-[#E8DFD2]" />
+                <img src={mediaUrl(row.image) || row.image} alt="" className="w-14 h-10 rounded-lg object-cover border border-[#E8DFD2]" />
               ) : (
                 "—"
               ),
@@ -53,7 +54,7 @@ export default function ManageProjects() {
               { value: "Commercial", label: "Commercial" },
             ],
           },
-          { name: "image", label: "Project Image", type: "image" },
+          { name: "image", label: "Project Image", type: "image", uploadSection: "projects", recommendedWidth: 1600, recommendedHeight: 900, imageHint: "Landscape photo. Featured projects show larger on homepage." },
           { name: "featured", label: "Featured (large card)", type: "checkbox" },
         ]}
       />
