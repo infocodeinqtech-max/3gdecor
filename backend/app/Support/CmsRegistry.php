@@ -16,6 +16,7 @@ use App\Models\ServiceContent;
 use App\Models\SiteContactContent;
 use App\Models\TestimonialContent;
 use App\Models\AboutPageHero;
+use App\Models\AboutPageHeroFeature;
 
 /**
  * Maps frontend storage keys → backend resources.
@@ -176,6 +177,30 @@ class CmsRegistry
                     'hours' => $row->hours,
                     'mapEmbed' => $row->map_embed,
                     'active' => (bool) $row->active,
+                ],
+            ],
+            'about-page-hero-features' => [
+                'model' => AboutPageHeroFeature::class,
+                'permission' => 'about-page-hero-features',
+                'order_by' => 'sort_order', 
+
+                'map_in' => fn (array $d) => [
+                    'about_page_hero_id' => (int) ($d['aboutPageHeroId'] ?? 0),
+                    'title'              => $d['title'] ?? '',
+                    'description'        => $d['description'] ?? '',
+                    'icon'               => $d['icon'] ?? '',
+                    'sort_order'         => (int) ($d['sortOrder'] ?? 0),
+                    'active'             => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+
+                'map_out' => fn ($row) => [
+                    'id'                => $row->id,
+                    'aboutPageHeroId'   => $row->about_page_hero_id,
+                    'title'             => $row->title,
+                    'description'       => $row->description,
+                    'icon'              => $row->icon,
+                    'sortOrder'         => $row->sort_order,
+                    'active'            => (bool) $row->active,
                 ],
             ],
         ];

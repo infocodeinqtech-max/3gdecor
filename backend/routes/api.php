@@ -57,5 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
 // Code By Moumita on 29-07-2026
 // About page hero
     Route::get('/about-page/hero', [AboutPageController::class, 'hero']);
-    Route::put('/about-page/hero', [AboutPageController::class, 'updateHero']);
+    Route::post('/about-page/hero', [AboutPageController::class, 'updateHero']);
     Route::get('/about-page/hero/features', [AboutPageController::class, 'heroFeatures']);
+    Route::post('/about-page/hero/features', [AboutPageController::class, 'storeHeroFeature']);
+    Route::put('/about-page/hero/features/{id}', [AboutPageController::class, 'updateHeroFeature']);
+    Route::delete('/about-page/hero/features/{id}', [AboutPageController::class, 'destroyHeroFeature']);

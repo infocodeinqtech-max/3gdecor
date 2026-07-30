@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AboutPageHero;
 use App\Models\AboutPageHeroFeature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Services\FileUploadService;
+use Illuminate\Http\JsonResponse;
 
 class AboutPageController extends Controller
 {
@@ -14,7 +17,12 @@ class AboutPageController extends Controller
      */
     public function hero()
     {
-        $hero = AboutPageHero::first();
+        $hero = AboutPageHero::with([
+            'features' => function ($query) {
+                $query->where('active', true)
+                      ->orderBy('sort_order');
+            }
+        ])->first();
 
         return response()->json([
             'success' => true,
@@ -25,41 +33,144 @@ class AboutPageController extends Controller
     /**
      * PUT /api/about-page/hero
      */
-    public function updateHero(Request $request)
+    public function updateHero(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'small_title'      => ['nullable', 'string', 'max:255'],
-            'title'            => ['required', 'string', 'max:255'],
-            'description'      => ['nullable', 'string'],
-            'background_image' => ['nullable', 'string', 'max:255'],
-            'active'           => ['nullable', 'boolean'],
+            'small_title' => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'background_image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+            'active' => ['nullable', 'boolean'],
         ]);
 
+        // Existing singleton record
+        $hero = AboutPageHero::find(
+            AboutPageHero::SINGLETON_ID
+        );
+
+        $data = $validated;
+
+        // Upload / Replace image only if a new file is provided
+        if ($request->hasFile('background_image')) {
+
+            $data['background_image'] = $hero
+                ? FileUploadService::replace(
+                    $request->file('background_image'),
+                    $hero->background_image,
+                    AboutPageHero::IMAGE_DIRECTORY
+                )
+                : FileUploadService::store(
+                    $request->file('background_image'),
+                    AboutPageHero::IMAGE_DIRECTORY
+                );
+        } else {
+            // Prevent accidental overwrite
+            unset($data['background_image']);
+        }
+
         $hero = AboutPageHero::updateOrCreate(
-            ['id' => 1],
-            $validated
+            ['id' => AboutPageHero::SINGLETON_ID],
+            $data
         );
 
         return response()->json([
             'success' => true,
             'message' => 'About Hero saved successfully.',
-            'data' => $hero,
+            'data' => $hero->fresh(),
         ]);
     }
 
     /**
-     * GET /api/about-page/heroFeatures
+     * GET /api/about-page/hero/features
+     * Admin - List all Hero Features
      */
 
     public function heroFeatures()
     {
-        $features = AboutPageHeroFeature::where('about_page_hero_id',1)
-        ->orderBy('sort_order')
-        ->get();
+        $features = AboutPageHeroFeature::query()
+            ->orderBy('sort_order')
+            ->get();
 
         return response()->json([
             'success' => true,
             'data' => $features,
+        ]);
+    }
+
+    /**
+     * POST /api/about-page/hero-features
+     */
+    public function storeHeroFeature(Request $request)
+    {
+        $validated = $request->validate([
+            'title'              => ['required', 'string', 'max:255'],
+            'description'        => ['nullable', 'string'],
+            'sort_order'         => ['nullable', 'integer'],
+            'active'             => ['nullable', 'boolean'],
+        ]);
+
+        $feature = AboutPageHeroFeature::create([
+            'about_page_hero_id' => AboutPageHero::SINGLETON_ID,
+            'title'              => $validated['title'],
+            'description'        => $validated['description'] ?? '',
+            'sort_order'         => $validated['sort_order'] ?? 0,
+            'active'             => $validated['active'] ?? true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Hero feature created successfully.',
+            'data' => $feature,
+        ], 201);
+    }
+
+    /**
+     * PUT /api/about-page/hero-features/{id}
+     */
+    public function updateHeroFeature(Request $request, int $id)
+    {
+        $feature = AboutPageHeroFeature::findOrFail($id);
+
+        $validated = $request->validate([
+            'about_page_hero_id' => ['required', 'exists:about_page_heroes,id'],
+            'title'              => ['required', 'string', 'max:255'],
+            'description'        => ['nullable', 'string'],
+            'sort_order'         => ['nullable', 'integer'],
+            'active'             => ['nullable', 'boolean'],
+        ]);
+
+        $feature->update([
+            'about_page_hero_id' => $validated['about_page_hero_id'],
+            'title'              => $validated['title'],
+            'description'        => $validated['description'] ?? '',
+            'sort_order'         => $validated['sort_order'] ?? 0,
+            'active'             => $validated['active'] ?? true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Hero feature updated successfully.',
+            'data' => $feature->fresh(),
+        ]);
+    }
+
+    /**
+     * DELETE /api/about-page/hero-features/{id}
+     */
+    public function deleteHeroFeature(int $id)
+    {
+        $feature = AboutPageHeroFeature::findOrFail($id);
+
+        $feature->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Hero feature deleted successfully.',
         ]);
     }
 }
