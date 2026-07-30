@@ -18,15 +18,13 @@ interface Props {
   description: string;
   button: string;
   projects: Project[];
+  viewAllLink: string;
 }
+export default function FeaturedProjects(props: Props) {
+  console.log(props);
 
-export default function FeaturedProjects({
-  title,
-  subtitle,
-  description,
-  button,
-  projects,
-}: Props) {
+  const { title, subtitle, description, button, projects, viewAllLink } = props;
+
   const navigate = useNavigate();
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -99,7 +97,12 @@ export default function FeaturedProjects({
             </p>
 
             <button
-              onClick={() => navigate("/projects/corporate")}
+              onClick={() => {
+                console.log("viewAllLink:", viewAllLink);
+                console.log("typeof:", typeof viewAllLink);
+
+                navigate(viewAllLink);
+              }}
               className="
                 mt-8
                 inline-flex

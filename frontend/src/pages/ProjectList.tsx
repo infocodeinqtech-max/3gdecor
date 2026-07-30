@@ -1,12 +1,31 @@
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
+import CustomDropdown from "../app/components/CustomDropdown";
+import { Link, useParams } from "react-router-dom";
 import NotFound from "./NotFound";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import corporateBanner from "../assets/images/corporate-banner.png";
-// import civilBanner from "../assets/images/civil-banner.jpg";
-import { ChevronRight, LayoutGrid, List } from "lucide-react";
+import civilBanner from "../assets/images/civil-banner.png";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ChevronRight,
+  ChevronDown,
+  ChevronLeft,
+  LayoutGrid,
+  List,
+  MapPin,
+  ArrowRight,
+} from "lucide-react";
 import { useState } from "react";
+import techMahindra from "../assets/images/tech-mahindra-office.jpeg";
+import siemens from "../assets/images/siemens-innovation-hub.jpeg";
+import dining from "../assets/images/executive-dining-space.jpeg";
+import workspace from "../assets/images/creative-studio-workspace.jpeg";
+import bank from "../assets/images/hdfc-bank-branch.jpeg";
+import itpark from "../assets/images/datasoft-it-park.jpeg";
+import mahindra from "../assets/images/mahindra-office.jpeg";
+import acme from "../assets/images/acme-headquarters.jpeg";
 
 const projectPages = {
   corporate: {
@@ -22,7 +41,6 @@ const projectPages = {
       "Workspaces",
       "Showrooms",
       "Banks",
-      "Hospitality",
       "IT Parks",
     ],
   },
@@ -30,8 +48,7 @@ const projectPages = {
   civil: {
     title: "Civil",
     breadcrumb: "Civil Structures",
-    // banner: civilBanner,
-    banner: corporateBanner,
+    banner: civilBanner,
     description:
       "Explore our portfolio of residential, commercial and industrial projects engineered with quality, innovation and long-lasting excellence.",
 
@@ -44,6 +61,83 @@ const projectPages = {
       "Infrastructure",
     ],
   },
+};
+
+const projects: Project[] = [
+  {
+    id: 1,
+    title: "Tech Mahindra Office",
+    category: "Offices",
+    location: "Kolkata, India",
+    image: techMahindra,
+    slug: "tech-mahindra-office",
+  },
+  {
+    id: 2,
+    title: "Siemens Innovation Hub",
+    category: "Workspaces",
+    location: "Kolkata, India",
+    image: siemens,
+    slug: "siemens-innovation-hub",
+  },
+  {
+    id: 3,
+    title: "Executive Dining Space",
+    category: "Hospitality",
+    location: "Kolkata, India",
+    image: dining,
+    slug: "executive-dining-space",
+  },
+  {
+    id: 4,
+    title: "Creative Studio Workspace",
+    category: "Workspaces",
+    location: "Kolkata, India",
+    image: workspace,
+    slug: "creative-studio-workspace",
+  },
+  {
+    id: 5,
+    title: "HDFC Bank Branch",
+    category: "Banks",
+    location: "Kolkata, India",
+    image: bank,
+    slug: "hdfc-bank",
+  },
+  {
+    id: 6,
+    title: "DataSoft IT Park",
+    category: "IT Parks",
+    location: "Kolkata, India",
+    image: itpark,
+    slug: "datasoft-it-park",
+  },
+  {
+    id: 7,
+    title: "Mahindra & Mahindra Office",
+    category: "Offices",
+    location: "Kolkata, India",
+    image: mahindra,
+    slug: "mahindra-office",
+  },
+  {
+    id: 8,
+    title: "Acme Corp Headquarters",
+    category: "Offices",
+    location: "Kolkata, India",
+    image: acme,
+    slug: "acme-corporate",
+  },
+];
+
+type Project = {
+  id: number;
+  title: string;
+  category: string;
+  location: string;
+  image: string;
+  slug: string;
+};
 } as const;
 
 type ProjectCategory = keyof typeof projectPages;
@@ -304,21 +398,56 @@ function HeroSection({ category }: { category: ProjectCategory }) {
   );
 }
 
+function ProjectFilters({
+  activeFilter,
+  setActiveFilter,
+  sortBy,
+  setSortBy,
+  view,
+  setView,
+}: {
+  activeFilter: string;
+
+  setActiveFilter: React.Dispatch<React.SetStateAction<string>>;
+
+  sortBy: string;
+
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+
+  view: "grid" | "list";
+
+  setView: React.Dispatch<React.SetStateAction<"grid" | "list">>;
+}) {
+  const { category } = useParams();
+
+  const pageData = projectPages[category as "corporate" | "civil"];
 function ProjectFilters({ category }: { category: ProjectCategory }) {
   const pageData = projectPages[category];
 
   const filters = pageData.filters;
-
-  const [activeFilter, setActiveFilter] = useState("All Projects");
-  const [sortBy, setSortBy] = useState("Latest");
-  const [view, setView] = useState<"grid" | "list">("grid");
 
   return (
     <section className="bg-[#F5F1EA] py-10">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           {/* Left */}
-          <div className="flex flex-wrap gap-3">
+          <div
+            // className="
+            //   flex
+            //   flex-wrap
+            //   gap-3
+            //   pt-2
+            //   pb-2
+            // "
+            className="
+              flex
+              flex-wrap
+              lg:flex-nowrap
+              gap-3
+              pt-2
+              pb-2
+            "
+          >
             {filters.map((item) => (
               <button
                 key={item}
@@ -349,7 +478,7 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
 
           {/* Right */}
           <div className="flex items-center gap-3">
-            <select
+            {/* <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="
@@ -368,9 +497,14 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
               <option>Latest</option>
               <option>Oldest</option>
               <option>A-Z</option>
-            </select>
+            </select> */}
+            <CustomDropdown
+              value={sortBy}
+              options={["Latest", "Oldest", "A-Z"]}
+              onChange={setSortBy}
+            />
 
-            <button
+            {/* <button
               onClick={() => setView("grid")}
               className={`
                 w-11
@@ -412,7 +546,7 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
               `}
             >
               <List size={18} />
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
@@ -420,8 +554,194 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
   );
 }
 
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <Link
+      to={project.slug}
+      className="
+        group
+        flex
+        flex-col
+        h-full
+        bg-white
+        rounded-[26px]
+        overflow-hidden
+        border
+        border-[#E8DED2]
+        transition-all
+        duration-500
+        hover:-translate-y-2
+        hover:shadow-[0_18px_50px_rgba(0,0,0,.10)]
+      "
+    >
+      <div className="overflow-hidden rounded-t-[24px]">
+        <img
+          src={project.image}
+          className="
+            w-full
+            aspect-[4/3]
+            object-cover
+            transition-transform
+            duration-700
+            group-hover:scale-105
+        "
+        />
+      </div>
+
+      <div className="flex flex-col flex-1 p-4 sm:p-5 lg:p-6">
+        <h3
+          className="
+            min-h-[80px]
+            text-[24px]
+            lg:text-[28px]
+            leading-[1.15]
+            font-semibold
+            text-[#2B231E]
+          "
+          style={{
+            fontFamily: "Cormorant Garamond",
+          }}
+        >
+          {project.title}
+        </h3>
+
+        <div className="mt-3 flex items-center gap-2">
+          <MapPin size={14} className="text-[#D89A2B] flex-shrink-0" />
+
+          <span
+            className="text-[14px] text-[#746C63]"
+            style={{ fontFamily: "Parkinsans" }}
+          >
+            {project.location}
+          </span>
+        </div>
+
+        <div
+          className="
+            mt-auto
+            pt-6
+            flex
+            items-center
+            gap-2
+            text-[#D89A2B]
+            text-[15px]
+            font-medium
+            transition-all
+            duration-300
+            group-hover:gap-3
+          "
+        >
+          View Project
+          <ArrowRight
+            size={18}
+            className="group-hover:translate-x-1 transition"
+          />
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function ProjectGrid({
+  projects,
+  view,
+}: {
+  projects: Project[];
+  view: "grid" | "list";
+}) {
+  return (
+    <section className="bg-[#F5F1EA] pb-16">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
+        <div
+          className="
+            grid
+            gap-8
+            items-stretch
+            sm:grid-cols-2
+            lg:grid-cols-3
+            xl:grid-cols-4
+          "
+        >
+          <AnimatePresence mode="popLayout">
+            {projects.map((project) => (
+              <motion.div
+                layout
+                initial={{
+                  opacity: 0,
+                  y: 40,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: -40,
+                }}
+                transition={{
+                  duration: 0.35,
+                }}
+                key={project.id}
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectPagination() {
+  return (
+    <section className="bg-[#F5F1EA] pb-24">
+      <div className="flex justify-center items-center gap-3">
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          <ChevronLeft size={18} />
+        </button>
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#D89A2B] text-white">
+          1
+        </button>
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          2
+        </button>
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          3
+        </button>
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          ...
+        </button>
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          6
+        </button>
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          <ChevronRight size={18} />
+        </button>
+      </div>
+    </section>
+  );
+}
+
 export default function ProjectList() {
   const { category } = useParams();
+
+  const [activeFilter, setActiveFilter] = useState("All Projects");
+
+  const [sortBy, setSortBy] = useState("Latest");
+
+  const [view, setView] = useState<"grid" | "list">("grid");
+
+  const filteredProjects =
+    activeFilter === "All Projects"
+      ? projects
+      : projects.filter((x) => x.category === activeFilter);
   const valid =
     category === "corporate" || category === "civil"
       ? (category as ProjectCategory)
@@ -444,6 +764,24 @@ export default function ProjectList() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
+        {/* Hero */}
+        <HeroSection />
+
+        {/* Filter */}
+        <ProjectFilters
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          view={view}
+          setView={setView}
+        />
+
+        {/* Project Grid */}
+        <ProjectGrid projects={filteredProjects} view={view} />
+
+        {/* Pagination */}
+        <ProjectPagination />
         <HeroSection category={valid} />
         <ProjectFilters category={valid} />
       </div>

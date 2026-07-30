@@ -11,7 +11,7 @@ import {
   Landmark,
   ArrowRight,
 } from "lucide-react";
-import projectBanner from "../assets/images/project-banner.png"; // your image
+import projectBanner from "../assets/images/project-banner.png";
 import corporateCategory from "../assets/images/project-category-corporate.png";
 import civilCategory from "../assets/images/project-category-corporate.png";
 
@@ -636,6 +636,7 @@ export default function Projects() {
           title="Featured Projects"
           description="Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences."
           button="View All Corporate Projects"
+          viewAllLink="/projects/corporate"
           projects={corporateProjects}
         />
 
@@ -646,6 +647,7 @@ export default function Projects() {
           description="Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality."
           subtitle="CIVIL STRUCTURES"
           button="View All Civil Projects"
+          viewAllLink="/projects/civil"
           projects={civilProjects}
         />
 
