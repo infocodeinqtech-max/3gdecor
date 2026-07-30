@@ -253,8 +253,8 @@ function mergeServicesFromSite(stored: Array<Record<string, unknown>>) {
 }
 
 /** Load all homepage CMS blocks once (single /cms-public/site request). */
-export async function loadHomepageCms() {
-  const site = await loadPublicSiteCms();
+export async function loadHomepageCms(force = false) {
+  const site = await loadPublicSiteCms(force);
 
   const about = mergeAboutFromSite(site.about ?? undefined);
   const expertiseSection = {

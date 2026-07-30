@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import Footer from "../app/components/Footer";
@@ -37,6 +37,7 @@ import {
   sanitizeMobileInput,
 } from "../utils/validation";
 import { mediaUrl } from "../utils/mediaUrl";
+import { toPublicErrorMessage } from "../utils/publicError";
 
 const fieldVariants = {
   hidden: { opacity: 0, y: 20, filter: "blur(6px)" },
@@ -322,11 +323,10 @@ export default function Contact() {
   const [emailHint, setEmailHint] = useState<string | null>(null);
   const [contactPageContent, setContactPageContent] =
     useState<ContactPageContent>(seedContactPage);
-  // Separate state for the hero — set only once on first CMS load so subsequent
-  // office/form state changes don't replay banner blur/fade animations.
+  // Hero uses its own state so office/form updates don't remount motion animations.
+  // CMS updates (including banner image) still refresh heroContent.
   const [heroContent, setHeroContent] =
     useState<ContactPageContent>(seedContactPage);
-  const heroSet = useRef(false);
   const [otpModalOpen, setOtpModalOpen] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [otpExpiresIn, setOtpExpiresIn] = useState(0);
@@ -338,7 +338,7 @@ export default function Contact() {
 
   useEffect(() => {
     const reload = () => {
-      loadPublicSiteCms()
+      loadPublicSiteCms(true)
         .then((site) => {
           if (site.contactPage && typeof site.contactPage === "object") {
             const merged = {
@@ -346,18 +346,12 @@ export default function Contact() {
               ...(site.contactPage as ContactPageContent),
             };
             setContactPageContent(merged);
-            if (!heroSet.current) {
-              setHeroContent(merged);
-              heroSet.current = true;
-            }
+            setHeroContent(merged);
           } else {
             getContent<ContactPageContent>("contact-page", seedContactPage).then(
               (data) => {
                 setContactPageContent(data);
-                if (!heroSet.current) {
-                  setHeroContent(data);
-                  heroSet.current = true;
-                }
+                setHeroContent(data);
               },
             );
           }
@@ -442,15 +436,13 @@ export default function Contact() {
           : "OTP sent to your email. Please verify to submit inquiry.",
       );
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to send OTP. Please retry.",
-      );
+      toast.error(toPublicErrorMessage(err));
     } finally {
       setOtpSending(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     const inquiryLabel = selectedInquiry?.label ?? form.inquiry;
     const payload: EnquiryPayload = {
@@ -504,7 +496,7 @@ export default function Contact() {
       if (pendingPayload) handleEnquirySubmitted();
       setPendingPayload(null);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "OTP verification failed");
+      toast.error(toPublicErrorMessage(err));
     } finally {
       setOtpVerifying(false);
     }

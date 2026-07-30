@@ -10,6 +10,8 @@ import {
   getListContent,
   updateListItem,
 } from "../utils/contentStorage";
+import { MEDIA_MAX_SIZE_MB } from "../utils/mediaUploadRules";
+import { toAdminErrorMessage } from "../../utils/publicError";
 
 export interface CrudField {
   name: string;
@@ -27,6 +29,13 @@ export interface CrudField {
   inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   pattern?: string;
   helperText?: string;
+  /** Image recommend size / crop target */
+  recommendedWidth?: number;
+  recommendedHeight?: number;
+  aspect?: number | null;
+  imageHint?: string;
+  /** public/uploads/{section}/ folder */
+  uploadSection?: string;
 }
 
 interface AdminCrudPageProps<T extends { id: number | string }> {
@@ -41,6 +50,8 @@ interface AdminCrudPageProps<T extends { id: number | string }> {
   allowCreate?: boolean;
   /** Return an error message to block save, or null if ok. */
   validateForm?: (form: Record<string, unknown>) => string | null;
+  /** Rows per page for the listing table. Default 10. */
+  pageSize?: number;
 }
 
 function FormField({
@@ -60,7 +71,12 @@ function FormField({
         label={field.label}
         value={(value as string) || ""}
         onChange={(v) => onChange(field.name, v)}
-        maxSizeMb={8}
+        maxSizeMb={MEDIA_MAX_SIZE_MB}
+        section={field.uploadSection || "misc"}
+        recommendedWidth={field.recommendedWidth}
+        recommendedHeight={field.recommendedHeight}
+        aspect={field.aspect}
+        hint={field.imageHint ?? field.helperText}
       />
     );
   }
@@ -161,6 +177,7 @@ export default function AdminCrudPage<T extends { id: number | string }>({
   readOnly = false,
   allowCreate = true,
   validateForm,
+  pageSize = 10,
 }: AdminCrudPageProps<T>) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -172,11 +189,12 @@ export default function AdminCrudPage<T extends { id: number | string }>({
   const load = async () => {
     setLoading(true);
     try {
-      const rows = await getListContent(storageKey, seedData);
+      // Never treat seedData as live DB rows (avoids fake ids → duplicate inserts).
+      const rows = await getListContent(storageKey, []);
       setData(rows);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load");
-      setData(seedData);
+      toast.error(toAdminErrorMessage(err));
+      setData([]);
     } finally {
       setLoading(false);
     }
@@ -212,7 +230,7 @@ export default function AdminCrudPage<T extends { id: number | string }>({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationError = validateForm?.(form);
     if (validationError) {
@@ -234,7 +252,7 @@ export default function AdminCrudPage<T extends { id: number | string }>({
       }
       setModalOpen(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Save failed");
+      toast.error(toAdminErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -247,7 +265,7 @@ export default function AdminCrudPage<T extends { id: number | string }>({
       setData((prev) => prev.filter((d) => d.id !== row.id));
       toast.success("Deleted");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Delete failed");
+      toast.error(toAdminErrorMessage(err));
     }
   };
 
@@ -282,6 +300,7 @@ export default function AdminCrudPage<T extends { id: number | string }>({
         onEdit={readOnly || fields.length === 0 ? undefined : openEdit}
         onDelete={readOnly ? undefined : handleDelete}
         readOnly={readOnly}
+        pageSize={pageSize}
       />
 
       <AnimatePresence>

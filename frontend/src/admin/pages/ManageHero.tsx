@@ -67,7 +67,7 @@ export default function ManageHero() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {
@@ -146,8 +146,11 @@ export default function ManageHero() {
               label="Hero Background"
               value={form.backgroundImage}
               onChange={(v) => update("backgroundImage", v)}
-              maxSizeMb={8}
-              hint="Wide image recommended. Empty = default hero image."
+              maxSizeMb={2}
+              section="hero"
+              recommendedWidth={1920}
+              recommendedHeight={1080}
+              hint="Wide full-bleed hero banner. Empty = default hero image."
             />
           </section>
 

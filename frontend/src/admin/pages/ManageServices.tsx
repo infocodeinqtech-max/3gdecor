@@ -1,10 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Save, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import ImageUpload from "../components/ImageUpload";
 import SectionEditor from "../components/SectionEditor";
-import { getListContent, saveListContent } from "../utils/contentStorage";
+import {
+  getListContent,
+  createListItem,
+  updateListItem,
+  deleteListItem,
+} from "../utils/contentStorage";
+import { MEDIA_MAX_SIZE_MB } from "../utils/mediaUploadRules";
 import {
   seedServicesSection,
   seedServices,
@@ -18,11 +24,30 @@ export default function ManageServices() {
   const [services, setServices] = useState<ServiceItem[]>(seedServices);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  /** IDs that already exist in DB (active rows loaded on mount / last save). */
+  const loadedIdsRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     (async () => {
-      const rows = await getListContent("services", seedServices);
-      setServices(mergeServices(rows));
+      const rows = await getListContent("services", []);
+      if (rows.length > 0) {
+        const next = normalizeServices(rows);
+        setServices(next);
+        loadedIdsRef.current = new Set(
+          next
+            .map((r) => Number(r.id))
+            .filter((id) => Number.isFinite(id) && id > 0),
+        );
+      } else {
+        // No active DB rows — show seeds as new (will INSERT on save).
+        setServices(
+          seedServices.map((s) => ({
+            ...s,
+            id: -Math.abs(Number(s.id) || Date.now()),
+          })),
+        );
+        loadedIdsRef.current = new Set();
+      }
       setLoading(false);
     })();
   }, []);
@@ -41,7 +66,7 @@ export default function ManageServices() {
     setServices((prev) => [
       ...prev,
       {
-        id: Date.now(),
+        id: -Date.now(), // temporary client id (not in DB)
         category: "New Category",
         title: "New Service",
         description: "Service description",
@@ -58,11 +83,46 @@ export default function ManageServices() {
     setServices((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await saveListContent("services", services);
+      const knownIds = loadedIdsRef.current;
+      const currentDbIds = new Set(
+        services
+          .map((s) => Number(s.id))
+          .filter((id) => knownIds.has(id)),
+      );
+
+      // Soft-delete removed rows (active = 0)
+      for (const id of knownIds) {
+        if (!currentDbIds.has(id)) {
+          await deleteListItem("services", id);
+        }
+      }
+
+      const saved: ServiceItem[] = [];
+      for (let i = 0; i < services.length; i++) {
+        const s = services[i];
+        const payload = {
+          title: s.title,
+          category: s.category,
+          description: s.description,
+          backgroundImage: s.backgroundImage,
+          sort_order: i + 1,
+        };
+
+        if (knownIds.has(Number(s.id))) {
+          const updated = await updateListItem("services", s.id, payload);
+          saved.push(mapServiceRow(updated, s));
+        } else {
+          const created = await createListItem("services", payload);
+          saved.push(mapServiceRow(created, s));
+        }
+      }
+
+      setServices(saved);
+      loadedIdsRef.current = new Set(saved.map((s) => Number(s.id)));
       toast.success("Services saved to database");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Save failed");
@@ -137,8 +197,11 @@ export default function ManageServices() {
                 label="Category Background Image"
                 value={service.backgroundImage}
                 onChange={(v) => updateService(index, "backgroundImage", v)}
-                maxSizeMb={8}
-                hint="This image shows as the section background when hovering the card."
+                maxSizeMb={MEDIA_MAX_SIZE_MB}
+                section="services"
+                recommendedWidth={1920}
+                recommendedHeight={1080}
+                hint="Full-section background when hovering this category card."
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -183,7 +246,8 @@ export default function ManageServices() {
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="admin-note rounded-xl p-4 text-sm flex-1">
-            Upload one background image per category. Save to update the homepage services section.
+            Existing rows are updated in place. Removed categories are soft-deleted
+            (active = 0). New categories are inserted once.
           </div>
           <button
             type="submit"
@@ -199,23 +263,28 @@ export default function ManageServices() {
   );
 }
 
-function mergeServices(stored: ServiceItem[]): ServiceItem[] {
-  const merged = seedServices.map((seedItem, index) => {
-    const storedItem =
-      stored.find((item) => item.id === seedItem.id) ?? stored[index];
-    if (!storedItem) return seedItem;
+function normalizeServices(stored: ServiceItem[]): ServiceItem[] {
+  if (!stored.length) return seedServices.map((s) => ({ ...s }));
+  return stored.map((item) => ({
+    id: Number(item.id),
+    title: item.title || "",
+    category: item.category || "",
+    description: item.description || "",
+    backgroundImage: item.backgroundImage?.trim() || "",
+  }));
+}
 
-    return {
-      ...seedItem,
-      ...storedItem,
-      backgroundImage:
-        storedItem.backgroundImage?.trim() || seedItem.backgroundImage,
-    };
-  });
-
-  const extras = stored.filter(
-    (item) => !merged.some((mergedItem) => mergedItem.id === item.id),
-  );
-
-  return [...merged, ...extras];
+function mapServiceRow(
+  row: Record<string, unknown>,
+  fallback: ServiceItem,
+): ServiceItem {
+  return {
+    id: Number(row.id ?? fallback.id),
+    title: String(row.title ?? fallback.title),
+    category: String(row.category ?? fallback.category),
+    description: String(row.description ?? fallback.description),
+    backgroundImage: String(
+      row.backgroundImage ?? row.background_image ?? fallback.backgroundImage,
+    ),
+  };
 }

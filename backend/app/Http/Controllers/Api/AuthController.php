@@ -20,25 +20,19 @@ class AuthController extends Controller
 
     /**
      * POST /api/auth/login
-     * Body: email, password, role (optional filter)
+     * Body: email, password — role comes from the user record in DB
      */
     public function login(Request $request)
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'role' => ['nullable', 'in:superadmin,admin'],
         ]);
 
-        $query = User::query()
+        $user = User::query()
             ->where('email', $data['email'])
-            ->where('active', true);
-
-        if (! empty($data['role'])) {
-            $query->where('role', $data['role']);
-        }
-
-        $user = $query->first();
+            ->where('active', true)
+            ->first();
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([

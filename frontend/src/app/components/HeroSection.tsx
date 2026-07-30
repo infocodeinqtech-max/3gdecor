@@ -31,7 +31,7 @@ export default function HeroSection() {
 
   useEffect(() => {
     const reload = () => {
-      loadPublicSiteCms()
+      loadPublicSiteCms(true)
         .then((site) => {
           if (site.hero && typeof site.hero === "object") {
             setHero({ ...seedHero, ...(site.hero as HeroContent) });

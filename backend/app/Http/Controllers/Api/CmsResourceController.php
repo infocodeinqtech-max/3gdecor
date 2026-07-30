@@ -157,7 +157,7 @@ class CmsResourceController extends Controller
         ]);
     }
 
-    /** Replace entire list — deactivate old rows, create new active rows */
+    /** Upsert list items: update existing ids, create new, soft-delete removed. */
     public function listSync(Request $request, string $resource)
     {
         $cfg = CmsRegistry::lists()[$resource] ?? null;
@@ -171,22 +171,47 @@ class CmsResourceController extends Controller
         ])['data'];
 
         $model = $cfg['model'];
-        $deactivate = $model::query();
+        $keptIds = [];
+        $out = [];
+
+        foreach ($items as $i => $item) {
+            $itemArr = is_array($item) ? $item : [];
+            $payload = $cfg['map_in']($itemArr);
+            $payload['sort_order'] = (int) ($payload['sort_order'] ?? ($i + 1));
+            if ($payload['sort_order'] === 0) {
+                $payload['sort_order'] = $i + 1;
+            }
+            $payload['active'] = true;
+
+            $id = isset($itemArr['id']) ? (int) $itemArr['id'] : 0;
+            $existing = null;
+            if ($id > 0) {
+                $existing = $model::query()->find($id);
+                if ($existing && ! empty($cfg['item_type']) && $existing->item_type !== $cfg['item_type']) {
+                    $existing = null;
+                }
+            }
+
+            if ($existing) {
+                // Never recreate — update the same row
+                unset($payload['active']); // keep active unless we set true below
+                $payload['active'] = true;
+                $existing->update($payload);
+                $row = $existing->fresh();
+            } else {
+                $row = $model::query()->create($payload);
+            }
+
+            $keptIds[] = $row->id;
+            $out[] = ($cfg['map_out'])($row);
+        }
+
+        // Soft-delete only rows not present in the submitted list
+        $deactivate = $model::query()->whereNotIn('id', $keptIds ?: [0]);
         if (! empty($cfg['item_type'])) {
             $deactivate->where('item_type', $cfg['item_type']);
         }
         $deactivate->update(['active' => false]);
-
-        $out = [];
-        foreach ($items as $i => $item) {
-            $payload = $cfg['map_in'](is_array($item) ? $item : []);
-            if (! isset($payload['sort_order']) || $payload['sort_order'] === 0) {
-                $payload['sort_order'] = $i + 1;
-            }
-            $payload['active'] = true;
-            $row = $model::query()->create($payload);
-            $out[] = ($cfg['map_out'])($row);
-        }
 
         $this->bustPublicCache($resource);
 

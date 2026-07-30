@@ -92,11 +92,28 @@ export const STANDALONE_ASSIGNABLE_MENUS: AdminMenuItem[] = ASSIGNABLE_MENUS.fil
   (menu) => !HOME_PAGE_SECTION_MENU_IDS.includes(menu.id),
 );
 
+const KNOWN_MENU_SEGMENTS = new Set<string>([
+  "dashboard",
+  "navigation",
+  "hero",
+  "about",
+  "expertise",
+  "projects",
+  "services",
+  "process",
+  "testimonials",
+  "footer",
+  "contact-offices",
+  "enquiries",
+  "users",
+  "profile",
+]);
+
 export function getMenuIdFromPath(pathname: string): MenuId | null {
   if (!pathname.startsWith("/admin")) return null;
   const segment = pathname.replace(/^\/admin\/?/, "").split("/")[0];
   if (!segment) return "dashboard";
-  if (segment === "profile") return "profile";
+  if (!KNOWN_MENU_SEGMENTS.has(segment)) return null;
   return segment as MenuId;
 }
 

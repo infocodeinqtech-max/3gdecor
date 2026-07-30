@@ -1,6 +1,7 @@
 import SectionEditor from "../components/SectionEditor";
 import AdminCrudPage from "../components/AdminCrudPage";
 import { seedExpertiseSection, seedExpertise } from "../data/seedContent";
+import { mediaUrl } from "../../utils/mediaUrl";
 
 export default function ManageExpertise() {
   return (
@@ -28,7 +29,7 @@ export default function ManageExpertise() {
             label: "Image",
             render: (row) =>
               row.image ? (
-                <img src={row.image} alt="" className="w-14 h-10 rounded-lg object-cover border border-[#E8DFD2]" />
+                <img src={mediaUrl(row.image) || row.image} alt="" className="w-14 h-10 rounded-lg object-cover border border-[#E8DFD2]" />
               ) : (
                 "—"
               ),
@@ -39,7 +40,7 @@ export default function ManageExpertise() {
         fields={[
           { name: "title", label: "Title" },
           { name: "description", label: "Description", type: "textarea" },
-          { name: "image", label: "Card Image", type: "image" },
+          { name: "image", label: "Card Image", type: "image", uploadSection: "expertise", recommendedWidth: 800, recommendedHeight: 1200, imageHint: "Portrait card photo for expertise section." },
         ]}
       />
     </div>

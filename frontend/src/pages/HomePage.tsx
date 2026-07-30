@@ -146,7 +146,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const reload = () => {
-      loadHomepageCms().then(setCms).catch(() => undefined);
+      loadHomepageCms(true).then(setCms).catch(() => undefined);
     };
     reload();
     return subscribeCmsUpdated(reload);

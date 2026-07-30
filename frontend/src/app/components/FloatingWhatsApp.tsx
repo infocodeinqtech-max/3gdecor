@@ -25,7 +25,7 @@ export default function FloatingWhatsApp() {
 
   useEffect(() => {
     const reload = () => {
-      loadPublicSiteCms()
+      loadPublicSiteCms(true)
         .then((site) => {
           const contact = site.siteContact as { whatsappNumber?: string } | null;
           const fromCms = contact?.whatsappNumber?.trim();

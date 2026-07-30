@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CmsResourceController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EnquiryController;
 use App\Http\Controllers\Api\AboutPageController;
+use App\Http\Controllers\Api\MediaUploadController;
 use Illuminate\Support\Facades\Route;
 
 // Auth (public)
@@ -29,6 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/change-password/otp/verify', [AuthController::class, 'verifyChangePasswordOtp']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Media uploads → public/uploads/{section}/...
+    Route::post('/media/upload', [MediaUploadController::class, 'upload']);
 
     // CMS lists CRUD
     Route::post('/cms-lists/{resource}', [CmsResourceController::class, 'listStore']);

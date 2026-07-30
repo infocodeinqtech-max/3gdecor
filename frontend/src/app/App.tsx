@@ -7,6 +7,7 @@ import ContactUs from "../pages/ContactUs";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Projects from "../pages/Projects";
 import ProjectList from "../pages/ProjectList";
+import NotFound from "../pages/NotFound";
 // import ViewProject from "../pages/ViewProject";
 import AdminLayout from "../admin/layouts/AdminLayout";
 import AdminLogin from "../admin/pages/AdminLogin";
@@ -26,63 +27,70 @@ import ManageFooter from "../admin/pages/ManageFooter";
 import ManageEnquiries from "../admin/pages/ManageEnquiries";
 
 import CustomCursor from "./components/CustomCursor";
+import AppErrorBoundary from "./components/AppErrorBoundary";
 
 export default function App() {
   return (
     <BrowserRouter basename="/">
-      <CustomCursor />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/projects/:category" element={<ProjectList />} />
-        {/* <Route
+      <AppErrorBoundary>
+        <CustomCursor />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:category" element={<ProjectList />} />
+          {/* <Route
   path="/projects/:category/:slug"
   element={<ViewProject />}
 /> */}
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/*" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="profile" element={<AdminProfile />} />
-          <Route path="users" element={<ManageAdmins />} />
-          <Route path="navigation" element={<ManageNavigation />} />
-          <Route path="hero" element={<ManageHero />} />
-          <Route path="about" element={<ManageAbout />} />
-          <Route path="expertise" element={<ManageExpertise />} />
-          <Route path="projects" element={<ManageProjects />} />
-          <Route path="services" element={<ManageServices />} />
-          <Route path="process" element={<ManageProcess />} />
-          <Route path="testimonials" element={<ManageTestimonials />} />
-          <Route path="footer" element={<ManageFooter />} />
-          <Route path="contact-offices" element={<ManageContactOffices />} />
-          <Route path="enquiries" element={<ManageEnquiries />} />
-        </Route>
-      </Routes>
-      <Toaster
-        position="top-right"
-        closeButton
-        expand
-        visibleToasts={4}
-        toastOptions={{
-          unstyled: false,
-          classNames: {
-            toast: "threeg-toast",
-            title: "threeg-toast__title",
-            description: "threeg-toast__description",
-            closeButton: "threeg-toast__close",
-            actionButton: "threeg-toast__action",
-            cancelButton: "threeg-toast__cancel",
-            success: "threeg-toast--success",
-            error: "threeg-toast--error",
-            warning: "threeg-toast--warning",
-            info: "threeg-toast--info",
-          },
-        }}
-      />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/*" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="users" element={<ManageAdmins />} />
+            <Route path="navigation" element={<ManageNavigation />} />
+            <Route path="hero" element={<ManageHero />} />
+            <Route path="about" element={<ManageAbout />} />
+            <Route path="expertise" element={<ManageExpertise />} />
+            <Route path="projects" element={<ManageProjects />} />
+            <Route path="services" element={<ManageServices />} />
+            <Route path="process" element={<ManageProcess />} />
+            <Route path="testimonials" element={<ManageTestimonials />} />
+            <Route path="footer" element={<ManageFooter />} />
+            <Route path="contact-offices" element={<ManageContactOffices />} />
+            <Route path="enquiries" element={<ManageEnquiries />} />
+            <Route path="*" element={<NotFound embed />} />
+          </Route>
+
+          {/* Public catch-all */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster
+          position="top-right"
+          closeButton
+          expand
+          visibleToasts={4}
+          toastOptions={{
+            unstyled: false,
+            classNames: {
+              toast: "threeg-toast",
+              title: "threeg-toast__title",
+              description: "threeg-toast__description",
+              closeButton: "threeg-toast__close",
+              actionButton: "threeg-toast__action",
+              cancelButton: "threeg-toast__cancel",
+              success: "threeg-toast--success",
+              error: "threeg-toast--error",
+              warning: "threeg-toast--warning",
+              info: "threeg-toast--info",
+            },
+          }}
+        />
+      </AppErrorBoundary>
     </BrowserRouter>
   );
 }

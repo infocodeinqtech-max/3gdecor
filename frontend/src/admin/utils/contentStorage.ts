@@ -59,20 +59,45 @@ export async function getListContent<T extends IdItem>(
   }
 }
 
-/** Replace entire list via sync endpoint */
+/** Upsert a full list: update existing ids, create new, soft-delete removed. */
 export async function saveListContent<T extends IdItem>(
   key: string,
   data: T[],
-): Promise<void> {
+): Promise<T[]> {
   if (key === "enquiries") {
-    // Enquiries are managed via create/delete/status, not full sync
-    return;
+    return [];
   }
-  await apiRequest(`/cms-lists/${key}/sync`, {
-    method: "PUT",
-    body: { data },
-  });
+
+  const current = await getListContent<T>(key, []);
+  const currentIds = new Set(current.map((r) => String(r.id)));
+
+  // Soft-delete removed rows only
+  for (const row of current) {
+    if (!data.some((d) => String(d.id) === String(row.id))) {
+      await deleteListItem(key, row.id);
+    }
+  }
+
+  const saved: T[] = [];
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    const payload = {
+      ...(item as Record<string, unknown>),
+      sort_order: i + 1,
+    };
+
+    if (currentIds.has(String(item.id)) && Number(item.id) > 0) {
+      const updated = await updateListItem(key, item.id, payload);
+      saved.push(updated as T);
+    } else {
+      const { id: _omit, ...rest } = payload;
+      const created = await createListItem(key, rest);
+      saved.push(created as T);
+    }
+  }
+
   notifyCmsUpdated(`sync:${key}`);
+  return saved;
 }
 
 export async function createListItem(

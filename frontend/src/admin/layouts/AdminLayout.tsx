@@ -23,11 +23,17 @@ export default function AdminLayout() {
 
   const menuId = getMenuIdFromPath(location.pathname);
 
+  // Unknown admin paths fall through to nested <Route path="*" /> → NotFound
   if (menuId === "users" && !isSuperAdmin) {
     return <Navigate to="/admin" replace />;
   }
 
-  if (menuId && menuId !== "profile" && !hasPermission(menuId)) {
+  if (
+    menuId &&
+    menuId !== "profile" &&
+    menuId !== "dashboard" &&
+    !hasPermission(menuId)
+  ) {
     return <Navigate to="/admin" replace />;
   }
 
