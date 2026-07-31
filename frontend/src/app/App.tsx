@@ -29,6 +29,10 @@ import ManageEnquiries from "../admin/pages/ManageEnquiries";
 import CustomCursor from "./components/CustomCursor";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 
+/** Code Start by Moumita */
+import AboutPageHero from "../admin/pages/AboutPageHero";
+/** End Moumita */
+
 export default function App() {
   return (
     <BrowserRouter basename="/">

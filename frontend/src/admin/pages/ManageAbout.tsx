@@ -1,22 +1,38 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Save } from "lucide-react";
+import { Save, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import ImageUpload from "../components/ImageUpload";
-import { setContent, getContent } from "../utils/contentStorage";
-import { seedAbout } from "../data/seedContent";
+import {
+  getContent,
+  setContent,
+  getListContent,
+  saveListContent,
+} from "../utils/contentStorage";
+import {
+  seedAbout,
+  type HeroFeature,
+} from "../data/seedContent";
 
 const inputClass = "w-full px-4 py-2.5 rounded-xl admin-input";
 const cardClass = "admin-card rounded-2xl p-5 space-y-3 h-full";
 
 export default function ManageAbout() {
   const [form, setForm] = useState(seedAbout);
+  const [features, setFeatures] = useState<HeroFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     (async () => {
-      setForm(await getContent("about", seedAbout));
+      const about = await getContent("about", seedAbout);
+      const heroFeatures = await getListContent<HeroFeature>(
+        "about-page-hero-features",
+        [],
+      );
+      setForm(about);
+      setFeatures(heroFeatures);
+
       setLoading(false);
     })();
   }, []);
@@ -33,12 +49,49 @@ export default function ManageAbout() {
     });
   };
 
+  const updateFeature = (
+  index: number,
+  field: keyof HeroFeature,
+  value: string | number | boolean,
+) => {
+  setFeatures((prev) =>
+    prev.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item,
+    ),
+  );
+};
+
+const addFeature = () => {
+  setFeatures((prev) => [
+    ...prev,
+    {
+      id: Date.now(),
+      icon: "",
+      title: "",
+      description: "",
+      sort_order: prev.length + 1,
+      active: true,
+    },
+  ]);
+};
+
+const removeFeature = (index: number) => {
+  setFeatures((prev) => prev.filter((_, i) => i !== index));
+};
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await setContent("about", form);
-      toast.success("About section saved to database");
+      await Promise.all([
+        setContent("about", form),
+        saveListContent(
+          "about-page-hero-features",
+          features,
+        ),
+      ]);
+
+      toast.success("About section saved successfully");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Save failed");
     } finally {
