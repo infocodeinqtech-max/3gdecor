@@ -23,10 +23,16 @@ export default function AdminSidebar() {
     return items;
   }, [hasPermission, isSuperAdmin]);
 
-  const standaloneLinks = useMemo(
-    () => links.filter((item) => STANDALONE_ASSIGNABLE_MENUS.some((m) => m.id === item.id)),
-    [links],
-  );
+  const standaloneLinks = useMemo(() => {
+    const base = links.filter((item) =>
+      STANDALONE_ASSIGNABLE_MENUS.some((m) => m.id === item.id),
+    );
+    // Super Admin: Admin Users after Enquiries / other standalone items
+    const users = isSuperAdmin
+      ? SUPERADMIN_MENUS.filter((m) => links.some((l) => l.id === m.id))
+      : [];
+    return [...base, ...users];
+  }, [links, isSuperAdmin]);
 
   const homeSectionLinks = useMemo(
     () => links.filter((item) => HOME_PAGE_SECTION_GROUP.items.some((m) => m.id === item.id)),
