@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardCards, { type DashboardCard } from "../components/DashboardCards";
 import { useAuth } from "../../context/AuthContext";
@@ -43,7 +43,7 @@ function getOverviewValue(menuId: MenuId, counts: DashCounts): string {
 }
 
 export default function Dashboard() {
-  const { hasPermission, isSuperAdmin } = useAuth();
+  const { hasPermission } = useAuth();
   const [counts, setCounts] = useState<DashCounts>({});
   const [recentEnquiries, setRecentEnquiries] = useState<
     { id: string; name: string; email: string; service?: string; status?: string }[]
@@ -65,30 +65,30 @@ export default function Dashboard() {
     return subscribeCmsUpdated(reload);
   }, []);
 
-  const permittedMenus = useMemo(() => {
-    const items = ASSIGNABLE_MENUS.filter(
-      (m) => m.id === "dashboard" || hasPermission(m.id),
-    );
-    if (isSuperAdmin) {
-      return [...items, ...SUPERADMIN_MENUS];
-    }
-    return items;
-  }, [hasPermission, isSuperAdmin]);
+  const DASHBOARD_CARD_ORDER: MenuId[] = [
+    "enquiries",
+    "projects",
+    "services",
+    "contact-offices",
+  ];
 
-  const cards: DashboardCard[] = permittedMenus
-    .filter((m) => m.id !== "dashboard")
-    .map((m) => ({
-      icon: m.icon,
-      label: m.label,
-      value: getOverviewValue(m.id, counts),
-      path: m.path,
-      trend:
-        m.id === "enquiries"
-          ? "New"
-          : m.id === "users"
-            ? "Active"
-            : "Manage",
-    }));
+  const cards: DashboardCard[] = DASHBOARD_CARD_ORDER.filter((id) =>
+    hasPermission(id),
+  )
+    .map((id) => {
+      const menu = [...ASSIGNABLE_MENUS, ...SUPERADMIN_MENUS].find(
+        (m) => m.id === id,
+      );
+      if (!menu) return null;
+      return {
+        icon: menu.icon,
+        label: menu.label,
+        value: getOverviewValue(menu.id, counts),
+        path: menu.path,
+        trend: menu.id === "enquiries" ? "New" : "Manage",
+      } satisfies DashboardCard;
+    })
+    .filter((c): c is DashboardCard => c !== null);
 
   return (
     <div>
