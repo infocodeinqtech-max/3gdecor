@@ -98,9 +98,6 @@ export default function FeaturedProjects(props: Props) {
 
             <button
               onClick={() => {
-                console.log("viewAllLink:", viewAllLink);
-                console.log("typeof:", typeof viewAllLink);
-
                 navigate(viewAllLink);
               }}
               className="

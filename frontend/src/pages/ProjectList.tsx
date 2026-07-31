@@ -3,8 +3,6 @@ import Footer from "../app/components/Footer";
 import CustomDropdown from "../app/components/CustomDropdown";
 import { Link, useParams } from "react-router-dom";
 import NotFound from "./NotFound";
-import { useParams } from "react-router-dom";
-import { motion } from "framer-motion";
 import corporateBanner from "../assets/images/corporate-banner.png";
 import civilBanner from "../assets/images/civil-banner.png";
 import { AnimatePresence, motion } from "framer-motion";
@@ -138,7 +136,6 @@ type Project = {
   image: string;
   slug: string;
 };
-} as const;
 
 type ProjectCategory = keyof typeof projectPages;
 
@@ -407,23 +404,15 @@ function ProjectFilters({
   setView,
 }: {
   activeFilter: string;
-
   setActiveFilter: React.Dispatch<React.SetStateAction<string>>;
-
   sortBy: string;
-
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
-
   view: "grid" | "list";
-
   setView: React.Dispatch<React.SetStateAction<"grid" | "list">>;
 }) {
   const { category } = useParams();
 
-  const pageData = projectPages[category as "corporate" | "civil"];
-function ProjectFilters({ category }: { category: ProjectCategory }) {
-  const pageData = projectPages[category];
-
+  const pageData = projectPages[category as ProjectCategory];
   const filters = pageData.filters;
 
   return (
@@ -440,36 +429,36 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
             //   pb-2
             // "
             className="
-              flex
-              flex-wrap
-              lg:flex-nowrap
-              gap-3
-              pt-2
-              pb-2
-            "
+                  flex
+                  flex-wrap
+                  lg:flex-nowrap
+                  gap-3
+                  pt-2
+                  pb-2
+                "
           >
             {filters.map((item) => (
               <button
                 key={item}
                 onClick={() => setActiveFilter(item)}
                 className={`
-                  px-5
-                  h-11
-                  rounded-xl
-                  border
-                  text-sm
-                  font-medium
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:shadow-md
+                      px-5
+                      h-11
+                      rounded-xl
+                      border
+                      text-sm
+                      font-medium
+                      transition-all
+                      duration-300
+                      hover:-translate-y-0.5
+                      hover:shadow-md
 
-                  ${
-                    activeFilter === item
-                      ? "bg-[#D89A2B] border-[#D89A2B] text-white"
-                      : "bg-white border-[#E6DDD2] text-[#5A5249] hover:border-[#D89A2B] hover:text-[#D89A2B]"
-                  }
-                `}
+                      ${
+                        activeFilter === item
+                          ? "bg-[#D89A2B] border-[#D89A2B] text-white"
+                          : "bg-white border-[#E6DDD2] text-[#5A5249] hover:border-[#D89A2B] hover:text-[#D89A2B]"
+                      }
+                    `}
               >
                 {item}
               </button>
@@ -479,25 +468,25 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
           {/* Right */}
           <div className="flex items-center gap-3">
             {/* <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="
-                h-11
-                min-w-[160px]
-                rounded-xl
-                border
-                border-[#E6DDD2]
-                bg-white
-                px-4
-                text-sm
-                outline-none
-                focus:border-[#D89A2B]
-              "
-            >
-              <option>Latest</option>
-              <option>Oldest</option>
-              <option>A-Z</option>
-            </select> */}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="
+                    h-11
+                    min-w-[160px]
+                    rounded-xl
+                    border
+                    border-[#E6DDD2]
+                    bg-white
+                    px-4
+                    text-sm
+                    outline-none
+                    focus:border-[#D89A2B]
+                  "
+                >
+                  <option>Latest</option>
+                  <option>Oldest</option>
+                  <option>A-Z</option>
+                </select> */}
             <CustomDropdown
               value={sortBy}
               options={["Latest", "Oldest", "A-Z"]}
@@ -505,48 +494,48 @@ function ProjectFilters({ category }: { category: ProjectCategory }) {
             />
 
             {/* <button
-              onClick={() => setView("grid")}
-              className={`
-                w-11
-                h-11
-                rounded-xl
-                border
-                flex
-                items-center
-                justify-center
-                transition-all
+                  onClick={() => setView("grid")}
+                  className={`
+                    w-11
+                    h-11
+                    rounded-xl
+                    border
+                    flex
+                    items-center
+                    justify-center
+                    transition-all
 
-                ${
-                  view === "grid"
-                    ? "bg-[#D89A2B] text-white border-[#D89A2B]"
-                    : "bg-white border-[#E6DDD2] text-[#5A5249]"
-                }
-              `}
-            >
-              <LayoutGrid size={18} />
-            </button>
+                    ${
+                      view === "grid"
+                        ? "bg-[#D89A2B] text-white border-[#D89A2B]"
+                        : "bg-white border-[#E6DDD2] text-[#5A5249]"
+                    }
+                  `}
+                >
+                  <LayoutGrid size={18} />
+                </button>
 
-            <button
-              onClick={() => setView("list")}
-              className={`
-                w-11
-                h-11
-                rounded-xl
-                border
-                flex
-                items-center
-                justify-center
-                transition-all
+                <button
+                  onClick={() => setView("list")}
+                  className={`
+                    w-11
+                    h-11
+                    rounded-xl
+                    border
+                    flex
+                    items-center
+                    justify-center
+                    transition-all
 
-                ${
-                  view === "list"
-                    ? "bg-[#D89A2B] text-white border-[#D89A2B]"
-                    : "bg-white border-[#E6DDD2] text-[#5A5249]"
-                }
-              `}
-            >
-              <List size={18} />
-            </button> */}
+                    ${
+                      view === "list"
+                        ? "bg-[#D89A2B] text-white border-[#D89A2B]"
+                        : "bg-white border-[#E6DDD2] text-[#5A5249]"
+                    }
+                  `}
+                >
+                  <List size={18} />
+                </button> */}
           </div>
         </div>
       </div>
@@ -559,45 +548,45 @@ function ProjectCard({ project }: { project: Project }) {
     <Link
       to={project.slug}
       className="
-        group
-        flex
-        flex-col
-        h-full
-        bg-white
-        rounded-[26px]
-        overflow-hidden
-        border
-        border-[#E8DED2]
-        transition-all
-        duration-500
-        hover:-translate-y-2
-        hover:shadow-[0_18px_50px_rgba(0,0,0,.10)]
-      "
+          group
+          flex
+          flex-col
+          h-full
+          bg-white
+          rounded-[26px]
+          overflow-hidden
+          border
+          border-[#E8DED2]
+          transition-all
+          duration-500
+          hover:-translate-y-2
+          hover:shadow-[0_18px_50px_rgba(0,0,0,.10)]
+        "
     >
       <div className="overflow-hidden rounded-t-[24px]">
         <img
           src={project.image}
           className="
-            w-full
-            aspect-[4/3]
-            object-cover
-            transition-transform
-            duration-700
-            group-hover:scale-105
-        "
+              w-full
+              aspect-[4/3]
+              object-cover
+              transition-transform
+              duration-700
+              group-hover:scale-105
+          "
         />
       </div>
 
       <div className="flex flex-col flex-1 p-4 sm:p-5 lg:p-6">
         <h3
           className="
-            min-h-[80px]
-            text-[24px]
-            lg:text-[28px]
-            leading-[1.15]
-            font-semibold
-            text-[#2B231E]
-          "
+              min-h-[80px]
+              text-[24px]
+              lg:text-[28px]
+              leading-[1.15]
+              font-semibold
+              text-[#2B231E]
+            "
           style={{
             fontFamily: "Cormorant Garamond",
           }}
@@ -618,18 +607,18 @@ function ProjectCard({ project }: { project: Project }) {
 
         <div
           className="
-            mt-auto
-            pt-6
-            flex
-            items-center
-            gap-2
-            text-[#D89A2B]
-            text-[15px]
-            font-medium
-            transition-all
-            duration-300
-            group-hover:gap-3
-          "
+              mt-auto
+              pt-6
+              flex
+              items-center
+              gap-2
+              text-[#D89A2B]
+              text-[15px]
+              font-medium
+              transition-all
+              duration-300
+              group-hover:gap-3
+            "
         >
           View Project
           <ArrowRight
@@ -654,13 +643,13 @@ function ProjectGrid({
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
         <div
           className="
-            grid
-            gap-8
-            items-stretch
-            sm:grid-cols-2
-            lg:grid-cols-3
-            xl:grid-cols-4
-          "
+              grid
+              gap-8
+              items-stretch
+              sm:grid-cols-2
+              lg:grid-cols-3
+              xl:grid-cols-4
+            "
         >
           <AnimatePresence mode="popLayout">
             {projects.map((project) => (
@@ -765,7 +754,7 @@ export default function ProjectList() {
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
         {/* Hero */}
-        <HeroSection />
+        <HeroSection category={valid} />
 
         {/* Filter */}
         <ProjectFilters
@@ -782,8 +771,6 @@ export default function ProjectList() {
 
         {/* Pagination */}
         <ProjectPagination />
-        <HeroSection category={valid} />
-        <ProjectFilters category={valid} />
       </div>
 
       <Footer />
