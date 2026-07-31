@@ -1,11 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import {
-  motion,
-  useInView,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "motion/react";
+import { motion, useInView, AnimatePresence } from "motion/react";
 import {
   Award,
   Users,

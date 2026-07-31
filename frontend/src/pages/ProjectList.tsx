@@ -421,13 +421,6 @@ function ProjectFilters({
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           {/* Left */}
           <div
-            // className="
-            //   flex
-            //   flex-wrap
-            //   gap-3
-            //   pt-2
-            //   pb-2
-            // "
             className="
                   flex
                   flex-wrap
@@ -467,75 +460,11 @@ function ProjectFilters({
 
           {/* Right */}
           <div className="flex items-center gap-3">
-            {/* <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="
-                    h-11
-                    min-w-[160px]
-                    rounded-xl
-                    border
-                    border-[#E6DDD2]
-                    bg-white
-                    px-4
-                    text-sm
-                    outline-none
-                    focus:border-[#D89A2B]
-                  "
-                >
-                  <option>Latest</option>
-                  <option>Oldest</option>
-                  <option>A-Z</option>
-                </select> */}
             <CustomDropdown
               value={sortBy}
               options={["Latest", "Oldest", "A-Z"]}
               onChange={setSortBy}
             />
-
-            {/* <button
-                  onClick={() => setView("grid")}
-                  className={`
-                    w-11
-                    h-11
-                    rounded-xl
-                    border
-                    flex
-                    items-center
-                    justify-center
-                    transition-all
-
-                    ${
-                      view === "grid"
-                        ? "bg-[#D89A2B] text-white border-[#D89A2B]"
-                        : "bg-white border-[#E6DDD2] text-[#5A5249]"
-                    }
-                  `}
-                >
-                  <LayoutGrid size={18} />
-                </button>
-
-                <button
-                  onClick={() => setView("list")}
-                  className={`
-                    w-11
-                    h-11
-                    rounded-xl
-                    border
-                    flex
-                    items-center
-                    justify-center
-                    transition-all
-
-                    ${
-                      view === "list"
-                        ? "bg-[#D89A2B] text-white border-[#D89A2B]"
-                        : "bg-white border-[#E6DDD2] text-[#5A5249]"
-                    }
-                  `}
-                >
-                  <List size={18} />
-                </button> */}
           </div>
         </div>
       </div>

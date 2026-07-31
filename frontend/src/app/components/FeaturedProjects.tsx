@@ -199,15 +199,17 @@ export default function FeaturedProjects(props: Props) {
                     px-0
                     sm:px-3"
                   >
-                    <motion.div
+                    {/* <motion.div
                       whileHover={{
                         boxShadow: "0 18px 40px rgba(0,0,0,.12)",
                       }}
                       transition={{ duration: 0.35 }}
                       className="group cursor-pointer"
-                    >
+                    > */}
+                    <div className="cursor-pointer">
                       <div
                         className="
+                          group
                           relative
                           overflow-hidden
                           rounded-[20px]
@@ -216,26 +218,6 @@ export default function FeaturedProjects(props: Props) {
                           bg-[#F5F1EA]
                         "
                       >
-                        {/* <motion.img
-                          src={project.image}
-                          whileHover={{ scale: 1.06 }}
-                          transition={{ duration: 0.5 }}
-                          //   className="
-                          //   w-full
-                          //   h-[220px]
-                          //   sm:h-[240px]
-                          //   xl:h-[270px]
-                          //   object-cover
-                          // "
-                          className="
-                            w-full
-                            aspect-[4/3]
-                            object-cover
-                            transition-transform
-                            duration-700
-                            group-hover:scale-105
-                            "
-                        /> */}
                         <img
                           src={project.image}
                           className="
@@ -244,6 +226,7 @@ export default function FeaturedProjects(props: Props) {
                             object-cover
                             transition-transform
                             duration-700
+                            ease-out
                             group-hover:scale-105
                           "
                         />
@@ -279,14 +262,14 @@ export default function FeaturedProjects(props: Props) {
                         gap-2
                         text-[#D49A2D]
                         font-medium
-                        group-hover:gap-4
                         transition-all
-                        "
+                        hover:gap-4
+                      "
                       >
                         View Project
                         <ArrowRight size={17} />
                       </button>
-                    </motion.div>
+                    </div>
                   </div>
                 ))}
               </div>
