@@ -8,11 +8,14 @@ import civilBanner from "../assets/images/civil-banner.png";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronRight,
+  ChevronDown,
   ChevronLeft,
+  LayoutGrid,
+  List,
   MapPin,
   ArrowRight,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import techMahindra from "../assets/images/tech-mahindra-office.jpeg";
 import siemens from "../assets/images/siemens-innovation-hub.jpeg";
 import dining from "../assets/images/executive-dining-space.jpeg";
@@ -29,6 +32,7 @@ const projectPages = {
     banner: corporateBanner,
     description:
       "Exceptional workplaces begin with exceptional design. At 3G Decorative Group, we create premium corporate interiors that blend functionality, innovation, and timeless aesthetics to shape environments where businesses thrive.",
+
     filters: [
       "All Projects",
       "Offices",
@@ -38,12 +42,14 @@ const projectPages = {
       "IT Parks",
     ],
   },
+
   civil: {
     title: "Civil",
     breadcrumb: "Civil Structures",
     banner: civilBanner,
     description:
       "Explore our portfolio of residential, commercial and industrial projects engineered with quality, innovation and long-lasting excellence.",
+
     filters: [
       "All Projects",
       "Residential",
@@ -54,17 +60,6 @@ const projectPages = {
     ],
   },
 };
-
-type Project = {
-  id: number;
-  title: string;
-  category: string;
-  location: string;
-  image: string;
-  slug: string;
-};
-
-type ProjectCategory = keyof typeof projectPages;
 
 const projects: Project[] = [
   {
@@ -133,22 +128,47 @@ const projects: Project[] = [
   },
 ];
 
+type Project = {
+  id: number;
+  title: string;
+  category: string;
+  location: string;
+  image: string;
+  slug: string;
+};
+
+type ProjectCategory = keyof typeof projectPages;
+
 function HeroSection({ category }: { category: ProjectCategory }) {
   const pageData = projectPages[category];
 
   return (
     <section
-      className="bg-[#F5F1EA] px-3 sm:px-4 lg:px-5"
-      style={{ position: "relative" }}
+      className="
+        bg-[#F5F1EA]
+        px-3
+        sm:px-4
+        lg:px-5
+        "
+      style={{
+        position: "relative",
+      }}
     >
       <div
         className="
-          relative overflow-hidden
-          rounded-[18px] sm:rounded-[24px] md:rounded-[32px] lg:rounded-[32px]
-          w-full min-h-[70svh]
-          h-[520px] sm:h-[560px] md:h-[600px] lg:h-[650px] xl:h-[700px]
+        relative
+        overflow-hidden
+        rounded-[18px] sm:rounded-[24px] md:rounded-[32px] lg:rounded-[32px]
+        w-full
+        min-h-[70svh]
+        h-[520px]
+        sm:h-[560px]
+        md:h-[600px]
+        lg:h-[650px]
+        xl:h-[700px]
         "
       >
+        {/* ── Full-bleed background image ── */}
         <div className="absolute inset-0 z-0">
           <img
             src={pageData.banner}
@@ -158,6 +178,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
               filter: "brightness(1.15) contrast(1.08) saturate(1.08)",
             }}
           />
+          {/* Overlay */}
           <div
             className="absolute inset-0"
             style={{
@@ -170,6 +191,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 rgba(10,8,6,.12) 58%,
                 rgba(10,8,6,0) 100%
             ),
+
             linear-gradient(
                 90deg,
                 rgba(8,6,5,.82) 0%,
@@ -178,6 +200,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 rgba(8,6,5,.08) 60%,
                 rgba(8,6,5,0) 100%
             ),
+
             linear-gradient(
                 180deg,
                 rgba(8,6,5,.05) 0%,
@@ -189,24 +212,40 @@ function HeroSection({ category }: { category: ProjectCategory }) {
             }}
           />
 
+          {/* Gold Border */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: 1,
+              ease: [0.22, 1, 0.36, 1],
+            }}
             className="absolute top-0 left-0 right-0 h-[3px] origin-left z-20"
             style={{
               background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
             }}
           />
-
+          {/* Glow */}
           <motion.div
-            animate={{ scale: [1, 1.15, 1] }}
-            transition={{ duration: 10, repeat: Infinity }}
+            animate={{
+              scale: [1, 1.15, 1],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+            }}
             className="
-              absolute left-[-120px] bottom-[-120px]
-              w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] lg:w-[600px] lg:h-[600px]
-              rounded-full
-            "
+                absolute
+                left-[-120px]
+                bottom-[-120px]
+                w-[320px]
+                h-[320px]
+                sm:w-[450px]
+                sm:h-[450px]
+                lg:w-[600px]
+                lg:h-[600px]
+                rounded-full
+                "
             style={{
               background:
                 "radial-gradient(circle,rgba(243,187,39,.08),transparent 70%)",
@@ -214,30 +253,43 @@ function HeroSection({ category }: { category: ProjectCategory }) {
             }}
           />
 
+          {/* Content */}
           <div className="relative z-10 h-full flex items-center">
             <div className="max-w-7xl mx-auto w-full px-5 sm:px-6 md:px-10 lg:px-16 xl:px-20">
+              {/* Breadcrumb */}
               <motion.div
                 initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6"
+                className="
+                    flex
+                    flex-wrap
+                    items-center
+                    gap-2
+                    sm:gap-3
+                    mb-6
+                    "
               >
-                <Link
-                  to="/"
+                <a
+                  href="/"
                   className="text-[#F5F1EA]/40 hover:text-[#F3BB27] text-[11px] uppercase tracking-[0.25em]"
                   style={{ fontFamily: "Parkinsans" }}
                 >
                   Home
-                </Link>
+                </a>
+
                 <ChevronRight className="w-3 h-3 text-[#F3BB27]/40" />
-                <Link
-                  to="/projects"
+
+                <a
+                  href="/projects"
                   className="text-[#F5F1EA]/40 hover:text-[#F3BB27] text-[11px] uppercase tracking-[0.25em]"
                   style={{ fontFamily: "Parkinsans" }}
                 >
                   Projects
-                </Link>
+                </a>
+
                 <ChevronRight className="w-3 h-3 text-[#F3BB27]/40" />
+
                 <span
                   className="text-[#F3BB27] text-[11px] uppercase tracking-[0.25em]"
                   style={{ fontFamily: "Parkinsans" }}
@@ -246,6 +298,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 </span>
               </motion.div>
 
+              {/* Label */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -253,22 +306,31 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 className="flex items-center gap-4 mb-7"
               >
                 <div className="w-10 h-px bg-gradient-to-r from-[#F3BB27] to-[#EA7A12]" />
+
                 <span
+                  //   className="text-[#F3BB27] uppercase tracking-[0.35em] text-xs"
                   className="
-                    text-[#F3BB27] uppercase
-                    tracking-[0.18em] sm:tracking-[0.35em]
-                    text-[10px] sm:text-xs
-                  "
+                    text-[#F3BB27]
+                    uppercase
+                    tracking-[0.18em]
+                    sm:tracking-[0.35em]
+                    text-[10px]
+                    sm:text-xs
+                    "
                   style={{ fontFamily: "Parkinsans" }}
                 >
                   OUR PORTFOLIO
                 </span>
               </motion.div>
 
+              {/* Heading */}
               <motion.h1
                 initial={{ y: 80, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.3,
+                }}
                 className="max-w-3xl"
                 style={{
                   fontFamily: "Cormorant Garamond",
@@ -278,7 +340,9 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 }}
               >
                 <span className="text-white">{pageData.title}</span>
+
                 <br />
+
                 <span
                   style={{
                     background: "linear-gradient(90deg,#f3bb27,#ea7a12)",
@@ -290,23 +354,35 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 </span>
               </motion.h1>
 
+              {/* Description */}
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
+                transition={{
+                  delay: 0.7,
+                }}
                 className="
-                  mt-8 max-w-md sm:max-w-lg lg:max-w-xl
-                  text-[#DDD5CB]
-                  text-[14px] sm:text-[15px] lg:text-[16px]
-                  leading-7 sm:leading-8
-                "
-                style={{ fontFamily: "Parkinsans" }}
+                    mt-8
+                    max-w-md
+                    sm:max-w-lg
+                    lg:max-w-xl
+                    text-[#DDD5CB]
+                    text-[14px]
+                    sm:text-[15px]
+                    lg:text-[16px]
+                    leading-7
+                    sm:leading-8
+                    "
+                style={{
+                  fontFamily: "Parkinsans",
+                }}
               >
                 {pageData.description}
               </motion.p>
             </div>
           </div>
 
+          {/* Bottom Fade */}
           <div
             className="absolute bottom-0 left-0 right-0 h-32"
             style={{
@@ -320,52 +396,146 @@ function HeroSection({ category }: { category: ProjectCategory }) {
 }
 
 function ProjectFilters({
-  category,
   activeFilter,
   setActiveFilter,
   sortBy,
   setSortBy,
+  view,
+  setView,
 }: {
-  category: ProjectCategory;
   activeFilter: string;
   setActiveFilter: React.Dispatch<React.SetStateAction<string>>;
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  view: "grid" | "list";
+  setView: React.Dispatch<React.SetStateAction<"grid" | "list">>;
 }) {
-  const filters = projectPages[category].filters;
+  const { category } = useParams();
+
+  const pageData = projectPages[category as ProjectCategory];
+  const filters = pageData.filters;
 
   return (
     <section className="bg-[#F5F1EA] py-10">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap lg:flex-nowrap gap-3 pt-2 pb-2">
+          {/* Left */}
+          <div
+            // className="
+            //   flex
+            //   flex-wrap
+            //   gap-3
+            //   pt-2
+            //   pb-2
+            // "
+            className="
+                  flex
+                  flex-wrap
+                  lg:flex-nowrap
+                  gap-3
+                  pt-2
+                  pb-2
+                "
+          >
             {filters.map((item) => (
               <button
                 key={item}
-                type="button"
                 onClick={() => setActiveFilter(item)}
                 className={`
-                  px-5 h-11 rounded-xl border text-sm font-medium
-                  transition-all duration-300
-                  hover:-translate-y-0.5 hover:shadow-md
-                  ${
-                    activeFilter === item
-                      ? "bg-[#D89A2B] border-[#D89A2B] text-white"
-                      : "bg-white border-[#E6DDD2] text-[#5A5249] hover:border-[#D89A2B] hover:text-[#D89A2B]"
-                  }
-                `}
+                      px-5
+                      h-11
+                      rounded-xl
+                      border
+                      text-sm
+                      font-medium
+                      transition-all
+                      duration-300
+                      hover:-translate-y-0.5
+                      hover:shadow-md
+
+                      ${
+                        activeFilter === item
+                          ? "bg-[#D89A2B] border-[#D89A2B] text-white"
+                          : "bg-white border-[#E6DDD2] text-[#5A5249] hover:border-[#D89A2B] hover:text-[#D89A2B]"
+                      }
+                    `}
               >
                 {item}
               </button>
             ))}
           </div>
 
+          {/* Right */}
           <div className="flex items-center gap-3">
+            {/* <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="
+                    h-11
+                    min-w-[160px]
+                    rounded-xl
+                    border
+                    border-[#E6DDD2]
+                    bg-white
+                    px-4
+                    text-sm
+                    outline-none
+                    focus:border-[#D89A2B]
+                  "
+                >
+                  <option>Latest</option>
+                  <option>Oldest</option>
+                  <option>A-Z</option>
+                </select> */}
             <CustomDropdown
               value={sortBy}
               options={["Latest", "Oldest", "A-Z"]}
               onChange={setSortBy}
             />
+
+            {/* <button
+                  onClick={() => setView("grid")}
+                  className={`
+                    w-11
+                    h-11
+                    rounded-xl
+                    border
+                    flex
+                    items-center
+                    justify-center
+                    transition-all
+
+                    ${
+                      view === "grid"
+                        ? "bg-[#D89A2B] text-white border-[#D89A2B]"
+                        : "bg-white border-[#E6DDD2] text-[#5A5249]"
+                    }
+                  `}
+                >
+                  <LayoutGrid size={18} />
+                </button>
+
+                <button
+                  onClick={() => setView("list")}
+                  className={`
+                    w-11
+                    h-11
+                    rounded-xl
+                    border
+                    flex
+                    items-center
+                    justify-center
+                    transition-all
+
+                    ${
+                      view === "list"
+                        ? "bg-[#D89A2B] text-white border-[#D89A2B]"
+                        : "bg-white border-[#E6DDD2] text-[#5A5249]"
+                    }
+                  `}
+                >
+                  <List size={18} />
+                </button> */}
           </div>
         </div>
       </div>
@@ -373,29 +543,36 @@ function ProjectFilters({
   );
 }
 
-function ProjectCard({
-  project,
-  category,
-}: {
-  project: Project;
-  category: ProjectCategory;
-}) {
+function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
-      to={`/projects/${category}/${project.slug}`}
+      to={project.slug}
       className="
-        group flex flex-col h-full bg-white rounded-[26px] overflow-hidden
-        border border-[#E8DED2] transition-all duration-500
-        hover:-translate-y-2 hover:shadow-[0_18px_50px_rgba(0,0,0,.10)]
-      "
+          group
+          flex
+          flex-col
+          h-full
+          bg-white
+          rounded-[26px]
+          overflow-hidden
+          border
+          border-[#E8DED2]
+          transition-all
+          duration-500
+          hover:-translate-y-2
+          hover:shadow-[0_18px_50px_rgba(0,0,0,.10)]
+        "
     >
       <div className="overflow-hidden rounded-t-[24px]">
         <img
           src={project.image}
-          alt={project.title}
           className="
-            w-full aspect-[4/3] object-cover
-            transition-transform duration-700 group-hover:scale-105
+              w-full
+              aspect-[4/3]
+              object-cover
+              transition-transform
+              duration-700
+              group-hover:scale-105
           "
         />
       </div>
@@ -403,16 +580,23 @@ function ProjectCard({
       <div className="flex flex-col flex-1 p-4 sm:p-5 lg:p-6">
         <h3
           className="
-            min-h-[80px] text-[24px] lg:text-[28px]
-            leading-[1.15] font-semibold text-[#2B231E]
-          "
-          style={{ fontFamily: "Cormorant Garamond" }}
+              min-h-[80px]
+              text-[24px]
+              lg:text-[28px]
+              leading-[1.15]
+              font-semibold
+              text-[#2B231E]
+            "
+          style={{
+            fontFamily: "Cormorant Garamond",
+          }}
         >
           {project.title}
         </h3>
 
         <div className="mt-3 flex items-center gap-2">
           <MapPin size={14} className="text-[#D89A2B] flex-shrink-0" />
+
           <span
             className="text-[14px] text-[#746C63]"
             style={{ fontFamily: "Parkinsans" }}
@@ -423,10 +607,18 @@ function ProjectCard({
 
         <div
           className="
-            mt-auto pt-6 flex items-center gap-2
-            text-[#D89A2B] text-[15px] font-medium
-            transition-all duration-300 group-hover:gap-3
-          "
+              mt-auto
+              pt-6
+              flex
+              items-center
+              gap-2
+              text-[#D89A2B]
+              text-[15px]
+              font-medium
+              transition-all
+              duration-300
+              group-hover:gap-3
+            "
         >
           View Project
           <ArrowRight
@@ -440,37 +632,51 @@ function ProjectCard({
 }
 
 function ProjectGrid({
-  projects: list,
-  category,
+  projects,
+  view,
 }: {
   projects: Project[];
-  category: ProjectCategory;
+  view: "grid" | "list";
 }) {
   return (
     <section className="bg-[#F5F1EA] pb-16">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
-        {list.length === 0 ? (
-          <p className="text-center text-[#746C63] py-16">
-            No projects found for this filter.
-          </p>
-        ) : (
-          <div className="grid gap-8 items-stretch sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <AnimatePresence mode="popLayout">
-              {list.map((project) => (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -40 }}
-                  transition={{ duration: 0.35 }}
-                  key={project.id}
-                >
-                  <ProjectCard project={project} category={category} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
+        <div
+          className="
+              grid
+              gap-8
+              items-stretch
+              sm:grid-cols-2
+              lg:grid-cols-3
+              xl:grid-cols-4
+            "
+        >
+          <AnimatePresence mode="popLayout">
+            {projects.map((project) => (
+              <motion.div
+                layout
+                initial={{
+                  opacity: 0,
+                  y: 40,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: -40,
+                }}
+                transition={{
+                  duration: 0.35,
+                }}
+                key={project.id}
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
@@ -480,46 +686,31 @@ function ProjectPagination() {
   return (
     <section className="bg-[#F5F1EA] pb-24">
       <div className="flex justify-center items-center gap-3">
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white flex items-center justify-center"
-        >
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
           <ChevronLeft size={18} />
         </button>
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#D89A2B] text-white"
-        >
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#D89A2B] text-white">
           1
         </button>
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white"
-        >
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
           2
         </button>
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white"
-        >
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
           3
         </button>
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white"
-        >
-          …
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+          ...
         </button>
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white"
-        >
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
           6
         </button>
-        <button
-          type="button"
-          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white flex items-center justify-center"
-        >
+
+        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
           <ChevronRight size={18} />
         </button>
       </div>
@@ -529,34 +720,21 @@ function ProjectPagination() {
 
 export default function ProjectList() {
   const { category } = useParams();
+
   const [activeFilter, setActiveFilter] = useState("All Projects");
+
   const [sortBy, setSortBy] = useState("Latest");
 
+  const [view, setView] = useState<"grid" | "list">("grid");
+
+  const filteredProjects =
+    activeFilter === "All Projects"
+      ? projects
+      : projects.filter((x) => x.category === activeFilter);
   const valid =
     category === "corporate" || category === "civil"
       ? (category as ProjectCategory)
       : null;
-
-  useEffect(() => {
-    setActiveFilter("All Projects");
-    setSortBy("Latest");
-  }, [valid]);
-
-  const filteredProjects = useMemo(() => {
-    const list =
-      activeFilter === "All Projects"
-        ? [...projects]
-        : projects.filter((x) => x.category === activeFilter);
-
-    if (sortBy === "A-Z") {
-      return list.sort((a, b) => a.title.localeCompare(b.title));
-    }
-    if (sortBy === "Oldest") {
-      return list.sort((a, b) => a.id - b.id);
-    }
-    // Latest
-    return list.sort((a, b) => b.id - a.id);
-  }, [activeFilter, sortBy]);
 
   if (!valid) {
     return (
@@ -575,15 +753,23 @@ export default function ProjectList() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
+        {/* Hero */}
         <HeroSection category={valid} />
+
+        {/* Filter */}
         <ProjectFilters
-          category={valid}
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
           sortBy={sortBy}
           setSortBy={setSortBy}
+          view={view}
+          setView={setView}
         />
-        <ProjectGrid projects={filteredProjects} category={valid} />
+
+        {/* Project Grid */}
+        <ProjectGrid projects={filteredProjects} view={view} />
+
+        {/* Pagination */}
         <ProjectPagination />
       </div>
 
