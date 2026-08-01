@@ -14,10 +14,6 @@ class AboutPageHero extends Model
 
     protected $guarded = [];
 
-    public const SINGLETON_ID = 1;
-
-    public const IMAGE_DIRECTORY = 'uploads/about/hero';
-
     protected function casts(): array
     {
         return [

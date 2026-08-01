@@ -185,7 +185,7 @@ class CmsRegistry
                 'order_by' => 'sort_order', 
 
                 'map_in' => fn (array $d) => [
-                    'about_page_hero_id' => (int) ($d['aboutPageHeroId'] ?? 0),
+                    'home_about_contents_id' => AboutContent::query()->firstOrFail()->id,
                     'title'              => $d['title'] ?? '',
                     'description'        => $d['description'] ?? '',
                     'icon'               => $d['icon'] ?? '',
@@ -195,7 +195,7 @@ class CmsRegistry
 
                 'map_out' => fn ($row) => [
                     'id'                => $row->id,
-                    'aboutPageHeroId'   => $row->about_page_hero_id,
+                    'home_about_contents_id'   => $row->home_about_contents_id,
                     'title'             => $row->title,
                     'description'       => $row->description,
                     'icon'              => $row->icon,

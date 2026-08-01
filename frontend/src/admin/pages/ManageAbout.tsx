@@ -171,6 +171,137 @@ const removeFeature = (index: number) => {
           </div>
         </section>
 
+        <section className="admin-card rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-[#2A211C]">
+            Hero Features
+          </h2>
+
+          <button
+            type="button"
+            onClick={addFeature}
+            className="inline-flex items-center gap-2 text-[#8a5a12] hover:text-[#6E4E10]"
+          >
+            <Plus className="w-4 h-4" />
+            Add Feature
+          </button>
+        </div>
+
+        <div className="space-y-4">
+
+          {features.map((feature, index) => (
+
+            <div
+              key={feature.id}
+              className="rounded-xl border border-[#E8DFD2] bg-[#FAF7F2]/40 p-5 space-y-4"
+            >
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Icon
+                  </label>
+
+                  <input
+                    className={inputClass}
+                    value={feature.icon}
+                    onChange={(e) =>
+                      updateFeature(index, "icon", e.target.value)
+                    }
+                    placeholder="e.g. Building2"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Title
+                  </label>
+
+                  <input
+                    className={inputClass}
+                    value={feature.title}
+                    onChange={(e) =>
+                      updateFeature(index, "title", e.target.value)
+                    }
+                    placeholder="Feature title"
+                  />
+                </div>
+
+              </div>
+
+              <div>
+                <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                  Description
+                </label>
+
+                <textarea
+                  rows={3}
+                  className={`${inputClass} resize-none`}
+                  value={feature.description}
+                  onChange={(e) =>
+                    updateFeature(index, "description", e.target.value)
+                  }
+                  placeholder="Feature description..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Sort Order
+                  </label>
+
+                  <input
+                    type="number"
+                    className={inputClass}
+                    value={feature.sort_order}
+                    onChange={(e) =>
+                      updateFeature(
+                        index,
+                        "sort_order",
+                        Number(e.target.value),
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <label className="inline-flex items-center gap-2 text-sm text-[#6E655C] font-medium">
+                    <input
+                      type="checkbox"
+                      checked={feature.active}
+                      onChange={(e) =>
+                        updateFeature(
+                          index,
+                          "active",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                    Active
+                  </label>
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={() => removeFeature(index)}
+                className="w-full py-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Remove Feature
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+      </section>
+
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="admin-note rounded-xl p-4 text-sm flex-1">
             Changes are stored locally for now. When the backend is connected, this

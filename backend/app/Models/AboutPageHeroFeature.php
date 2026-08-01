@@ -14,6 +14,10 @@ class AboutPageHeroFeature extends Model
 
     protected $guarded = [];
 
+    public const SINGLETON_ID = 7;
+
+    public const IMAGE_DIRECTORY = 'uploads/about/hero';
+
     protected function casts(): array
     {
         return [
@@ -24,8 +28,8 @@ class AboutPageHeroFeature extends Model
     public function hero(): BelongsTo
     {
         return $this->belongsTo(
-            AboutPageHero::class,
-            'about_page_hero_id',
+            AboutContent::class,
+            'home_about_contents_id',
             'id'
         );
     }

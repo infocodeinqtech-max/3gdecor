@@ -49,8 +49,8 @@ class AboutPageController extends Controller
         ]);
 
         // Existing singleton record
-        $hero = AboutPageHero::find(
-            AboutPageHero::SINGLETON_ID
+        $hero = AboutPageHeroFeature::find(
+            AboutPageHeroFeature::SINGLETON_ID
         );
 
         $data = $validated;
@@ -62,11 +62,11 @@ class AboutPageController extends Controller
                 ? FileUploadService::replace(
                     $request->file('background_image'),
                     $hero->background_image,
-                    AboutPageHero::IMAGE_DIRECTORY
+                    AboutPageHeroFeature::IMAGE_DIRECTORY
                 )
                 : FileUploadService::store(
                     $request->file('background_image'),
-                    AboutPageHero::IMAGE_DIRECTORY
+                    AboutPageHeroFeature::IMAGE_DIRECTORY
                 );
         } else {
             // Prevent accidental overwrite
@@ -115,7 +115,7 @@ class AboutPageController extends Controller
         ]);
 
         $feature = AboutPageHeroFeature::create([
-            'about_page_hero_id' => AboutPageHero::SINGLETON_ID,
+            'home_about_contents_id' => AboutPageHeroFeature::SINGLETON_ID,
             'title'              => $validated['title'],
             'description'        => $validated['description'] ?? '',
             'sort_order'         => $validated['sort_order'] ?? 0,
@@ -137,7 +137,7 @@ class AboutPageController extends Controller
         $feature = AboutPageHeroFeature::findOrFail($id);
 
         $validated = $request->validate([
-            'about_page_hero_id' => ['required', 'exists:about_page_heroes,id'],
+            'home_about_contents_id' => ['required', 'exists:home_about_contents,id'],
             'title'              => ['required', 'string', 'max:255'],
             'description'        => ['nullable', 'string'],
             'sort_order'         => ['nullable', 'integer'],
@@ -145,7 +145,7 @@ class AboutPageController extends Controller
         ]);
 
         $feature->update([
-            'about_page_hero_id' => $validated['about_page_hero_id'],
+            'home_about_contents_id' => $validated['home_about_contents_id'],
             'title'              => $validated['title'],
             'description'        => $validated['description'] ?? '',
             'sort_order'         => $validated['sort_order'] ?? 0,
