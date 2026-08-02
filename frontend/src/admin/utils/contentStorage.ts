@@ -10,6 +10,8 @@ const LIST_KEYS = new Set([
   "process",
   "testimonials",
   "contact-offices",
+  "about-page-hero-features",
+  "about-page-founder-members",
 ]);
 
 /** Singleton resources */
@@ -83,10 +85,14 @@ export async function saveListContent<T extends IdItem>(
     const item = data[i];
     const payload = {
       ...(item as Record<string, unknown>),
-      sort_order: i + 1,
+      // sort_order: i + 1,
     };
 
     if (currentIds.has(String(item.id)) && Number(item.id) > 0) {
+      console.log("Current IDs:", [...currentIds]);
+console.log("Item ID:", item.id);
+console.log("Matched:", currentIds.has(String(item.id)));
+
       const updated = await updateListItem(key, item.id, payload);
       saved.push(updated as T);
     } else {

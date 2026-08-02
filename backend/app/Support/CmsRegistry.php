@@ -17,6 +17,7 @@ use App\Models\SiteContactContent;
 use App\Models\TestimonialContent;
 use App\Models\AboutPageHero;
 use App\Models\AboutPageHeroFeature;
+use App\Models\AboutPageFounderMember;
 
 /**
  * Maps frontend storage keys → backend resources.
@@ -189,7 +190,7 @@ class CmsRegistry
                     'title'              => $d['title'] ?? '',
                     'description'        => $d['description'] ?? '',
                     'icon'               => $d['icon'] ?? '',
-                    'sort_order'         => (int) ($d['sortOrder'] ?? 0),
+                    'sort_order'         => (int) ($d['sort_order'] ?? 0),
                     'active'             => array_key_exists('active', $d) ? (bool) $d['active'] : true,
                 ],
 
@@ -199,8 +200,36 @@ class CmsRegistry
                     'title'             => $row->title,
                     'description'       => $row->description,
                     'icon'              => $row->icon,
-                    'sortOrder'         => $row->sort_order,
+                    'sort_order'         => $row->sort_order,
                     'active'            => (bool) $row->active,
+                ],
+            ],
+            'about-page-founder-members' => [
+                'model' => AboutPageFounderMember::class,
+                'permission' => 'about-page-founder-members',
+                'order_by' => 'sort_order',
+
+                'map_in' => fn (array $d) => [
+                    'home_about_contents_id' => AboutContent::query()->firstOrFail()->id,
+                    'image' => $d['image'] ?? '',
+                    'name' => $d['name'] ?? '',
+                    'title' => $d['title'] ?? '',
+                    'short_description' => $d['short_description'] ?? '',
+                    'sort_order' => (int) ($d['sort_order'] ?? 1),
+                    'active' => array_key_exists('active', $d)
+                        ? (bool) $d['active']
+                        : true,
+                ],
+
+                'map_out' => fn ($row) => [
+                    'id' => $row->id,
+                    'home_about_contents_id' => $row->home_about_contents_id,
+                    'image' => $row->image,
+                    'name' => $row->name,
+                    'title' => $row->title,
+                    'short_description' => $row->short_description,
+                    'sort_order' => $row->sort_order,
+                    'active' => (bool) $row->active,
                 ],
             ],
         ];

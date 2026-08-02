@@ -12,6 +12,7 @@ import {
 import {
   seedAbout,
   type HeroFeature,
+  type FounderMember,
 } from "../data/seedContent";
 
 const inputClass = "w-full px-4 py-2.5 rounded-xl admin-input";
@@ -22,6 +23,7 @@ export default function ManageAbout() {
   const [features, setFeatures] = useState<HeroFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [founders, setFounders] = useState<FounderMember[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -30,8 +32,13 @@ export default function ManageAbout() {
         "about-page-hero-features",
         [],
       );
+      const founderMembers = await getListContent<FounderMember>(
+        "about-page-founder-members",
+        [],
+      );
       setForm(about);
       setFeatures(heroFeatures);
+      setFounders(founderMembers);
 
       setLoading(false);
     })();
@@ -50,16 +57,16 @@ export default function ManageAbout() {
   };
 
   const updateFeature = (
-  index: number,
-  field: keyof HeroFeature,
-  value: string | number | boolean,
-) => {
-  setFeatures((prev) =>
-    prev.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item,
-    ),
-  );
-};
+    index: number,
+    field: keyof HeroFeature,
+    value: string | number | boolean,
+  ) => {
+    setFeatures((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item,
+      ),
+    );
+  };
 
 const addFeature = () => {
   setFeatures((prev) => [
@@ -79,16 +86,45 @@ const removeFeature = (index: number) => {
   setFeatures((prev) => prev.filter((_, i) => i !== index));
 };
 
+const updateFounder = (
+  index:number,
+  field: keyof FounderMember,
+  value: string | number | boolean,
+) => {
+  setFounders((prev) =>
+    prev.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item,
+    ),
+  );
+};
+
+const addFounder = () => {
+  setFounders((prev) => [
+    ...prev,
+    {
+      id: Date.now(),
+      image:"",
+      name: "",
+      title: "",
+      short_description: "",
+      sort_order: prev.length + 1,
+      active: true,
+    },
+  ]);
+};
+
+const removeFounder = (index: number) => {
+  setFounders((prev) => prev.filter((_, i) => i !== index));
+};
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {
       await Promise.all([
         setContent("about", form),
-        saveListContent(
-          "about-page-hero-features",
-          features,
-        ),
+        saveListContent("about-page-hero-features",features),
+        saveListContent("about-page-founder-members", founders),
       ]);
 
       toast.success("About section saved successfully");
@@ -293,6 +329,155 @@ const removeFeature = (index: number) => {
               >
                 <Trash2 className="w-4 h-4" />
                 Remove Feature
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+        </section>
+
+        <section className="admin-card rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-[#2A211C]">
+            Founder Members
+          </h2>
+
+          <button
+            type="button"
+            onClick={addFounder}
+            className="inline-flex items-center gap-2 text-[#8a5a12] hover:text-[#6E4E10]"
+          >
+            <Plus className="w-4 h-4" />
+            Add Member
+          </button>
+        </div>
+
+        <div className="space-y-4">
+
+          {founders.map((founder, index) => (
+
+            <div
+              key={founder.id}
+              className="rounded-xl border border-[#E8DFD2] bg-[#FAF7F2]/40 p-5 space-y-4"
+            >
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <ImageUpload
+                  label="Member Photo"
+                  value={founder.image || ""}
+                  onChange={(v) => updateFounder(index, "image", v)}
+                  maxSizeMb={2}
+                  section="about"
+                  recommendedWidth={500}
+                  recommendedHeight={600}
+                  hint="Founder member photo."
+                />
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Name
+                  </label>
+
+                  <input
+                    className={inputClass}
+                    value={founder.name}
+                    onChange={(e) =>
+                      updateFounder(index, "name", e.target.value)
+                    }
+                    placeholder="Member name"
+                  />
+                </div>
+
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Title
+                  </label>
+
+                  <input
+                    className={inputClass}
+                    value={founder.title}
+                    onChange={(e) =>
+                      updateFounder(index, "title", e.target.value)
+                    }
+                    placeholder="Founder & CEO"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Short Description
+                  </label>
+
+                  <input
+                    className={inputClass}
+                    value={founder.short_description}
+                    onChange={(e) =>
+                      updateFounder(
+                        index,
+                        "short_description",
+                        e.target.value,
+                      )
+                    }
+                    placeholder="One line description"
+                  />
+                </div>
+
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Sort Order
+                  </label>
+
+                  <input
+                    type="number"
+                    className={inputClass}
+                    value={founder.sort_order}
+                    onChange={(e) =>
+                      updateFounder(
+                        index,
+                        "sort_order",
+                        Number(e.target.value),
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <label className="inline-flex items-center gap-2 text-sm text-[#6E655C] font-medium">
+                    <input
+                      type="checkbox"
+                      checked={founder.active}
+                      onChange={(e) =>
+                        updateFounder(
+                          index,
+                          "active",
+                          e.target.checked,
+                        )
+                      }
+                    />
+                    Active
+                  </label>
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={() => removeFounder(index)}
+                className="w-full py-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Remove Member
               </button>
 
             </div>

@@ -59,6 +59,16 @@ export interface HeroFeature {
   active: boolean;
 }
 
+export interface FounderMember {
+  id: number;
+  image: string;
+  name: string;
+  title: string;
+  short_description: string;
+  sort_order: number;
+  active: boolean;
+}
+
 export const seedAbout = {
   label: "ABOUT US",
   titleLine1: "Creating Spaces",

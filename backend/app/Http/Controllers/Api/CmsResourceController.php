@@ -96,7 +96,11 @@ class CmsResourceController extends Controller
         if ($resource === 'contact-offices') {
             $this->applyContactOfficeMapFallback($payload);
         }
-        $payload['active'] = true;
+        /* Added By Moumita*/
+        if ($resource !== 'about-page-hero-features') {
+            $payload['active'] = true;
+        }
+        /** End */
         $row = $cfg['model']::query()->create($payload);
         $this->bustPublicCache($resource);
 
@@ -181,8 +185,10 @@ class CmsResourceController extends Controller
             if ($payload['sort_order'] === 0) {
                 $payload['sort_order'] = $i + 1;
             }
-            $payload['active'] = true;
-
+            if($resource != 'about'){
+                $payload['active'] = true;
+            }
+            
             $id = isset($itemArr['id']) ? (int) $itemArr['id'] : 0;
             $existing = null;
             if ($id > 0) {
