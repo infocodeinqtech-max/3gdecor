@@ -5,7 +5,7 @@ import Footer from "../app/components/Footer";
 import Navbar from "../app/components/Navbar";
 import contactBanner from "../assets/images/contact_4.png";
 import { apiRequest } from "../api/client";
-import { notifyCmsUpdated, subscribeCmsUpdated } from "../content/cmsSync";
+import { notifyCmsUpdated } from "../content/cmsSync";
 import {
   seedContactPage,
   seedContactOffices,
@@ -15,6 +15,8 @@ import {
 import { getContent } from "../admin/utils/contentStorage";
 import { getListContent } from "../admin/utils/contentStorage";
 import { loadPublicSiteCms } from "../content/publicCms";
+import PageLoader from "../app/components/PageLoader";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 import {
   MapPin,
   Phone,
@@ -36,7 +38,7 @@ import {
   phoneKeyupHint,
   sanitizeMobileInput,
 } from "../utils/validation";
-import { mediaUrl } from "../utils/mediaUrl";
+import { mediaUrl, preloadImage } from "../utils/mediaUrl";
 import { toPublicErrorMessage } from "../utils/publicError";
 
 const fieldVariants = {
@@ -147,10 +149,14 @@ function FormField({
   );
 }
 
-function ContactHero({ content }: { content: ContactPageContent }) {
-  const bannerImage = content.bannerImage?.trim()
+function resolveContactBanner(content: ContactPageContent): string {
+  return content.bannerImage?.trim()
     ? mediaUrl(content.bannerImage) || contactBanner
     : contactBanner;
+}
+
+function ContactHero({ content }: { content: ContactPageContent }) {
+  const bannerImage = resolveContactBanner(content);
 
   return (
     <section className="bg-[#F5F1EA] px-4 lg:px-5 overflow-x-hidden">
@@ -336,53 +342,49 @@ export default function Contact() {
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
 
-  useEffect(() => {
-    const reload = () => {
-      loadPublicSiteCms(true)
-        .then((site) => {
-          if (site.contactPage && typeof site.contactPage === "object") {
-            const merged = {
-              ...seedContactPage,
-              ...(site.contactPage as ContactPageContent),
-            };
-            setContactPageContent(merged);
-            setHeroContent(merged);
-          } else {
-            getContent<ContactPageContent>("contact-page", seedContactPage).then(
-              (data) => {
-                setContactPageContent(data);
-                setHeroContent(data);
-              },
-            );
-          }
+  const { showLoader, fading } = useCmsPageGate(async (force) => {
+    const site = await loadPublicSiteCms(force);
 
-          const rows =
-            (site.contactOffices as ContactOffice[] | undefined)?.length
-              ? (site.contactOffices as ContactOffice[])
-              : null;
-          if (rows) {
-            setOffices(rows);
-            setActiveOfficeId((current) =>
-              rows.some((o) => o.id === current) ? current : rows[0].id,
-            );
-            return;
-          }
-          return getListContent<ContactOffice>(
-            "contact-offices",
-            seedContactOffices,
-          ).then((fallback) => {
-            const next = fallback.length ? fallback : seedContactOffices;
-            setOffices(next);
-            setActiveOfficeId((current) =>
-              next.some((o) => o.id === current) ? current : next[0].id,
-            );
-          });
-        })
-        .catch(() => undefined);
-    };
-    reload();
-    return subscribeCmsUpdated(reload);
-  }, []);
+    let nextPage: ContactPageContent;
+    if (site.contactPage && typeof site.contactPage === "object") {
+      nextPage = {
+        ...seedContactPage,
+        ...(site.contactPage as ContactPageContent),
+      };
+    } else {
+      nextPage = await getContent<ContactPageContent>(
+        "contact-page",
+        seedContactPage,
+      );
+    }
+
+    // Prefetch DB banner so loader does not reveal the static seed image first
+    await preloadImage(resolveContactBanner(nextPage));
+    setContactPageContent(nextPage);
+    setHeroContent(nextPage);
+
+    const rows =
+      (site.contactOffices as ContactOffice[] | undefined)?.length
+        ? (site.contactOffices as ContactOffice[])
+        : null;
+    if (rows) {
+      setOffices(rows);
+      setActiveOfficeId((current) =>
+        rows.some((o) => o.id === current) ? current : rows[0].id,
+      );
+      return;
+    }
+
+    const fallback = await getListContent<ContactOffice>(
+      "contact-offices",
+      seedContactOffices,
+    );
+    const next = fallback.length ? fallback : seedContactOffices;
+    setOffices(next);
+    setActiveOfficeId((current) =>
+      next.some((o) => o.id === current) ? current : next[0].id,
+    );
+  });
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -514,6 +516,7 @@ export default function Contact() {
   return (
     // className="w-full overflow-x-hidden bg-[#F5F1EA]"
     <div className="w-full overflow-x-hidden bg-[#F7F3EE]">
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav="contact" />
       <div
         className="w-full overflow-x-hidden"
@@ -521,6 +524,8 @@ export default function Contact() {
       >
         <ContactHero content={heroContent} />
 
+        {!showLoader && (
+          <>
         <section
           id="contact"
           className="relative overflow-hidden py-16 md:py-24"
@@ -1268,6 +1273,8 @@ export default function Contact() {
         </AnimatePresence>
 
         <Footer />
+          </>
+        )}
       </div>
     </div>
   );

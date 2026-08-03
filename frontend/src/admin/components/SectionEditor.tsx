@@ -183,9 +183,9 @@ export default function SectionEditor<T extends Record<string, unknown>>({
           </div>
         ))}
 
-        <div className="admin-note rounded-xl p-4 text-sm">
+        {/* <div className="admin-note rounded-xl p-4 text-sm">
           Changes are saved to the MySQL database and update the live website.
-        </div>
+        </div> */}
 
         <button
           type="submit"

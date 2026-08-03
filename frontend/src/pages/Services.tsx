@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 
 import { mediaUrl } from "../utils/mediaUrl";
+import { loadPublicSiteCms } from "../content/publicCms";
+import PageLoader from "../app/components/PageLoader";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 import type {
   ServiceOfferItem,
   ServicePageContent,
@@ -1096,8 +1099,13 @@ export default function Services() {
   const whyStats = seedServiceWhyStats;
   const whyFeatures = seedServiceWhyFeatures;
 
+  const { showLoader, fading } = useCmsPageGate((force) =>
+    loadPublicSiteCms(force),
+  );
+
   return (
     <>
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav="services" />
 
       <div
@@ -1105,10 +1113,14 @@ export default function Services() {
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
         <Hero data={page} />
-        <ServicesGrid page={page} services={offers} />
-        <ProcessStrip page={page} steps={processSteps} />
-        <WhyUs page={page} stats={whyStats} features={whyFeatures} />
-        <Footer />
+        {!showLoader && (
+          <>
+            <ServicesGrid page={page} services={offers} />
+            <ProcessStrip page={page} steps={processSteps} />
+            <WhyUs page={page} stats={whyStats} features={whyFeatures} />
+            <Footer />
+          </>
+        )}
       </div>
     </>
   );

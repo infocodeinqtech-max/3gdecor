@@ -3,6 +3,9 @@ import { motion } from "motion/react";
 import { Home, ArrowLeft } from "lucide-react";
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
+import PageLoader from "../app/components/PageLoader";
+import { loadPublicSiteCms } from "../content/publicCms";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 
 type NotFoundProps = {
   /** Compact layout without public navbar/footer (e.g. admin shell). */
@@ -16,6 +19,10 @@ export default function NotFound({
   title = "Page not found",
   description = "The page you are looking for doesn’t exist, was moved, or the link is incorrect.",
 }: NotFoundProps) {
+  const { showLoader, fading } = useCmsPageGate((force) =>
+    embed ? Promise.resolve() : loadPublicSiteCms(force),
+  );
+
   const content = (
     <div className="relative z-[1] max-w-xl mx-auto text-center px-4 py-16 md:py-24">
       <motion.p
@@ -76,6 +83,7 @@ export default function NotFound({
 
   return (
     <div className="min-h-screen bg-[#F7F3EE] flex flex-col">
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar />
       <main className="flex-1 relative overflow-hidden">
         <div className="absolute top-1/4 -left-24 w-64 h-64 rounded-full bg-[#f3bb27]/15 blur-[90px] pointer-events-none" />

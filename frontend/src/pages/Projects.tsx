@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
+import PageLoader from "../app/components/PageLoader";
 import { useNavigate } from "react-router-dom";
+import { loadPublicSiteCms } from "../content/publicCms";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 import {
   ChevronRight,
   Briefcase,
@@ -616,8 +619,13 @@ function ProjectCategories() {
 }
 
 export default function Projects() {
+  const { showLoader, fading } = useCmsPageGate((force) =>
+    loadPublicSiteCms(force),
+  );
+
   return (
     <>
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav="projects" />
 
       <div
@@ -627,6 +635,8 @@ export default function Projects() {
         {/* Hero Section */}
         <HeroSection />
 
+        {!showLoader && (
+          <>
         {/* Category Section */}
         <ProjectCategories />
 
@@ -652,9 +662,11 @@ export default function Projects() {
         />
 
         {/* CTA */}
+          </>
+        )}
       </div>
 
-      <Footer />
+      {!showLoader && <Footer />}
     </>
   );
 }

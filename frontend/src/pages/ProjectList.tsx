@@ -1,8 +1,11 @@
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
+import PageLoader from "../app/components/PageLoader";
 import CustomDropdown from "../app/components/CustomDropdown";
 import { Link, useParams } from "react-router-dom";
 import NotFound from "./NotFound";
+import { loadPublicSiteCms } from "../content/publicCms";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 import corporateBanner from "../assets/images/corporate-banner.png";
 import civilBanner from "../assets/images/civil-banner.png";
 import { AnimatePresence, motion } from "framer-motion";
@@ -656,6 +659,10 @@ export default function ProjectList() {
 
   const [view, setView] = useState<"grid" | "list">("grid");
 
+  const { showLoader, fading } = useCmsPageGate((force) =>
+    loadPublicSiteCms(force),
+  );
+
   const filteredProjects =
     activeFilter === "All Projects"
       ? projects
@@ -676,6 +683,7 @@ export default function ProjectList() {
 
   return (
     <>
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav="projects" />
 
       <div
@@ -685,6 +693,8 @@ export default function ProjectList() {
         {/* Hero */}
         <HeroSection category={valid} />
 
+        {!showLoader && (
+          <>
         {/* Filter */}
         <ProjectFilters
           activeFilter={activeFilter}
@@ -700,9 +710,11 @@ export default function ProjectList() {
 
         {/* Pagination */}
         <ProjectPagination />
+          </>
+        )}
       </div>
 
-      <Footer />
+      {!showLoader && <Footer />}
     </>
   );
 }

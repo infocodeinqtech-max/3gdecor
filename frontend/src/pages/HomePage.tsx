@@ -12,7 +12,8 @@ import about4 from "../assets/images/about4.jpg";
 import badge3G from "../assets/images/3g-badge.png";
 import HeroSection from "../app/components/HeroSection";
 import { getDefaultAboutData, loadHomepageCms, resolveImage } from "../content/homepageData";
-import { subscribeCmsUpdated } from "../content/cmsSync";
+import PageLoader from "../app/components/PageLoader";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 import {
   seedExpertiseSection,
   seedExpertise,
@@ -144,13 +145,10 @@ export default function HomePage() {
     })),
   });
 
-  useEffect(() => {
-    const reload = () => {
-      loadHomepageCms(true).then(setCms).catch(() => undefined);
-    };
-    reload();
-    return subscribeCmsUpdated(reload);
-  }, []);
+  const { showLoader, fading } = useCmsPageGate(async (force) => {
+    const data = await loadHomepageCms(force);
+    setCms(data);
+  });
 
   const about = cms.about;
   const expertiseSection = cms.expertiseSection;
@@ -263,11 +261,14 @@ export default function HomePage() {
 
   return (
     <div className="size-full bg-[#F5F1EA] text-[#332C26] overflow-x-hidden">
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav={activeNav} />
 
       {/* Hero Section - Premium Editorial Framing */}
       <HeroSection />
 
+      {!showLoader && (
+        <>
       {/* About Section - Light Background */}
       <section
         id="about"
@@ -1743,6 +1744,8 @@ export default function HomePage() {
       {/* Footer - Dark Background */}
       <Footer />
       <FloatingWhatsApp />
+        </>
+      )}
     </div>
   );
 }
