@@ -311,7 +311,6 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 <div className="w-10 h-px bg-gradient-to-r from-[#F3BB27] to-[#EA7A12]" />
 
                 <span
-                  //   className="text-[#F3BB27] uppercase tracking-[0.35em] text-xs"
                   className="
                     text-[#F3BB27]
                     uppercase
@@ -322,7 +321,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                     "
                   style={{ fontFamily: "Parkinsans" }}
                 >
-                  OUR PORTFOLIO
+                  {pageData.breadcrumb}
                 </span>
               </motion.div>
 
@@ -476,9 +475,10 @@ function ProjectFilters({
 }
 
 function ProjectCard({ project }: { project: Project }) {
+  const { category } = useParams();
   return (
     <Link
-      to={project.slug}
+      to={`/projects/${category}/${project.slug}`}
       className="
           group
           flex
