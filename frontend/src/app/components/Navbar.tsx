@@ -6,7 +6,11 @@ import logo from "../../assets/images/3GDecoLogo-2.png";
 import { getListContent } from "../../admin/utils/contentStorage";
 import { seedNavigation } from "../../admin/data/seedContent";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
-import { loadPublicSiteCms } from "../../content/publicCms";
+import {
+  getCachedPublicSiteCms,
+  loadPublicSiteCms,
+  type PublicSiteCms,
+} from "../../content/publicCms";
 
 interface NavbarProps {
   activeNav?: string;
@@ -33,14 +37,25 @@ function navKeyFromLink(link: string): string {
   return path.replace(/^\//, "") || "home";
 }
 
+function navFromSite(site: PublicSiteCms | null): NavItem[] {
+  const rows = (site?.navigation as NavItem[] | undefined) ?? [];
+  if (!rows.length) return seedNavigation;
+  const visible = rows
+    .filter((r) => r.visible !== false)
+    .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+  return visible.length ? visible : seedNavigation;
+}
+
 export default function Navbar({ activeNav }: NavbarProps) {
   const location = useLocation();
   const [open, setOpen] = useState(false);
-  const [navItems, setNavItems] = useState<NavItem[]>(seedNavigation);
+  const [navItems, setNavItems] = useState<NavItem[]>(() =>
+    navFromSite(getCachedPublicSiteCms()),
+  );
 
   useEffect(() => {
-    const reload = () => {
-      loadPublicSiteCms(true)
+    const reload = (force: boolean) => {
+      loadPublicSiteCms(force)
         .then((site) => {
           const rows = (site.navigation as NavItem[] | undefined) ?? [];
           if (rows.length) {
@@ -61,8 +76,8 @@ export default function Navbar({ activeNav }: NavbarProps) {
         })
         .catch(() => undefined);
     };
-    reload();
-    return subscribeCmsUpdated(reload);
+    reload(false);
+    return subscribeCmsUpdated(() => reload(true));
   }, []);
 
   const menu = navItems.map((item) => ({

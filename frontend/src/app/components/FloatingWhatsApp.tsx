@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { whatsappChatUrl, WHATSAPP_NUMBER } from "../../config/whatsapp";
-import { loadPublicSiteCms } from "../../content/publicCms";
+import { loadPublicSiteCms, getCachedPublicSiteCms } from "../../content/publicCms";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
 import { seedSiteContact } from "../../admin/data/seedContent";
 
@@ -18,14 +18,24 @@ function WhatsAppGlyph({ className = "w-7 h-7" }: { className?: string }) {
   );
 }
 
-export default function FloatingWhatsApp() {
-  const [number, setNumber] = useState(
-    seedSiteContact.whatsappNumber || WHATSAPP_NUMBER,
+function whatsappFromCache(): string {
+  const contact = getCachedPublicSiteCms()?.siteContact as
+    | { whatsappNumber?: string }
+    | null
+    | undefined;
+  return (
+    contact?.whatsappNumber?.trim() ||
+    seedSiteContact.whatsappNumber ||
+    WHATSAPP_NUMBER
   );
+}
+
+export default function FloatingWhatsApp() {
+  const [number, setNumber] = useState(whatsappFromCache);
 
   useEffect(() => {
-    const reload = () => {
-      loadPublicSiteCms(true)
+    const reload = (force: boolean) => {
+      loadPublicSiteCms(force)
         .then((site) => {
           const contact = site.siteContact as { whatsappNumber?: string } | null;
           const fromCms = contact?.whatsappNumber?.trim();
@@ -33,8 +43,8 @@ export default function FloatingWhatsApp() {
         })
         .catch(() => undefined);
     };
-    reload();
-    return subscribeCmsUpdated(reload);
+    reload(false);
+    return subscribeCmsUpdated(() => reload(true));
   }, []);
 
   const href = whatsappChatUrl(

@@ -21,6 +21,12 @@ export type PublicSiteCms = {
 };
 
 let sitePromise: Promise<PublicSiteCms> | null = null;
+let cachedSite: PublicSiteCms | null = null;
+
+/** Last successfully resolved public CMS payload (sync read for initial UI). */
+export function getCachedPublicSiteCms(): PublicSiteCms | null {
+  return cachedSite;
+}
 
 /** Single shared fetch for public site CMS (nav/hero/footer/homepage/contact). */
 export function loadPublicSiteCms(force = false): Promise<PublicSiteCms> {
@@ -30,7 +36,10 @@ export function loadPublicSiteCms(force = false): Promise<PublicSiteCms> {
       "/cms-public/site",
       { auth: false },
     )
-      .then((res) => res.data ?? {})
+      .then((res) => {
+        cachedSite = res.data ?? {};
+        return cachedSite;
+      })
       .catch(() => {
         sitePromise = null;
         return {} as PublicSiteCms;
@@ -41,4 +50,5 @@ export function loadPublicSiteCms(force = false): Promise<PublicSiteCms> {
 
 export function clearPublicSiteCmsCache(): void {
   sitePromise = null;
+  cachedSite = null;
 }

@@ -23,6 +23,9 @@ import about4 from "../assets/images/about4.jpg";
 
 import { useNavigate } from "react-router-dom";
 import { mediaUrl } from "../utils/mediaUrl";
+import { loadPublicSiteCms } from "../content/publicCms";
+import PageLoader from "../app/components/PageLoader";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 
 const aboutImages = [about1, about2, about3, about4];
 
@@ -1278,20 +1281,27 @@ function CTASection() {
 
 /* ─── Root ─── */
 export default function AboutUs() {
+  const { showLoader, fading } = useCmsPageGate((force) =>
+    loadPublicSiteCms(force),
+  );
+
   return (
     <>
+      {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav="about" />
       <div
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
         <HeroSection />
-        {/* <MarqueeStrip /> */}
-        <AboutSection />
-        <TeamSection />
-        <PrinciplesSection />
-        {/* <CTASection onNavigate={onNavigate} /> */}
-        <Footer />
+        {!showLoader && (
+          <>
+            <AboutSection />
+            <TeamSection />
+            <PrinciplesSection />
+            <Footer />
+          </>
+        )}
       </div>
     </>
   );

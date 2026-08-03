@@ -15,7 +15,11 @@ import { getHeroContent } from "../../admin/utils/contentStorage";
 import { seedHero, type HeroContent } from "../../admin/data/seedContent";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { subscribeCmsUpdated } from "../../content/cmsSync";
-import { loadPublicSiteCms } from "../../content/publicCms";
+import {
+  getCachedPublicSiteCms,
+  loadPublicSiteCms,
+  type PublicSiteCms,
+} from "../../content/publicCms";
 
 const STAT_ICONS = [Briefcase, Award, Users] as const;
 
@@ -26,12 +30,21 @@ function resolveHeroBg(value: string | undefined): string {
   return trimmed;
 }
 
+function heroFromSite(site: PublicSiteCms | null): HeroContent {
+  if (site?.hero && typeof site.hero === "object") {
+    return { ...seedHero, ...(site.hero as HeroContent) };
+  }
+  return seedHero;
+}
+
 export default function HeroSection() {
-  const [hero, setHero] = useState<HeroContent>(seedHero);
+  const [hero, setHero] = useState<HeroContent>(() =>
+    heroFromSite(getCachedPublicSiteCms()),
+  );
 
   useEffect(() => {
-    const reload = () => {
-      loadPublicSiteCms(true)
+    const reload = (force: boolean) => {
+      loadPublicSiteCms(force)
         .then((site) => {
           if (site.hero && typeof site.hero === "object") {
             setHero({ ...seedHero, ...(site.hero as HeroContent) });
@@ -41,8 +54,8 @@ export default function HeroSection() {
         })
         .catch(() => undefined);
     };
-    reload();
-    return subscribeCmsUpdated(reload);
+    reload(false);
+    return subscribeCmsUpdated(() => reload(true));
   }, []);
 
   const bgImage = resolveHeroBg(hero.backgroundImage);

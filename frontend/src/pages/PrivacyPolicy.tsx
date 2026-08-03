@@ -7,9 +7,15 @@ import privacyBanner from "../assets/images/privacypolicybanner.jpg";
 import privacy2img from "../assets/images/privacy2img.jpg";
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
+import PageLoader from "../app/components/PageLoader";
+import { loadPublicSiteCms } from "../content/publicCms";
+import { useCmsPageGate } from "../hooks/useCmsPageGate";
 
 export default function PrivacyPolicy() {
   const [openIndex, setOpenIndex] = useState(0);
+  const { showLoader, fading } = useCmsPageGate((force) =>
+    loadPublicSiteCms(force),
+  );
 
   const accordionItems = [
     {
@@ -42,8 +48,10 @@ export default function PrivacyPolicy() {
       content: "Feel free to contact us regarding any privacy concerns.",
     },
   ];
+
   return (
     <>
+      {showLoader && <PageLoader fading={fading} />}
       <div className="bg-[#F5F1EA] overflow-x-hidden">
         <Navbar />
 
@@ -427,6 +435,8 @@ export default function PrivacyPolicy() {
           </div>
         </section>
 
+        {!showLoader && (
+          <>
         {/* Main Section Layout + Left Card + Content Area */}
 
         <section className="bg-[#F8F5F0] py-20">
@@ -681,6 +691,8 @@ export default function PrivacyPolicy() {
         {/* Footer */}
 
         <Footer />
+          </>
+        )}
       </div>
     </>
   );
