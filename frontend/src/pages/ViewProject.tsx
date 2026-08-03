@@ -2,266 +2,485 @@ import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
 
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
+import { ArrowLeft, ArrowRight, MapPin, ChevronRight } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
-// function HeroSection({ project }: { project: any }) {
-//   const navigate = useNavigate();
-//   return (
-//     <section
-//       className="bg-[#F5F1EA] px-4 lg:px-5 pt-5"
-//       style={{ position: "relative" }}
-//     >
-//       <div
-//         className="
-//         relative
-//         overflow-hidden
-//         rounded-[24px]
-//         md:rounded-[34px]
-//         min-h-[90vh]
-//         lg:min-h-[860px]
-//         "
-//       >
-//         {/* Background */}
+import { useNavigate, useParams } from "react-router-dom";
+import techMahindraBanner from "../assets/images/tech-mahindra-office.jpeg";
+import techMahindraBanner2 from "../assets/images/tech-mahindra-banner.png";
 
-//         <div className="absolute inset-0">
-//           <img
-//             src={project.heroImage}
-//             alt={project.title}
-//             className="w-full h-full object-cover"
-//           />
+const heroSlides = [
+  {
+    image: techMahindraBanner,
+    title: "Tech Mahindra Headquarters",
+    location: "Kolkata, India",
+  },
+  {
+    image: techMahindraBanner2,
+    title: "Tech Mahindra Office",
+    location: "Kolkata, India",
+  },
+];
 
-//           {/* Overlay */}
+function HeroSection({
+  project,
+}: {
+  project: {
+    title: string;
+    category: string;
+    location: string;
+    heroImage: string;
+    current: number;
+    total: number;
+  };
+}) {
+  const navigate = useNavigate();
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+  });
+  useEffect(() => {
+    const timer = setInterval(() => {
+      emblaApi?.scrollNext();
+    }, 5000);
 
-//           <div
-//             className="absolute inset-0"
-//             style={{
-//               background: `
-//               radial-gradient(circle at 18% 80%,
-//               rgba(8,6,5,.98) 0%,
-//               rgba(8,6,5,.92) 25%,
-//               rgba(8,6,5,.72) 42%,
-//               rgba(8,6,5,.28) 68%,
-//               rgba(8,6,5,0) 100%),
+    return () => clearInterval(timer);
+  }, [emblaApi]);
 
-//               linear-gradient(
-//               90deg,
-//               rgba(8,6,5,.92) 0%,
-//               rgba(8,6,5,.72) 28%,
-//               rgba(8,6,5,.35) 48%,
-//               rgba(8,6,5,0) 100%)
-//             `,
-//             }}
-//           />
-//         </div>
+  return (
+    <section
+      className="bg-[#F5F1EA] px-4 lg:px-5"
+      style={{
+        position: "relative",
+      }}
+    >
+      <div
+        className="
+          relative
+          overflow-hidden
+          rounded-[20px] md:rounded-[32px]
+          w-full
+          min-h-[75svh]
+         h-[620px]
+          sm:h-[650px]
+          md:h-[650px]
+          lg:h-[650px]
+          xl:h-[700px]
+        "
+      >
+        {/* Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden" ref={emblaRef}>
+          <div className="flex h-full">
+            {heroSlides.map((slide, index) => (
+              <div key={index} className="relative flex-[0_0_100%] h-full">
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover"
+                  style={{
+                    filter: "brightness(.92) contrast(1.05) saturate(1.08)",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
 
-//         {/* Gold Bar */}
+          {/* Luxury Overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `
+                linear-gradient(
+                  90deg,
+                  rgba(0,0,0,.82) 0%,
+                  rgba(0,0,0,.75) 18%,
+                  rgba(0,0,0,.58) 34%,
+                  rgba(0,0,0,.28) 48%,
+                  rgba(0,0,0,.08) 60%,
+                  rgba(0,0,0,0) 72%
+                ),
 
-//         <div
-//           className="absolute top-0 left-0 right-0 h-[3px] z-20"
-//           style={{
-//             background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-//           }}
-//         />
+                linear-gradient(
+                  180deg,
+                  rgba(0,0,0,.25) 0%,
+                  rgba(0,0,0,.08) 18%,
+                  rgba(0,0,0,0) 42%,
+                  rgba(0,0,0,.12) 100%
+                )
+              `,
+            }}
+          />
+        </div>
 
-//         {/* Back */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(255,185,70,.08), transparent 45%)",
+            mixBlendMode: "soft-light",
+          }}
+        />
 
-//         <button
-//           onClick={() => navigate("/projects")}
-//           className="
-//           absolute
-//           top-10
-//           left-10
-//           z-30
-//           flex
-//           items-center
-//           gap-3
-//           text-white/90
-//           hover:text-[#f3bb27]
-//           transition
-//           "
-//         >
-//           <ArrowLeft size={18} />
+        {/* Gold Top Line */}
 
-//           <span className="text-sm tracking-wide">Back to Projects</span>
-//         </button>
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{
+            duration: 1.1,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
+          style={{
+            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+          }}
+        />
 
-//         {/* Logo */}
+        {/* Ambient Gold Glow */}
 
-//         <img
-//           src="/logo-light.png"
-//           alt="Logo"
-//           className="
-//           absolute
-//           top-8
-//           right-10
-//           w-24
-//           z-30
-//           "
-//         />
+        <motion.div
+          animate={{
+            scale: [1, 1.15, 1],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+          }}
+          className="absolute left-0 bottom-0 w-[650px] h-[650px] rounded-full z-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle,rgba(243,187,39,.03),transparent 70%)",
+            filter: "blur(90px)",
+          }}
+        />
 
-//         {/* Hero Content */}
+        {/* Back Button */}
 
-//         <div
-//           className="
-//           relative
-//           z-20
-//           max-w-7xl
-//           mx-auto
-//           h-full
-//           flex
-//           items-center
-//           px-8
-//           lg:px-16
-//           "
-//         >
-//           <div className="max-w-3xl mt-24">
-//             {/* Category */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.25 }}
+          onClick={() => navigate("/projects")}
+          className="
+            absolute
+            top-10
+            left-10
+            z-30
+            flex
+            items-center
+            gap-3
+            text-[#F5F1EA]
+            hover:text-[#f3bb27]
+            transition
+          "
+        >
+          <ArrowLeft size={18} />
 
-//             <motion.p
-//               initial={{ opacity: 0, y: 30 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ duration: 0.7 }}
-//               className="
-//               uppercase
-//               tracking-[0.4em]
-//               text-[#D9A441]
-//               text-xs
-//               mb-8
-//               "
-//             >
-//               {project.category}
-//             </motion.p>
+          <span
+            className="
+            uppercase
+            tracking-[.25em]
+            text-[11px]
+          "
+          >
+            Back to Projects
+          </span>
+        </motion.button>
 
-//             {/* Title */}
+        {/* Main Content */}
 
-//             <motion.h1
-//               initial={{ opacity: 0, y: 60 }}
-//               animate={{ opacity: 1, y: 0 }}
-//               transition={{ duration: 0.9 }}
-//               className="
-//               text-white
-//               font-light
-//               leading-[0.9]
-//               tracking-[-0.04em]
-//               text-[60px]
-//               md:text-[90px]
-//               "
-//               style={{
-//                 fontFamily: "'Cormorant Garamond', serif",
-//               }}
-//             >
-//               {project.title}
-//             </motion.h1>
+        <div
+          className="
+            relative
+            z-20
+            max-w-[1600px]
+            mx-auto
 
-//             {/* Location */}
+            px-5
+            sm:px-8
+            lg:px-14
+            xl:px-16
 
-//             <motion.div
-//               initial={{ opacity: 0 }}
-//               animate={{ opacity: 1 }}
-//               transition={{ delay: 0.4 }}
-//               className="
-//               flex
-//               items-center
-//               gap-3
-//               mt-10
-//               text-[#F5F5F5]
-//               "
-//             >
-//               <MapPin size={18} className="text-[#D9A441]" />
+            pt-28
+            sm:pt-32
+            md:pt-36
+            lg:pt-40
 
-//               <span className="text-lg">{project.location}</span>
-//             </motion.div>
+            pb-24
+            sm:pb-28
+            lg:pb-32
 
-//             {/* Gold Line */}
+            flex
+            flex-col
+            justify-end
+            h-full
+            "
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            height: "100%",
+          }}
+        >
+          {/* Breadcrumb */}
 
-//             <div className="mt-10 w-20 h-[2px] bg-[#D9A441]" />
-//           </div>
-//         </div>
+          <motion.div
+            initial={{ opacity: 0, x: -15 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="
+            hidden
+            md:flex
+            flex-wrap
+            items-center
+            gap-2
+            mb-8
+          "
+          >
+            <button
+              onClick={() => navigate("/")}
+              className="
+              text-[#F5F1EA]/55
+              hover:text-[#F3BB27]
+              text-[11px]
+              uppercase
+              tracking-[0.22em]
+              transition-colors
+            "
+              style={{ fontFamily: "Parkinsans" }}
+            >
+              Home
+            </button>
 
-//         {/* Bottom Counter */}
+            <ChevronRight className="w-3 h-3 text-[#F3BB27]/35" />
 
-//         <div
-//           className="
-//           absolute
-//           bottom-10
-//           left-1/2
-//           -translate-x-1/2
-//           z-30
-//           flex
-//           items-center
-//           gap-4
-//           text-white
-//           "
-//         >
-//           <span className="text-lg">
-//             {String(project.current).padStart(2, "0")}
-//           </span>
+            <button
+              onClick={() => navigate("/projects")}
+              className="
+                text-[#F5F1EA]/55
+                hover:text-[#F3BB27]
+                text-[11px]
+                uppercase
+                tracking-[0.22em]
+                transition-colors
+              "
+              style={{ fontFamily: "Parkinsans" }}
+            >
+              Projects
+            </button>
 
-//           <div className="w-12 h-px bg-white/40" />
+            <ChevronRight className="w-3 h-3 text-[#F3BB27]/35" />
 
-//           <span className="text-white/70 text-lg">
-//             {String(project.total).padStart(2, "0")}
-//           </span>
-//         </div>
+            <button
+              onClick={() =>
+                navigate(
+                  `/projects/${project.category.toLowerCase().replace(/\s+/g, "-")}`,
+                )
+              }
+              className="
+              text-[#F3BB27]
+              hover:text-[#F8C24A]
+              text-[11px]
+              uppercase
+              tracking-[0.22em]
+              transition-colors
+            "
+              style={{ fontFamily: "Parkinsans" }}
+            >
+              {project.category}
+            </button>
 
-//         {/* Prev Next */}
+            <ChevronRight className="w-3 h-3 text-[#F3BB27]/35" />
 
-//         <div
-//           className="
-//           absolute
-//           bottom-0
-//           right-0
-//           z-30
-//           flex
-//           "
-//         >
-//           <button
-//             onClick={onPrevious}
-//             className="
-//             w-24
-//             h-24
-//             bg-black/50
-//             hover:bg-[#D9A441]
-//             transition
-//             flex
-//             items-center
-//             justify-center
-//             "
-//           >
-//             <ArrowLeft color="white" />
-//           </button>
+            <span
+              className="
+                text-[#F5F1EA]/85
+                text-[11px]
+                uppercase
+                tracking-[0.22em]
+              "
+              style={{ fontFamily: "Parkinsans" }}
+            >
+              {project.title}
+            </span>
+          </motion.div>
 
-//           <button
-//             onClick={onNext}
-//             className="
-//             w-24
-//             h-24
-//             bg-black/65
-//             hover:bg-[#D9A441]
-//             transition
-//             flex
-//             items-center
-//             justify-center
-//             "
-//           >
-//             <ArrowRight color="white" />
-//           </button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
+          {/* Title */}
+
+          <motion.h1
+            initial={{
+              y: 60,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 1,
+              delay: 0.45,
+            }}
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontWeight: 500,
+              letterSpacing: "-0.03em",
+            }}
+            className="max-w-4xl text-[#F5F1EA] text-[44px]
+              sm:text-[56px]
+              md:text-[64px]
+              lg:text-[70px]
+              leading-[0.95]"
+          >
+            {project.title}
+          </motion.h1>
+
+          {/* Location */}
+
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 15,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.75,
+            }}
+            className="flex items-center gap-3 mt-10"
+          >
+            <MapPin size={18} className="text-[#f3bb27]" />
+
+            <span className="text-[#E9E5DF] text-sm sm:text-base lg:text-lg">
+              {project.location}
+            </span>
+          </motion.div>
+          {/* Premium Bottom Line */}
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.85 }}
+            className="
+            mt-6
+            text-white/85
+
+            text-[15px]
+            sm:text-[16px]
+            lg:text-[18px]
+
+            leading-7
+            lg:leading-8
+
+            max-w-[320px]
+            sm:max-w-[420px]
+            md:max-w-[480px]
+            lg:max-w-[520px]
+          "
+          >
+            A future-ready workspace crafted to inspire collaboration,
+            creativity, and productivity while reflecting the brand's innovative
+            spirit.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+            className="flex items-center gap-4 mt-10"
+          >
+            <div className="w-10 h-[1px] bg-[#D8A042]" />
+
+            <span className="uppercase text-[11px] tracking-[.28em] text-[#f3bb27]">
+              Completed Project
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Navigation */}
+
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.05 }}
+          className="
+            absolute
+            bottom-8
+            right-8
+            z-30
+            flex
+            gap-4
+          "
+        >
+          <button
+            onClick={() => emblaApi?.scrollPrev()}
+            className="
+              w-16
+              h-16
+              rounded-full
+              border
+              border-white/15
+              bg-white/10
+              backdrop-blur-xl
+              flex
+              items-center
+              justify-center
+              hover:bg-[#f3bb27]
+              hover:border-[#f3bb27]
+              transition-all
+              duration-300
+            "
+          >
+            <ArrowLeft size={18} className="text-white" />
+          </button>
+
+          <button
+            onClick={() => emblaApi?.scrollNext()}
+            className="
+              w-16
+              h-16
+              rounded-full
+              border
+              border-white/15
+              bg-white/10
+              backdrop-blur-xl
+              flex
+              items-center
+              justify-center
+              hover:bg-[#f3bb27]
+              hover:border-[#f3bb27]
+              transition-all
+              duration-300
+            "
+          >
+            <ArrowRight size={18} className="text-white" />
+          </button>
+        </motion.div>
+
+        {/* Decorative Border */}
+
+        <div
+          className="absolute inset-0 rounded-[32px] pointer-events-none"
+          style={{
+            border: "1px solid rgba(255,255,255,.06)",
+          }}
+        />
+      </div>
+    </section>
+  );
+}
 
 export default function ProjectDetail() {
   const navigate = useNavigate();
+  const { category, slug } = useParams();
 
   const project = {
     title: "Tech Mahindra Headquarters",
     category: "Corporate Interiors",
     location: "Kolkata, India",
-    heroImage: "/images/projects/banner.jpg",
+    heroImage: techMahindraBanner,
     current: 1,
     total: 5,
   };
@@ -275,6 +494,7 @@ export default function ProjectDetail() {
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
         {/* HERO SECTION */}
+        <HeroSection project={project} />
 
         {/* <HeroSection project={project} /> */}
 
