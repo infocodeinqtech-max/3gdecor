@@ -31,7 +31,11 @@ export default defineConfig({
     },
   },
   server: {
-    // Serve CMS uploads from Laravel public/ even if src is a relative /uploads path
+    host: "0.0.0.0",
+    watch: {
+      usePolling: true,
+      interval: 100,
+    },
     proxy: {
       "/uploads": {
         target: "http://127.0.0.1:8000",
