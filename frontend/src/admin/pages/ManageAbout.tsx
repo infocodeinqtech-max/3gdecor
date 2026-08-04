@@ -44,6 +44,7 @@ export default function ManageAbout() {
         "about-page-principles",
         [],
       );
+
       setForm(about);
       setFeatures(heroFeatures);
       setFounders(founderMembers);
@@ -541,7 +542,8 @@ const updatePrinciple = <K extends keyof Principle>(
             <button
               type="button"
               onClick={addPrinciple}
-            >
+              className="inline-flex items-center gap-2 text-[#8a5a12] hover:text-[#6E4E10]">
+              <Plus className="w-4 h-4" />
               Add Principle
             </button>
           </div>
