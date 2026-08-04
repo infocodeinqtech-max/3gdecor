@@ -18,6 +18,7 @@ use App\Models\TestimonialContent;
 use App\Models\AboutPageHero;
 use App\Models\AboutPageHeroFeature;
 use App\Models\AboutPageFounderMember;
+use App\Models\AboutPagePrinciple;
 
 /**
  * Maps frontend storage keys → backend resources.
@@ -228,6 +229,32 @@ class CmsRegistry
                     'name' => $row->name,
                     'title' => $row->title,
                     'short_description' => $row->short_description,
+                    'sort_order' => $row->sort_order,
+                    'active' => (bool) $row->active,
+                ],
+            ],
+            'about-page-principles' => [
+                'model' => AboutPagePrinciple::class,
+                'permission' => 'about-page-principles',
+                'order_by' => 'sort_order',
+
+                'map_in' => fn (array $d) => [
+                    'home_about_contents_id' => AboutContent::query()->firstOrFail()->id,
+                    'icon' => $d['icon'] ?? '',
+                    'title' => $d['title'] ?? '',
+                    'description' => $d['description'] ?? '',
+                    'sort_order' => (int) ($d['sort_order'] ?? 0),
+                    'active' => array_key_exists('active', $d)
+                        ? (bool) $d['active']
+                        : true,
+                ],
+
+                'map_out' => fn ($row) => [
+                    'id' => $row->id,
+                    'home_about_contents_id' => $row->home_about_contents_id,
+                    'icon' => $row->icon,
+                    'title' => $row->title,
+                    'description' => $row->description,
                     'sort_order' => $row->sort_order,
                     'active' => (bool) $row->active,
                 ],

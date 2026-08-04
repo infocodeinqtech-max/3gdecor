@@ -69,6 +69,15 @@ export interface FounderMember {
   active: boolean;
 }
 
+export interface Principle {
+  id: number;
+  icon: string;
+  title: string;
+  description: string;
+  sort_order: number;
+  active: boolean;
+}
+
 export const seedAbout = {
   label: "ABOUT US",
   titleLine1: "Creating Spaces",
@@ -85,18 +94,6 @@ export const seedAbout = {
     "/uploads/about/about-4.jpg",
   ],
   badgeImage: "/uploads/about/badge.jpg",
-
-  // ⭐ Hero Features
-  heroFeatures: [
-    {
-      id: 1,
-      icon: "",
-      title: "",
-      description: "",
-      sort_order: 1,
-      active: true,
-    },
-  ] as HeroFeature[],
 };
 
 export const seedExpertiseSection = {

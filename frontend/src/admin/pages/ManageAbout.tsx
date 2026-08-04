@@ -13,7 +13,10 @@ import {
   seedAbout,
   type HeroFeature,
   type FounderMember,
+  type Principle,
 } from "../data/seedContent";
+
+import { ICON_OPTIONS } from "../data/iconOptions";
 
 const inputClass = "w-full px-4 py-2.5 rounded-xl admin-input";
 const cardClass = "admin-card rounded-2xl p-5 space-y-3 h-full";
@@ -24,6 +27,7 @@ export default function ManageAbout() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [founders, setFounders] = useState<FounderMember[]>([]);
+  const [principles, setPrinciples] = useState<Principle[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -36,9 +40,14 @@ export default function ManageAbout() {
         "about-page-founder-members",
         [],
       );
+      const principlesList = await getListContent<Principle>(
+        "about-page-principles",
+        [],
+      );
       setForm(about);
       setFeatures(heroFeatures);
       setFounders(founderMembers);
+      setPrinciples(principlesList);
 
       setLoading(false);
     })();
@@ -117,6 +126,42 @@ const removeFounder = (index: number) => {
   setFounders((prev) => prev.filter((_, i) => i !== index));
 };
 
+const updatePrinciple = <K extends keyof Principle>(
+  index: number,
+  field: K,
+  value: Principle[K]
+  ) => {
+    setPrinciples((prev) =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item
+      )
+    );
+  };
+
+  const addPrinciple = () => {
+
+    setPrinciples([
+      ...principles,
+      {
+        id: Date.now(),
+        icon: "",
+        title: "",
+        description: "",
+        sort_order: principles.length + 1,
+        active: true,
+      },
+    ]);
+  };
+
+  const removePrinciple = (index: number) => {
+    setPrinciples((prev) => prev.filter((_, i) => i !== index));
+  }
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -125,6 +170,7 @@ const removeFounder = (index: number) => {
         setContent("about", form),
         saveListContent("about-page-hero-features",features),
         saveListContent("about-page-founder-members", founders),
+        saveListContent("about-page-principles", principles),
       ]);
 
       toast.success("About section saved successfully");
@@ -483,9 +529,152 @@ const removeFounder = (index: number) => {
             </div>
 
           ))}
+          </div>
+        </section>
 
-        </div>
-      </section>
+        <section className="admin-card rounded-2xl p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-[#2A211C]">
+              Principles
+            </h2>
+
+            <button
+              type="button"
+              onClick={addPrinciple}
+            >
+              Add Principle
+            </button>
+          </div>
+
+          <div className="space-y-4">
+
+            {principles.map((principle, index) => (
+
+              <div
+                key={principle.id}
+                className="rounded-xl border border-[#E8DFD2] bg-[#FAF7F2]/40 p-5 space-y-4"
+              >
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  {/* Icon */}
+                  <div>
+                    <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                      Icon
+                    </label>
+
+                    <select
+                      className={inputClass}
+                      value={principle.icon}
+                      onChange={(e) =>
+                        updatePrinciple(index, "icon", e.target.value)
+                      }
+                    >
+                      <option value="">Select an icon</option>
+
+                      {ICON_OPTIONS.map((icon) => (
+                        <option key={icon.value} value={icon.value}>
+                          {icon.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Title */}
+                  <div>
+                    <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                      Title
+                    </label>
+
+                    <input
+                      className={inputClass}
+                      value={principle.title}
+                      onChange={(e) =>
+                        updatePrinciple(index, "title", e.target.value)
+                      }
+                      placeholder="Principle title"
+                    />
+                  </div>
+
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                    Description
+                  </label>
+
+                  <textarea
+                    rows={3}
+                    className={`${inputClass} resize-none`}
+                    value={principle.description}
+                    onChange={(e) =>
+                      updatePrinciple(
+                        index,
+                        "description",
+                        e.target.value,
+                      )
+                    }
+                    placeholder="Principle description..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  {/* Sort Order */}
+                  <div>
+                    <label className="block text-sm mb-2 text-[#6E655C] font-medium">
+                      Sort Order
+                    </label>
+
+                    <input
+                      type="number"
+                      className={inputClass}
+                      value={principle.sort_order}
+                      onChange={(e) =>
+                        updatePrinciple(
+                          index,
+                          "sort_order",
+                          Number(e.target.value),
+                        )
+                      }
+                    />
+                  </div>
+
+                  {/* Active */}
+                  <div className="flex items-end">
+                    <label className="inline-flex items-center gap-2 text-sm text-[#6E655C] font-medium">
+                      <input
+                        type="checkbox"
+                        checked={principle.active}
+                        onChange={(e) =>
+                          updatePrinciple(
+                            index,
+                            "active",
+                            e.target.checked,
+                          )
+                        }
+                      />
+                      Active
+                    </label>
+                  </div>
+
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => removePrinciple(index)}
+                  className="w-full py-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Remove Principle
+                </button>
+
+              </div>
+
+            ))}
+          </div>
+        </section>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="admin-note rounded-xl p-4 text-sm flex-1">
