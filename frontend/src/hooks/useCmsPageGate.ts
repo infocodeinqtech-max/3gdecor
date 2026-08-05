@@ -69,5 +69,16 @@ export function useCmsPageGate(load: CmsLoader, minDurationMs = 900) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minDurationMs]);
 
+  // Keep scrollbar track on <html> while loader is up; block body scroll only.
+  useEffect(() => {
+    if (!showLoader) return;
+    const html = document.documentElement;
+    html.style.overflowY = "scroll";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showLoader]);
+
   return { showLoader, fading };
 }

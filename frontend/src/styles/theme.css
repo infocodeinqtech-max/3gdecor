@@ -126,6 +126,9 @@
 
   body {
     @apply bg-background text-foreground;
+    /* 100vw stays constant when the classic scrollbar appears, so %/flow
+       layouts (hero, sections) do not shrink from the right. */
+    width: 100vw;
     overflow-x: hidden;
   }
 
@@ -137,6 +140,8 @@
   html {
     font-size: var(--font-size);
     overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
   }
 
   h1 {
