@@ -114,7 +114,7 @@ export default function Navbar({ activeNav }: NavbarProps) {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-[#F5F1EA]"
+        className="fixed top-0 left-0 z-50 w-screen bg-[#F5F1EA]"
         style={{ height: "72px" }}
       >
         <div className="max-w-[1720px] mx-auto h-full px-4 sm:px-6 lg:px-8">

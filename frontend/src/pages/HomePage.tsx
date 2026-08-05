@@ -260,7 +260,7 @@ export default function HomePage() {
   const cards = aboutImageLayouts;
 
   return (
-    <div className="size-full bg-[#F5F1EA] text-[#332C26] overflow-x-hidden">
+    <div className="min-h-full w-full bg-[#F5F1EA] text-[#332C26] overflow-x-hidden">
       {showLoader && <PageLoader fading={fading} />}
       <Navbar activeNav={activeNav} />
 
