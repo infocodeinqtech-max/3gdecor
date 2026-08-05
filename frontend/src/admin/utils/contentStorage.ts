@@ -12,6 +12,7 @@ const LIST_KEYS = new Set([
   "contact-offices",
   "about-page-hero-features",
   "about-page-founder-members",
+  "about-page-principles",
 ]);
 
 /** Singleton resources */
