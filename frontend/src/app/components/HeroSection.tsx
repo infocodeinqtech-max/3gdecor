@@ -64,17 +64,17 @@ export default function HeroSection() {
     <section
       id="home"
       data-cursor-theme="dark"
-      className="relative bg-[#F6F2EC] px-4 pb-19 lg:pb-24 lg:px-5"
+      className="relative bg-[#F6F2EC] px-4 pt-[72px] pb-32 sm:pb-28 lg:px-5 lg:pt-[80px] lg:pb-24"
     >
       <div
         className="
           relative
           overflow-visible
-          h-[min(640px,85svh)]
+          h-[620px]
           sm:h-[700px]
           md:h-[780px]
           lg:h-[760px]
-          xl:h-[790px]      
+          xl:h-[790px]
           w-full
           "
       >
@@ -108,7 +108,8 @@ export default function HeroSection() {
           object-[62%_center]
           md:object-center
 
-          rounded-[32px]
+          rounded-[20px]
+          md:rounded-[32px]
           "
           style={{
             filter: "contrast(1.15) saturate(1.05) brightness(.94)",
@@ -117,7 +118,7 @@ export default function HeroSection() {
 
         {/* Overlay 1 */}
         <div
-          className="absolute inset-0 rounded-[32px] pointer-events-none"
+          className="absolute inset-0 rounded-[20px] md:rounded-[32px] pointer-events-none"
           style={{
             background: `
               linear-gradient(
@@ -220,7 +221,7 @@ export default function HeroSection() {
           }}
         /> */}
         <div
-          className="absolute inset-0 rounded-[32px] pointer-events-none"
+          className="absolute inset-0 rounded-[20px] md:rounded-[32px] pointer-events-none"
           style={{
             background: `
               radial-gradient(
@@ -326,11 +327,18 @@ export default function HeroSection() {
           className="
             absolute
             inset-0
-            z-20
+            z-40
             flex
             items-center
             justify-center
-            px-6
+            pt-4
+            pb-36
+            sm:pt-0
+            sm:pb-36
+            md:pb-24
+            lg:pb-0
+            px-5
+            sm:px-6
             lg:px-[220px]
             xl:px-[240px]
             2xl:px-[260px]
@@ -339,20 +347,22 @@ export default function HeroSection() {
           <div
             className="max-w-[340px]
             sm:max-w-[520px]
-            lg:max-w-[650px] text-center"
+            lg:max-w-[650px] text-center w-full"
           >
             {/* Small Heading */}
 
             <div
               className="
                 uppercase
-                tracking-[10px]
+                tracking-[0.28em]
+                sm:tracking-[10px]
                 text-[#D8A64B]
-                mb-6
+                mb-3
+                sm:mb-6
                 "
               style={{
                 fontFamily: "'Parkinsans', sans-serif",
-                fontSize: "13px",
+                fontSize: "11px",
                 fontWeight: 700,
               }}
             >
@@ -369,7 +379,7 @@ export default function HeroSection() {
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontWeight: 500,
-                fontSize: "clamp(38px,8vw,68px)",
+                fontSize: "clamp(28px,6.8vw,68px)",
               }}
             >
               {hero.headlineLine1}
@@ -381,12 +391,13 @@ export default function HeroSection() {
 
             <div
               className="
-                mt-2
+                mt-1
+                sm:mt-2
                 "
               style={{
                 fontFamily: '"Great Vibes", cursive',
                 color: "#D8A64B",
-                fontSize: "clamp(42px,10vw,70px)",
+                fontSize: "clamp(30px,7.5vw,70px)",
                 lineHeight: 1,
               }}
             >
@@ -397,17 +408,18 @@ export default function HeroSection() {
 
             <p
               className="
-                mt-6
+                mt-3
+                sm:mt-6
                 mx-auto
                 max-w-[470px]
-                leading-7
+                leading-5
                 sm:leading-8
                 lg:leading-9
                 text-[#F3F3F3]
                 "
               style={{
                 fontFamily: "'Parkinsans', sans-serif",
-                fontSize: "16px",
+                fontSize: "clamp(12px,3.4vw,16px)",
                 fontWeight: 300,
               }}
             >
@@ -418,11 +430,11 @@ export default function HeroSection() {
 
             <div
               className="
-                 mt-8
-                 mb-20
-
-                sm:mb-20
-                lg:mb-0
+                 mt-4
+                 sm:mt-8
+                 mb-0
+                 sm:mb-16
+                 lg:mb-0
 
                 flex
                 flex-col
@@ -432,7 +444,8 @@ export default function HeroSection() {
                 items-center
                 justify-center
 
-                gap-4
+                gap-2.5
+                sm:gap-4
                 lg:gap-5
 
                 lg:hidden
@@ -447,8 +460,10 @@ export default function HeroSection() {
                     relative
                     overflow-hidden
                     rounded-full
-                    px-8
-                    py-4
+                    px-6
+                    sm:px-8
+                    py-3.5
+                    sm:py-4
                     w-full
                     max-w-[310px]
                     sm:max-w-[285px]
@@ -456,6 +471,7 @@ export default function HeroSection() {
                     items-center
                     justify-center
                     gap-2
+                    shrink-0
                     "
                 style={{
                   background: "linear-gradient(90deg,#EA8C18 0%,#F3BE4C 100%)",
@@ -487,7 +503,7 @@ export default function HeroSection() {
                     fontSize: "clamp(13px,3.5vw,15px)",
                   }}
                 >
-                  {hero.ctaCorporateText}
+                  {hero.leftCardTitle}
                 </span>
 
                 <ArrowRight
@@ -506,41 +522,56 @@ export default function HeroSection() {
                     relative
                     overflow-hidden
                     rounded-full
-                    border
-                    border-white/25
-                    bg-black/18
-                    backdrop-blur-md
-                    px-8
-                    py-4
+                    px-6
+                    sm:px-8
+                    py-3.5
+                    sm:py-4
                     w-full
-                    max-w-[360px]
-                    sm:max-w-[320px]
-                    lg:min-w-[285px]
+                    max-w-[310px]
+                    sm:max-w-[285px]
                     flex
                     items-center
                     justify-center
-                    gap-3
-                    hover:bg-black/30
-                    transition-all
+                    gap-2
+                    shrink-0
                     "
+                style={{
+                  background: "linear-gradient(90deg,#EA8C18 0%,#F3BE4C 100%)",
+                  boxShadow: "0 18px 45px rgba(234,140,24,.35)",
+                }}
               >
-                <Factory size={18} color="#D8A64B" />
+                <div
+                  className="
+                    absolute
+                    left-[-40%]
+                    top-0
+                    h-full
+                    w-[40%]
+                    bg-white/20
+                    skew-x-[-25deg]
+                    group-hover:left-[140%]
+                    transition-all
+                    duration-700
+                    "
+                />
+
+                <Factory size={18} color="#fff" className="flex-shrink-0" />
 
                 <span
-                  className="text-white"
+                  className="text-white whitespace-nowrap"
                   style={{
                     fontFamily: "'Parkinsans', sans-serif",
                     fontWeight: 600,
-                    fontSize: "15px",
+                    fontSize: "clamp(13px,3.5vw,15px)",
                   }}
                 >
-                  {hero.ctaCivilText}
+                  {hero.rightCardTitle}
                 </span>
 
                 <ArrowRight
                   size={18}
-                  color="#D8A64B"
-                  className="transition-transform group-hover:translate-x-1"
+                  color="#fff"
+                  className="flex-shrink-0 transition-transform group-hover:translate-x-1"
                 />
               </motion.a>
             </div>
@@ -570,11 +601,11 @@ export default function HeroSection() {
             absolute
             left-1/2
             -translate-x-1/2
-            bottom-4
-            sm:bottom-6
+            -bottom-20
+            sm:-bottom-16
             md:bottom-[-40px]
-            lg:bottom-[-55px]         
-            z-30
+            lg:bottom-[-55px]
+            z-20
            
             flex
             justify-center
@@ -584,7 +615,6 @@ export default function HeroSection() {
             lg:w-[82%]
             xl:w-[900px]
             2xl:w-[980px]
-
                 "
         >
           <div

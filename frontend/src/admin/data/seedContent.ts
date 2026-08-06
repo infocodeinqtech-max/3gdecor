@@ -3,7 +3,7 @@ export const seedNavigation = [
   { id: 2, label: "EXPERTISE", link: "/#features", order: 2, visible: true },
   { id: 3, label: "ABOUT", link: "/about", order: 3, visible: true },
   { id: 4, label: "SERVICES", link: "/services", order: 4, visible: true },
-  { id: 5, label: "PROJECTS", link: "/#projects", order: 5, visible: true },
+  { id: 5, label: "PROJECTS", link: "/projects", order: 5, visible: true },
   { id: 6, label: "CONTACT", link: "/contact", order: 6, visible: true },
 ];
 
@@ -761,4 +761,205 @@ export const seedServiceWhyFeatures: ServiceWhyFeatureItem[] = [
   { id: 2, text: "In-house civil, interior, and furniture teams" },
   { id: 3, text: "ISO-compliant project management processes" },
   { id: 4, text: "Transparent costing with no hidden extras" },
+];
+
+/* ─── Projects Page CMS ─── */
+
+export interface ProjectsPageStat {
+  id: number | string;
+  number: string;
+  title: string;
+  icon?: string;
+}
+
+export interface ProjectsPageContent {
+  bannerImage: string;
+  heroEyebrow: string;
+  heroTitlePrefix: string;
+  heroTitleHighlight: string;
+  heroDescription1: string;
+  heroDescription2: string;
+  stats: ProjectsPageStat[];
+  categoriesEyebrow: string;
+  categoriesTitleLine1: string;
+  categoriesTitleLine2: string;
+  categoriesDescription: string;
+  corporateSubtitle: string;
+  corporateTitle: string;
+  corporateDescription: string;
+  corporateButton: string;
+  corporateLink: string;
+  civilSubtitle: string;
+  civilTitle: string;
+  civilDescription: string;
+  civilButton: string;
+  civilLink: string;
+}
+
+export interface ProjectsPageCategoryItem {
+  id: number | string;
+  title: string;
+  subtitle: string;
+  image: string;
+  icon: string;
+  tags: string;
+  button: string;
+  link: string;
+  order?: number;
+  active?: boolean;
+}
+
+export interface ProjectsPageItem {
+  id: number | string;
+  domain: "corporate" | "civil";
+  title: string;
+  location: string;
+  image: string;
+  slug: string;
+  order?: number;
+  active?: boolean;
+}
+
+export const seedProjectsPage: ProjectsPageContent = {
+  bannerImage: "",
+  heroEyebrow: "Projects",
+  heroTitlePrefix: "Our ",
+  heroTitleHighlight: "Projects",
+  heroDescription1:
+    "Explore a curated collection of premium corporate interiors and civil infrastructure projects that reflect our passion for craftsmanship, precision, and timeless architectural excellence.",
+  heroDescription2:
+    "From collaborative workspaces and executive offices to reception lounges and business environments, we combine creativity, precision, and timeless design to create spaces that leave a lasting impression.",
+  stats: [
+    { id: 1, number: "250+", title: "Projects Delivered", icon: "Briefcase" },
+    { id: 2, number: "15+", title: "Years Experience", icon: "Building2" },
+    { id: 3, number: "100%", title: "Client Satisfaction", icon: "Award" },
+  ],
+  categoriesEyebrow: "OUR PROJECT CATEGORIES",
+  categoriesTitleLine1: "Two Domains.",
+  categoriesTitleLine2: "Endless Possibilities.",
+  categoriesDescription:
+    "From inspiring interiors to iconic structures, our work spans across two core domains.",
+  corporateSubtitle: "CORPORATE INTERIORS",
+  corporateTitle: "Featured Projects",
+  corporateDescription:
+    "Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences.",
+  corporateButton: "View All Corporate Projects",
+  corporateLink: "/projects/corporate",
+  civilSubtitle: "CIVIL STRUCTURES",
+  civilTitle: "Featured Projects",
+  civilDescription:
+    "Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality.",
+  civilButton: "View All Civil Projects",
+  civilLink: "/projects/civil",
+};
+
+export const seedProjectsPageCategories: ProjectsPageCategoryItem[] = [
+  {
+    id: 1,
+    title: "Corporate Interiors",
+    subtitle:
+      "Workspaces that inspire. Interiors that perform. Environments that elevate everyday experiences.",
+    image: "",
+    icon: "Building2",
+    tags: "Workspaces, Offices, Showrooms, Banks",
+    button: "View Projects",
+    link: "/projects/corporate",
+    order: 1,
+  },
+  {
+    id: 2,
+    title: "Civil Structures",
+    subtitle:
+      "Strong foundations. Timeless structures. Built to shape skylines and empower communities.",
+    image: "",
+    icon: "Landmark",
+    tags: "Residential, Commercial, Industrial, Infrastructure",
+    button: "View Projects",
+    link: "/projects/civil",
+    order: 2,
+  },
+];
+
+export const seedProjectsPageItems: ProjectsPageItem[] = [
+  {
+    id: 1,
+    domain: "corporate",
+    title: "Tech Mahindra Office",
+    location: "Kolkata, India",
+    image: "",
+    slug: "tech-mahindra",
+    order: 1,
+  },
+  {
+    id: 2,
+    domain: "corporate",
+    title: "Siemens Innovation Hub",
+    location: "Kolkata, India",
+    image: "",
+    slug: "siemens",
+    order: 2,
+  },
+  {
+    id: 3,
+    domain: "corporate",
+    title: "Executive Dining Space",
+    location: "Kolkata, India",
+    image: "",
+    slug: "executive-dining",
+    order: 3,
+  },
+  {
+    id: 4,
+    domain: "corporate",
+    title: "Creative Studio Workspace",
+    location: "Kolkata, India",
+    image: "",
+    slug: "creative-workspace",
+    order: 4,
+  },
+  {
+    id: 5,
+    domain: "corporate",
+    title: "Corporate Reception",
+    location: "Kolkata, India",
+    image: "",
+    slug: "reception",
+    order: 5,
+  },
+  {
+    id: 6,
+    domain: "civil",
+    title: "Luxury Villa",
+    location: "Bhuvaneshwar, India",
+    image: "",
+    slug: "luxury-villa",
+    order: 6,
+  },
+  {
+    id: 7,
+    domain: "civil",
+    title: "Flender Drives",
+    location: "Kharagpur, India",
+    image: "",
+    slug: "industrial-facility",
+    order: 7,
+  },
+  {
+    id: 8,
+    domain: "civil",
+    title: "Residential",
+    location: "Kolkata, India",
+    image: "",
+    slug: "residential-building",
+    order: 8,
+  },
+  {
+    id: 9,
+    domain: "civil",
+    title: "Industrial Complex",
+    location: "Bhubaneswar, India",
+    image: "",
+    slug: "industrial-complex",
+    order: 9,
+  },
 ];

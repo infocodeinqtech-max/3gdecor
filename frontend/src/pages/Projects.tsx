@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
@@ -13,154 +14,89 @@ import {
   Building,
   Landmark,
   ArrowRight,
+  type LucideIcon,
 } from "lucide-react";
 import projectBanner from "../assets/images/project-banner.png";
 import corporateCategory from "../assets/images/project-category-corporate.png";
-import civilCategory from "../assets/images/project-category-corporate.png";
-
 import office1 from "../assets/images/cp_int-1.jpeg";
 import office2 from "../assets/images/cp-int-2.jpeg";
 import office3 from "../assets/images/cp-int-3.jpeg";
 import office4 from "../assets/images/cp-int-4.jpeg";
 import office5 from "../assets/images/cp-int-5.jpeg";
-
 import civil1 from "../assets/images/cv_1.png";
 import civil2 from "../assets/images/cv_2.png";
 import civil3 from "../assets/images/cv_3.png";
 import civil4 from "../assets/images/cv_4.png";
 import FeaturedProjects from "../app/components/FeaturedProjects";
+import {
+  seedProjectsPage,
+  seedProjectsPageCategories,
+  seedProjectsPageItems,
+  type ProjectsPageCategoryItem,
+  type ProjectsPageContent,
+  type ProjectsPageItem,
+} from "../admin/data/seedContent";
+import { getContent, getListContent } from "../admin/utils/contentStorage";
+import { mediaUrl, preloadImage } from "../utils/mediaUrl";
 
-const projectStats = [
-  {
-    icon: Briefcase,
-    number: "250+",
-    title: "Projects Delivered",
-  },
-  {
-    icon: Building2,
-    number: "15+",
-    title: "Years Experience",
-  },
-  {
-    icon: Award,
-    number: "100%",
-    title: "Client Satisfaction",
-  },
-];
+const ICON_MAP: Record<string, LucideIcon> = {
+  Briefcase,
+  Building2,
+  Award,
+  Building,
+  Landmark,
+};
 
-const projectCategories = [
-  {
-    id: 1,
-    title: "Corporate Interiors",
-    image: corporateCategory,
-    icon: Building2,
+const FALLBACK_CATEGORY_IMAGES = [corporateCategory, corporateCategory];
+const FALLBACK_ITEM_IMAGES: Record<string, string> = {
+  "tech-mahindra": office1,
+  siemens: office2,
+  "executive-dining": office3,
+  "creative-workspace": office4,
+  reception: office5,
+  "luxury-villa": civil1,
+  "industrial-facility": civil2,
+  "residential-building": civil3,
+  "industrial-complex": civil4,
+};
 
-    subtitle:
-      "Workspaces that inspire. Interiors that perform. Environments that elevate everyday experiences.",
+function resolveProjectsBanner(content: ProjectsPageContent): string {
+  return content.bannerImage?.trim()
+    ? mediaUrl(content.bannerImage) || projectBanner
+    : projectBanner;
+}
 
-    tags: ["Workspaces", "Offices", "Showrooms", "Banks"],
+function parseTags(tags: string | string[] | undefined): string[] {
+  if (Array.isArray(tags)) return tags.map(String).filter(Boolean);
+  return String(tags || "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
 
-    button: "View Projects",
+function resolveCategoryImage(
+  item: ProjectsPageCategoryItem,
+  index: number,
+): string {
+  const fromDb = item.image?.trim() ? mediaUrl(item.image) : "";
+  return fromDb || FALLBACK_CATEGORY_IMAGES[index % FALLBACK_CATEGORY_IMAGES.length];
+}
 
-    link: "/projects/corporate",
-  },
+function resolveItemImage(item: ProjectsPageItem): string {
+  const fromDb = item.image?.trim() ? mediaUrl(item.image) : "";
+  return fromDb || FALLBACK_ITEM_IMAGES[item.slug] || office1;
+}
 
-  {
-    id: 2,
-    title: "Civil Structures",
-    image: civilCategory,
-    icon: Landmark,
+function HeroSection({ content }: { content: ProjectsPageContent }) {
+  const bannerImage = resolveProjectsBanner(content);
 
-    subtitle:
-      "Strong foundations. Timeless structures. Built to shape skylines and empower communities.",
-
-    tags: ["Residential", "Commercial", "Industrial", "Infrastructure"],
-
-    button: "View Projects",
-
-    link: "/projects/civil",
-  },
-];
-
-const corporateProjects = [
-  {
-    id: 1,
-    title: "Tech Mahindra Office",
-    location: "Kolkata, India",
-    image: office1,
-    slug: "tech-mahindra",
-  },
-  {
-    id: 2,
-    title: "Siemens Innovation Hub",
-    location: "Kolkata, India",
-    image: office2,
-    slug: "siemens",
-  },
-  {
-    id: 3,
-    title: "Executive Dining Space",
-    location: "Kolkata, India",
-    image: office3,
-    slug: "executive-dining",
-  },
-  {
-    id: 4,
-    title: "Creative Studio Workspace",
-    location: "Kolkata, India",
-    image: office4,
-    slug: "creative-workspace",
-  },
-  {
-    id: 5,
-    title: "Corporate Reception",
-    location: "Kolkata, India",
-    image: office5,
-    slug: "reception",
-  },
-];
-
-const civilProjects = [
-  {
-    id: 1,
-    title: "Luxury Villa",
-    location: "Bhuvaneshwar, India",
-    image: civil1,
-    slug: "luxury-villa",
-  },
-  {
-    id: 2,
-    title: "Flender Drives",
-    location: "Kharagpur, India",
-    image: civil2,
-    slug: "industrial-facility",
-  },
-  {
-    id: 3,
-    title: "Residential",
-    location: "Kolkata, India",
-    image: civil3,
-    slug: "residential-building",
-  },
-  {
-    id: 4,
-    title: "Industrial Complex",
-    location: "Bhubaneswar, India",
-    image: civil4,
-    slug: "industrial-complex",
-  },
-];
-
-function HeroSection() {
-  const navigate = useNavigate();
   return (
     <section
-      // className="bg-[#F5F1EA] px-4 lg:px-5"
       className="
         bg-[#F5F1EA]
         px-4
         lg:px-5
-        pt-[72px]     
+        pt-[72px]
         lg:pt-[80px]
       "
       style={{
@@ -178,18 +114,15 @@ function HeroSection() {
           lg:min-h-[760px]
           "
       >
-        {/* ── Full-bleed background image ── */}
         <div className="absolute inset-0 z-0">
           <img
-            src={projectBanner}
-            alt="3G Decorative Group reception"
+            src={bannerImage}
+            alt="3G Decorative Group projects"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
               filter: "brightness(1.45) contrast(1.08) saturate(1.1)",
             }}
           />
-          {/* Left-heavy dark overlay — text readable, image glows through on right  -- Dark Gradient */}
-          {/* Dark Overlay */}
           <div
             className="absolute inset-0"
             style={{
@@ -202,7 +135,6 @@ function HeroSection() {
                     rgba(10,8,6,0.28) 65%,
                     rgba(10,8,6,0) 100%
                 ),
-
                 linear-gradient(
                     90deg,
                     rgba(8,6,5,0.92) 0%,
@@ -218,7 +150,6 @@ function HeroSection() {
                       rgba(8,6,5,0.08) 35%,
                       rgba(8,6,5,0) 60%
                   ),
-
                 linear-gradient(
                     180deg,
                     rgba(8,6,5,0.10) 0%,
@@ -231,18 +162,16 @@ function HeroSection() {
           />
         </div>
 
-        {/* Gold top bar */}
-        <motion.div
+        {/* <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
-          // style={{
-          //   background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-          // }}
-        />
+          style={{
+            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+          }}
+        /> */}
 
-        {/* Ambient orb — warm left */}
         <motion.div
           className="absolute top-1/3 left-1/4 w-[600px] h-[600px] rounded-full pointer-events-none z-0"
           style={{
@@ -254,7 +183,6 @@ function HeroSection() {
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* ── Main text content ── */}
         <div
           className="relative z-10 max-w-7xl mx-auto px-5 md:px-8 lg:px-16"
           style={{
@@ -266,7 +194,6 @@ function HeroSection() {
             justifyContent: "center",
           }}
         >
-          {/* Breadcrumb */}
           <motion.div
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -289,7 +216,6 @@ function HeroSection() {
             </span>
           </motion.div>
 
-          {/* Pre-label */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -301,11 +227,9 @@ function HeroSection() {
               className="text-[#f3bb27] text-[11px] uppercase tracking-[0.32em]"
               style={{ fontFamily: "'Parkinsans', sans-serif" }}
             >
-              Projects
+              {content.heroEyebrow}
             </span>
           </motion.div>
-
-          {/* Main heading — matches reference: Design. Build. Deliver Excellence. */}
 
           <div className="max-w-2xl mb-7">
             <div style={{ overflow: "hidden" }}>
@@ -325,8 +249,7 @@ function HeroSection() {
                   letterSpacing: "-0.03em",
                 }}
               >
-                <span className="text-[#F5F1EA]">Our </span>
-
+                <span className="text-[#F5F1EA]">{content.heroTitlePrefix}</span>
                 <span
                   style={{
                     background: "linear-gradient(90deg,#f3bb27,#ea7a12)",
@@ -334,11 +257,12 @@ function HeroSection() {
                     WebkitTextFillColor: "transparent",
                   }}
                 >
-                  Projects
+                  {content.heroTitleHighlight}
                 </span>
               </motion.h1>
             </div>
           </div>
+
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -350,9 +274,7 @@ function HeroSection() {
               lineHeight: 1.75,
             }}
           >
-            Explore a curated collection of premium corporate interiors and
-            civil infrastructure projects that reflect our passion for
-            craftsmanship, precision, and timeless architectural excellence.
+            {content.heroDescription1}
           </motion.p>
 
           <motion.p
@@ -366,74 +288,62 @@ function HeroSection() {
               lineHeight: 1.9,
             }}
           >
-            From collaborative workspaces and executive offices to reception
-            lounges and business environments, we combine creativity, precision,
-            and timeless design to create spaces that leave a lasting
-            impression.
+            {content.heroDescription2}
           </motion.p>
 
-          {/* Statistics */}
-
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: 1,
-            }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
             className="flex flex-wrap gap-14 mt-16"
           >
-            {projectStats.map((item, index) => {
-              const Icon = item.icon;
+            {(content.stats?.length ? content.stats : seedProjectsPage.stats).map(
+              (item, index) => {
+                const Icon =
+                  ICON_MAP[item.icon || ""] ||
+                  [Briefcase, Building2, Award][index % 3];
 
-              return (
-                <div key={index} className="flex items-center gap-5">
-                  <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center"
-                    style={{
-                      border: "1px solid rgba(244,178,35,.35)",
-                      background: "rgba(255,255,255,.05)",
-                      backdropFilter: "blur(8px)",
-                    }}
-                  >
-                    <Icon
-                      className="w-9 h-9 text-[#f4b223]"
-                      strokeWidth={1.5}
-                    />
-                  </div>
-
-                  <div>
-                    <h3
-                      className="text-white"
+                return (
+                  <div key={item.id ?? index} className="flex items-center gap-5">
+                    <div
+                      className="w-20 h-20 rounded-full flex items-center justify-center"
                       style={{
-                        fontFamily: "Cormorant Garamond",
-                        fontSize: "44px",
+                        border: "1px solid rgba(244,178,35,.35)",
+                        background: "rgba(255,255,255,.05)",
+                        backdropFilter: "blur(8px)",
                       }}
                     >
-                      {item.number}
-                    </h3>
+                      <Icon
+                        className="w-9 h-9 text-[#f4b223]"
+                        strokeWidth={1.5}
+                      />
+                    </div>
 
-                    <p
-                      className="text-[#DDD6CC]"
-                      style={{
-                        fontFamily: "Parkinsans",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {item.title}
-                    </p>
+                    <div>
+                      <h3
+                        className="text-white"
+                        style={{
+                          fontFamily: "Cormorant Garamond",
+                          fontSize: "44px",
+                        }}
+                      >
+                        {item.number}
+                      </h3>
+                      <p
+                        className="text-[#DDD6CC]"
+                        style={{
+                          fontFamily: "Parkinsans",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {item.title}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              },
+            )}
           </motion.div>
-
-          {/* Bottom Fade */}
 
           <div
             className="absolute bottom-0 left-0 right-0 h-44"
@@ -447,14 +357,19 @@ function HeroSection() {
   );
 }
 
-function ProjectCategories() {
+function ProjectCategories({
+  content,
+  categories,
+}: {
+  content: ProjectsPageContent;
+  categories: ProjectsPageCategoryItem[];
+}) {
   const navigate = useNavigate();
+  const rows = categories.length ? categories : seedProjectsPageCategories;
 
   return (
     <section className="bg-[#F5F1EA] py-20 lg:py-28">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
-        {/* Heading */}
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -463,7 +378,7 @@ function ProjectCategories() {
           className="text-center"
         >
           <span className="uppercase tracking-[.28em] text-[#D49A2D] text-xs font-semibold">
-            OUR PROJECT CATEGORIES
+            {content.categoriesEyebrow}
           </span>
 
           <h2
@@ -474,9 +389,9 @@ function ProjectCategories() {
               lineHeight: 1.1,
             }}
           >
-            Two Domains.
+            {content.categoriesTitleLine1}
             <br className="sm:hidden" />
-            Endless Possibilities.
+            {content.categoriesTitleLine2}
           </h2>
 
           <p
@@ -486,16 +401,15 @@ function ProjectCategories() {
               lineHeight: 1.8,
             }}
           >
-            From inspiring interiors to iconic structures, our work spans across
-            two core domains.
+            {content.categoriesDescription}
           </p>
         </motion.div>
 
-        {/* Cards */}
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-16">
-          {projectCategories.map((item, index) => {
-            const Icon = item.icon;
+          {rows.map((item, index) => {
+            const Icon = ICON_MAP[item.icon] || Building2;
+            const tags = parseTags(item.tags);
+            const image = resolveCategoryImage(item, index);
 
             return (
               <motion.div
@@ -507,19 +421,18 @@ function ProjectCategories() {
                   duration: 0.7,
                   delay: index * 0.15,
                 }}
-                onClick={() => navigate(item.link)}
+                onClick={() => navigate(item.link || "/projects")}
                 className="group cursor-pointer"
               >
                 <div className="relative overflow-hidden rounded-[22px] h-[430px] xl:h-[450px]">
                   <img
-                    src={item.image}
-                    className="absolute inset-0 w-full h-full object-cover transition duration-700 transition-all duration-1000 group-hover:scale-[1.04]"
+                    src={image}
+                    alt={item.title}
+                    className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-[1.04]"
                     style={{
                       filter: "brightness(1.12) contrast(1.05) saturate(1.05)",
                     }}
                   />
-
-                  {/* Overlay */}
 
                   <div
                     className="absolute inset-0"
@@ -542,23 +455,13 @@ function ProjectCategories() {
                     }}
                   />
 
-                  {/* Content */}
-
                   <div className="absolute inset-0 flex flex-col justify-between">
-                    {/* Top */}
                     <div className="p-7 md:p-9 lg:p-10">
                       <div
                         className="
-                          w-16
-                          h-16
-                          rounded-full
-                          border
-                          border-[#D49A2D]
-                          bg-black/20
-                          backdrop-blur-md
-                          flex
-                          items-center
-                          justify-center
+                          w-16 h-16 rounded-full border border-[#D49A2D]
+                          bg-black/20 backdrop-blur-md
+                          flex items-center justify-center
                           "
                       >
                         <Icon
@@ -568,7 +471,6 @@ function ProjectCategories() {
                       </div>
                     </div>
 
-                    {/* Bottom */}
                     <div className="px-7 md:px-9 lg:px-10 pb-10">
                       <h3
                         className="text-white"
@@ -585,13 +487,13 @@ function ProjectCategories() {
                         className="flex flex-wrap items-center mt-5"
                         style={{ fontFamily: "Parkinsans" }}
                       >
-                        {item.tags.map((tag, index) => (
+                        {tags.map((tag, tagIndex) => (
                           <span
                             key={tag}
                             className="text-[#E6E0D8] text-[15px]"
                           >
                             {tag}
-                            {index !== item.tags.length - 1 && (
+                            {tagIndex !== tags.length - 1 && (
                               <span className="mx-3 text-[#D49A2D]">•</span>
                             )}
                           </span>
@@ -600,17 +502,12 @@ function ProjectCategories() {
 
                       <button
                         className="
-                          mt-8
-                          flex
-                          items-center
-                          gap-3
-                          text-[#D49A2D]
-                          font-medium
-                          group-hover:gap-5
-                          transition-all
+                          mt-8 flex items-center gap-3
+                          text-[#D49A2D] font-medium
+                          group-hover:gap-5 transition-all
                           "
                       >
-                        {item.button}
+                        {item.button || "View Projects"}
                         <ArrowRight size={18} />
                       </button>
                     </div>
@@ -626,9 +523,78 @@ function ProjectCategories() {
 }
 
 export default function Projects() {
-  const { showLoader, fading } = useCmsPageGate((force) =>
-    loadPublicSiteCms(force),
+  const [pageContent, setPageContent] =
+    useState<ProjectsPageContent>(seedProjectsPage);
+  const [heroContent, setHeroContent] =
+    useState<ProjectsPageContent>(seedProjectsPage);
+  const [categories, setCategories] = useState<ProjectsPageCategoryItem[]>(
+    seedProjectsPageCategories,
   );
+  const [items, setItems] = useState<ProjectsPageItem[]>(seedProjectsPageItems);
+
+  const { showLoader, fading } = useCmsPageGate(async (force) => {
+    const site = await loadPublicSiteCms(force);
+
+    let nextPage: ProjectsPageContent;
+    if (site.projectsPage && typeof site.projectsPage === "object") {
+      nextPage = {
+        ...seedProjectsPage,
+        ...(site.projectsPage as ProjectsPageContent),
+        stats:
+          Array.isArray((site.projectsPage as ProjectsPageContent).stats) &&
+          (site.projectsPage as ProjectsPageContent).stats.length
+            ? (site.projectsPage as ProjectsPageContent).stats
+            : seedProjectsPage.stats,
+      };
+    } else {
+      nextPage = await getContent<ProjectsPageContent>(
+        "projects-page",
+        seedProjectsPage,
+      );
+    }
+
+    await preloadImage(resolveProjectsBanner(nextPage));
+    setPageContent(nextPage);
+    setHeroContent(nextPage);
+
+    const nextCategories = (
+      (site.projectsPageCategories as ProjectsPageCategoryItem[] | undefined)
+        ?.length
+        ? (site.projectsPageCategories as ProjectsPageCategoryItem[])
+        : await getListContent(
+            "projects-page-categories",
+            seedProjectsPageCategories,
+          )
+    ).filter((row) => row.active !== false);
+    setCategories(nextCategories.length ? nextCategories : seedProjectsPageCategories);
+
+    const nextItems = (
+      (site.projectsPageItems as ProjectsPageItem[] | undefined)?.length
+        ? (site.projectsPageItems as ProjectsPageItem[])
+        : await getListContent("projects-page-items", seedProjectsPageItems)
+    ).filter((row) => row.active !== false);
+    setItems(nextItems.length ? nextItems : seedProjectsPageItems);
+  });
+
+  const corporateProjects = items
+    .filter((p) => p.domain === "corporate")
+    .map((p) => ({
+      id: Number(p.id) || 0,
+      title: p.title,
+      location: p.location,
+      image: resolveItemImage(p),
+      slug: p.slug,
+    }));
+
+  const civilProjects = items
+    .filter((p) => p.domain === "civil")
+    .map((p) => ({
+      id: Number(p.id) || 0,
+      title: p.title,
+      location: p.location,
+      image: resolveItemImage(p),
+      slug: p.slug,
+    }));
 
   return (
     <>
@@ -639,36 +605,56 @@ export default function Projects() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        {/* Hero Section */}
-        <HeroSection />
+        <HeroSection content={heroContent} />
 
         {!showLoader && (
           <>
-            {/* Category Section */}
-            <ProjectCategories />
-
-            {/* Corporate Projects */}
-            <FeaturedProjects
-              subtitle="CORPORATE INTERIORS"
-              title="Featured Projects"
-              description="Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences."
-              button="View All Corporate Projects"
-              viewAllLink="/projects/corporate"
-              projects={corporateProjects}
+            <ProjectCategories
+              content={pageContent}
+              categories={categories}
             />
 
-            {/* Civil Projects */}
-
             <FeaturedProjects
-              title="Featured Projects"
-              description="Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality."
-              subtitle="CIVIL STRUCTURES"
-              button="View All Civil Projects"
-              viewAllLink="/projects/civil"
-              projects={civilProjects}
+              subtitle={pageContent.corporateSubtitle}
+              title={pageContent.corporateTitle}
+              description={pageContent.corporateDescription}
+              button={pageContent.corporateButton}
+              viewAllLink={pageContent.corporateLink || "/projects/corporate"}
+              projects={
+                corporateProjects.length
+                  ? corporateProjects
+                  : seedProjectsPageItems
+                      .filter((p) => p.domain === "corporate")
+                      .map((p) => ({
+                        id: Number(p.id),
+                        title: p.title,
+                        location: p.location,
+                        image: resolveItemImage(p),
+                        slug: p.slug,
+                      }))
+              }
             />
 
-            {/* CTA */}
+            <FeaturedProjects
+              title={pageContent.civilTitle}
+              description={pageContent.civilDescription}
+              subtitle={pageContent.civilSubtitle}
+              button={pageContent.civilButton}
+              viewAllLink={pageContent.civilLink || "/projects/civil"}
+              projects={
+                civilProjects.length
+                  ? civilProjects
+                  : seedProjectsPageItems
+                      .filter((p) => p.domain === "civil")
+                      .map((p) => ({
+                        id: Number(p.id),
+                        title: p.title,
+                        location: p.location,
+                        image: resolveItemImage(p),
+                        slug: p.slug,
+                      }))
+              }
+            />
           </>
         )}
       </div>

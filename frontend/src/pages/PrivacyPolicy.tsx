@@ -57,7 +57,7 @@ export default function PrivacyPolicy() {
 
         {/* HERO SECTION */}
 
-        <section className="relative overflow-hidden min-h-[520px] sm:min-h-[640px] lg:min-h-[720px]">
+        <section className="relative overflow-hidden mx-4 lg:mx-5 mt-[72px] lg:mt-[80px] rounded-[20px] md:rounded-[32px] min-h-[520px] sm:min-h-[640px] lg:min-h-[720px]">
           {/* Background */}
           <img
             src={privacyBanner}

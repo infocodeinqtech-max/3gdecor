@@ -19,6 +19,9 @@ use App\Models\AboutPageHero;
 use App\Models\AboutPageHeroFeature;
 use App\Models\AboutPageFounderMember;
 use App\Models\AboutPagePrinciple;
+use App\Models\ProjectsPageContent;
+use App\Models\ProjectsPageCategory;
+use App\Models\ProjectsPageItem;
 
 /**
  * Maps frontend storage keys → backend resources.
@@ -259,6 +262,60 @@ class CmsRegistry
                     'active' => (bool) $row->active,
                 ],
             ],
+            'projects-page-categories' => [
+                'model' => ProjectsPageCategory::class,
+                'permission' => 'projects-page',
+                'order_by' => 'sort_order',
+                'map_in' => fn (array $d) => [
+                    'title' => $d['title'] ?? '',
+                    'subtitle' => $d['subtitle'] ?? '',
+                    'image' => $d['image'] ?? '',
+                    'icon' => $d['icon'] ?? 'Building2',
+                    'tags' => $d['tags'] ?? '',
+                    'button' => $d['button'] ?? 'View Projects',
+                    'link' => $d['link'] ?? '/projects',
+                    'sort_order' => (int) ($d['sort_order'] ?? $d['order'] ?? 0),
+                    'active' => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+                'map_out' => fn ($row) => [
+                    'id' => $row->id,
+                    'title' => $row->title,
+                    'subtitle' => $row->subtitle,
+                    'image' => $row->image,
+                    'icon' => $row->icon,
+                    'tags' => $row->tags,
+                    'button' => $row->button,
+                    'link' => $row->link,
+                    'order' => $row->sort_order,
+                    'active' => (bool) $row->active,
+                ],
+            ],
+            'projects-page-items' => [
+                'model' => ProjectsPageItem::class,
+                'permission' => 'projects-page',
+                'order_by' => 'sort_order',
+                'map_in' => fn (array $d) => [
+                    'domain' => in_array(($d['domain'] ?? ''), ['corporate', 'civil'], true)
+                        ? $d['domain']
+                        : 'corporate',
+                    'title' => $d['title'] ?? '',
+                    'location' => $d['location'] ?? '',
+                    'image' => $d['image'] ?? '',
+                    'slug' => $d['slug'] ?? '',
+                    'sort_order' => (int) ($d['sort_order'] ?? $d['order'] ?? 0),
+                    'active' => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+                'map_out' => fn ($row) => [
+                    'id' => $row->id,
+                    'domain' => $row->domain,
+                    'title' => $row->title,
+                    'location' => $row->location,
+                    'image' => $row->image,
+                    'slug' => $row->slug,
+                    'order' => $row->sort_order,
+                    'active' => (bool) $row->active,
+                ],
+            ],
         ];
     }
 
@@ -421,6 +478,58 @@ class CmsRegistry
                     'description'     => $row->description,
                     'backgroundImage' => $row->background_image,
                     'active'          => (bool) $row->active,
+                ],
+            ],
+            'projects-page' => [
+                'model' => ProjectsPageContent::class,
+                'permission' => 'projects-page',
+                'map_in' => fn (array $d) => [
+                    'banner_image' => $d['bannerImage'] ?? '',
+                    'hero_eyebrow' => $d['heroEyebrow'] ?? '',
+                    'hero_title_prefix' => $d['heroTitlePrefix'] ?? '',
+                    'hero_title_highlight' => $d['heroTitleHighlight'] ?? '',
+                    'hero_description_1' => $d['heroDescription1'] ?? '',
+                    'hero_description_2' => $d['heroDescription2'] ?? '',
+                    'stats' => $d['stats'] ?? [],
+                    'categories_eyebrow' => $d['categoriesEyebrow'] ?? '',
+                    'categories_title_line1' => $d['categoriesTitleLine1'] ?? '',
+                    'categories_title_line2' => $d['categoriesTitleLine2'] ?? '',
+                    'categories_description' => $d['categoriesDescription'] ?? '',
+                    'corporate_subtitle' => $d['corporateSubtitle'] ?? '',
+                    'corporate_title' => $d['corporateTitle'] ?? '',
+                    'corporate_description' => $d['corporateDescription'] ?? '',
+                    'corporate_button' => $d['corporateButton'] ?? '',
+                    'corporate_link' => $d['corporateLink'] ?? '',
+                    'civil_subtitle' => $d['civilSubtitle'] ?? '',
+                    'civil_title' => $d['civilTitle'] ?? '',
+                    'civil_description' => $d['civilDescription'] ?? '',
+                    'civil_button' => $d['civilButton'] ?? '',
+                    'civil_link' => $d['civilLink'] ?? '',
+                    'active' => array_key_exists('active', $d) ? (bool) $d['active'] : true,
+                ],
+                'map_out' => fn ($row) => [
+                    'bannerImage' => $row->banner_image,
+                    'heroEyebrow' => $row->hero_eyebrow,
+                    'heroTitlePrefix' => $row->hero_title_prefix,
+                    'heroTitleHighlight' => $row->hero_title_highlight,
+                    'heroDescription1' => $row->hero_description_1,
+                    'heroDescription2' => $row->hero_description_2,
+                    'stats' => $row->stats ?? [],
+                    'categoriesEyebrow' => $row->categories_eyebrow,
+                    'categoriesTitleLine1' => $row->categories_title_line1,
+                    'categoriesTitleLine2' => $row->categories_title_line2,
+                    'categoriesDescription' => $row->categories_description,
+                    'corporateSubtitle' => $row->corporate_subtitle,
+                    'corporateTitle' => $row->corporate_title,
+                    'corporateDescription' => $row->corporate_description,
+                    'corporateButton' => $row->corporate_button,
+                    'corporateLink' => $row->corporate_link,
+                    'civilSubtitle' => $row->civil_subtitle,
+                    'civilTitle' => $row->civil_title,
+                    'civilDescription' => $row->civil_description,
+                    'civilButton' => $row->civil_button,
+                    'civilLink' => $row->civil_link,
+                    'active' => (bool) $row->active,
                 ],
             ],
         ];

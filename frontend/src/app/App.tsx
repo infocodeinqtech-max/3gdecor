@@ -20,6 +20,7 @@ import ManageAbout from "../admin/pages/ManageAbout";
 import ManageExpertise from "../admin/pages/ManageExpertise";
 import ManageContactOffices from "../admin/pages/ManageContactOffices";
 import ManageProjects from "../admin/pages/ManageProjects";
+import ManageProjectsPage from "../admin/pages/ManageProjectsPage";
 import ManageServices from "../admin/pages/ManageServices";
 import ManageProcess from "../admin/pages/ManageProcess";
 import ManageTestimonials from "../admin/pages/ManageTestimonials";
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="about" element={<ManageAbout />} />
             <Route path="expertise" element={<ManageExpertise />} />
             <Route path="projects" element={<ManageProjects />} />
+            <Route path="projects-page" element={<ManageProjectsPage />} />
             <Route path="services" element={<ManageServices />} />
             <Route path="process" element={<ManageProcess />} />
             <Route path="testimonials" element={<ManageTestimonials />} />

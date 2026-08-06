@@ -8,6 +8,9 @@ export type PublicSiteCms = {
   about?: Record<string, unknown> | null;
   contactPage?: Record<string, unknown> | null;
   contactOffices?: unknown[];
+  projectsPage?: Record<string, unknown> | null;
+  projectsPageCategories?: unknown[];
+  projectsPageItems?: unknown[];
   expertiseSection?: Record<string, unknown> | null;
   expertise?: unknown[];
   projectsSection?: Record<string, unknown> | null;
