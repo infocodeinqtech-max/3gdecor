@@ -1,6 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "motion/react";
 
+import type { AboutContent } from "../../../admin/data/seedContent";
+type HeroSectionProps = {
+  content: AboutContent;
+};
+
+
 import about1 from "../../../assets/images/about1.jpg";
 import about2 from "../../../assets/images/about2.jpg";
 import about3 from "../../../assets/images/about3.jpg";
@@ -51,7 +57,7 @@ function AnimatedNumber({ target }: { target: string }) {
 
 
 /* ─── About + Stats (single combined section) ─── */
-export default function AboutSection() {
+export default function AboutSection({ content }: { content: AboutContent }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.18 });
   const cards = [

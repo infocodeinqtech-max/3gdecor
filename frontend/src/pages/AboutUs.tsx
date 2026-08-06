@@ -4,16 +4,26 @@ import { ArrowRight, ArrowUpRight} from "lucide-react";
 import Footer from "../app/components/Footer";
 import Navbar from "../app/components/Navbar";
 
-
-
 import { useNavigate } from "react-router-dom";
 
-import { loadPublicSiteCms } from "../content/publicCms";
 import PageLoader from "../app/components/PageLoader";
 import { useCmsPageGate } from "../hooks/useCmsPageGate";
 
+/** Common Api Calling */
+import { useState } from "react";
+
+import {
+  seedAbout,
+  type AboutContent,
+  type HeroFeature,
+  type FounderMember,
+} from "../admin/data/seedContent";
+
+import { loadPublicCmsList, loadPublicSiteCms } from "../content/publicCms";
+
+
 /* Load Components */
-import HeroSection from "./about/components/HeroSection";
+import AboutHeroSection from "./about/components/AboutHeroSection";
 import AboutSection from "./about/components/AboutSection";
 import TeamSection from "./about/components/TeamSection";
 import PrinciplesSection from "./about/components/PrinciplesSection";
@@ -179,9 +189,27 @@ function CTASection() {
 
 /* ─── Root ─── */
 export default function AboutUs() {
-  const { showLoader, fading } = useCmsPageGate((force) =>
-    loadPublicSiteCms(force),
-  );
+  const [aboutContent, setAboutContent] = useState<AboutContent>(seedAbout);
+
+  const [heroFeatures, setHeroFeatures] = useState<HeroFeature[]>([]);
+  const [teamMembers, setTeamMembers] = useState<FounderMember[]>([]);
+
+  const { showLoader, fading } = useCmsPageGate(async (force) => {
+    const [site, features] = await Promise.all([
+      loadPublicSiteCms(force),
+      loadPublicCmsList<HeroFeature>("about-page-hero-features"),
+    ]);
+
+    if (site.about && typeof site.about === "object") {
+      setAboutContent({
+        ...seedAbout,
+        ...(site.about as AboutContent),
+      });
+    }
+    setHeroFeatures(features);
+    setTeamMembers(teamMembers);
+  });
+
 
   return (
     <>
@@ -191,11 +219,14 @@ export default function AboutUs() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        <HeroSection />
+        <AboutHeroSection
+          content={aboutContent}
+          heroFeatures={heroFeatures}
+        />
         {!showLoader && (
           <>
-            <AboutSection />
-            <TeamSection />
+            <AboutSection content={aboutContent} />
+            <TeamSection teamMembers={teamMembers} />
             <PrinciplesSection />
             <Footer />
           </>

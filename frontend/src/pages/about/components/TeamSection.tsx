@@ -3,38 +3,47 @@
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { mediaUrl } from "../../../utils/mediaUrl";
+import { loadPublicCmsList } from "../../../content/publicCms";
+import type { FounderMember } from "../../../admin/data/seedContent";
 
-const teamMembers = [
-  {
-    name: "Priya Sharma",
-    role: "Founder & Creative Director",
-    quote: '"Every space tells a story."',
-    image: mediaUrl("/uploads/pages/about/team-1.jpg"),
-  },
-  {
-    name: "Arjun Mehta",
-    role: "Principal Architect",
-    quote: '"Structure is silent poetry."',
-    image: mediaUrl("/uploads/pages/about/team-2.jpg"),
-  },
-  {
-    name: "Rahul Nair",
-    role: "Senior Interior Designer",
-    quote: '"Details make perfection."',
-    image: mediaUrl("/uploads/pages/about/team-3.jpg"),
-  },
-  {
-    name: "Kavya Reddy",
-    role: "Project Lead & Stylist",
-    quote: '"Function shapes the soul."',
-    image: mediaUrl("/uploads/pages/about/team-4.jpg"),
-  },
-];
 
-export default function TeamSection() {
+// const teamMembers = [
+//   {
+//     name: "Priya Sharma",
+//     role: "Founder & Creative Director",
+//     quote: '"Every space tells a story."',
+//     image: mediaUrl("/uploads/pages/about/team-1.jpg"),
+//   },
+//   {
+//     name: "Arjun Mehta",
+//     role: "Principal Architect",
+//     quote: '"Structure is silent poetry."',
+//     image: mediaUrl("/uploads/pages/about/team-2.jpg"),
+//   },
+//   {
+//     name: "Rahul Nair",
+//     role: "Senior Interior Designer",
+//     quote: '"Details make perfection."',
+//     image: mediaUrl("/uploads/pages/about/team-3.jpg"),
+//   },
+//   {
+//     name: "Kavya Reddy",
+//     role: "Project Lead & Stylist",
+//     quote: '"Function shapes the soul."',
+//     image: mediaUrl("/uploads/pages/about/team-4.jpg"),
+//   },
+// ];
+
+type TeamSectionProps = {
+  teamMembers: FounderMember[];
+};
+
+export default function TeamSection({ teamMembers }: TeamSectionProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
+
+  console.log("teamMembers:", teamMembers);
 
   return (
     <section
@@ -102,6 +111,7 @@ export default function TeamSection() {
               fontSize: "14.5px",
               lineHeight: 1.7,
             }}
+            
           >
             Architects, designers, and site engineers who understand both the
             boardroom and the build yard.
@@ -160,7 +170,7 @@ export default function TeamSection() {
                           lineHeight: 1.5,
                         }}
                       >
-                        {m.quote}
+                        {m.short_description}
                       </motion.p>
                     </motion.div>
                   )}
@@ -192,7 +202,7 @@ export default function TeamSection() {
                 className="text-[#5e5650] text-[11px] uppercase tracking-wider"
                 style={{ fontFamily: "'Parkinsans', sans-serif" }}
               >
-                {m.role}
+                {m.title}
               </p>
             </motion.div>
           ))}

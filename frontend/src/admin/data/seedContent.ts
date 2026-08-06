@@ -96,6 +96,8 @@ export const seedAbout = {
   badgeImage: "/uploads/about/badge.jpg",
 };
 
+export type AboutContent = typeof seedAbout;
+
 export const seedExpertiseSection = {
   titleLine1: "Crafting",
   titleLine2: "Exceptional Spaces",
