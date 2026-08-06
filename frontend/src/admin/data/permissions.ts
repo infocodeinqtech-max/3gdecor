@@ -27,6 +27,7 @@ export type MenuId =
   | "about"
   | "expertise"
   | "projects"
+  | "projects-page"
   | "services"
   | "process"
   | "testimonials"
@@ -57,6 +58,7 @@ export const ASSIGNABLE_MENUS: AdminMenuItem[] = [
   { id: "about", path: "/admin/about", label: "About Section", icon: Info },
   { id: "expertise", path: "/admin/expertise", label: "Expertise", icon: Lightbulb },
   { id: "projects", path: "/admin/projects", label: "Projects", icon: FolderKanban },
+  { id: "projects-page", path: "/admin/projects-page", label: "Projects Page", icon: FolderKanban },
   { id: "services", path: "/admin/services", label: "Services", icon: Wrench },
   { id: "process", path: "/admin/process", label: "Our Process", icon: GitBranch },
   { id: "testimonials", path: "/admin/testimonials", label: "Testimonials", icon: MessageSquare },
@@ -104,6 +106,7 @@ const KNOWN_MENU_SEGMENTS = new Set<string>([
   "testimonials",
   "footer",
   "contact-offices",
+  "projects-page",
   "enquiries",
   "users",
   "profile",

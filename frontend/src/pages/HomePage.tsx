@@ -318,7 +318,9 @@ export default function HomePage() {
             mx-auto
             grid
             lg:grid-cols-2
-            gap-20
+            gap-10
+            md:gap-14
+            lg:gap-20
             items-center
             "
         >
@@ -360,8 +362,10 @@ export default function HomePage() {
               <span
                 className="
               uppercase
-              tracking-[8px]
-              text-[13px]
+              tracking-[0.28em]
+              sm:tracking-[0.38em]
+              text-[11px]
+              sm:text-[13px]
               font-medium
               text-[#C4973B]
               "
@@ -377,7 +381,7 @@ export default function HomePage() {
                 "
               style={{
                 fontFamily: "'Parkinsans',sans-serif",
-                fontSize: "clamp(42px,5vw,72px)",
+                fontSize: "clamp(34px,8vw,72px)",
                 fontWeight: 400,
                 color: "#171717",
               }}
@@ -399,13 +403,14 @@ export default function HomePage() {
             <p
               className="
               text-[#6E655C]
-              leading-8
+              leading-7
+              sm:leading-8
               mb-8
               max-w-xl
               "
               style={{
                 fontFamily: "'Parkinsans',sans-serif",
-                fontSize: "18px",
+                fontSize: "clamp(15px,3.8vw,18px)",
                 fontWeight: 400,
               }}
             >
@@ -415,13 +420,14 @@ export default function HomePage() {
             <p
               className="
               text-[#6E655C]
-              leading-8
+              leading-7
+              sm:leading-8
               mb-12
               max-w-xl
               "
               style={{
                 fontFamily: "'Parkinsans',sans-serif",
-                fontSize: "18px",
+                fontSize: "clamp(15px,3.8vw,18px)",
                 fontWeight: 400,
               }}
             >
@@ -836,22 +842,30 @@ export default function HomePage() {
               <div
                 className="
                   absolute
-                  left-10
-                  right-10
-                  top-10
-                  bottom-10
+                  left-5
+                  right-5
+                  bottom-5
+                  sm:left-8
+                  sm:right-8
+                  sm:bottom-8
+                  lg:left-10
+                  lg:right-10
+                  lg:top-10
+                  lg:bottom-10
 
                   flex
                   flex-col
                   justify-end
-                 
                   "
               >
                 <p
                   className="
                     text-[#C79A4A]
-                    text-5xl
-                    mb-3
+                    text-[22px]
+                    sm:text-4xl
+                    lg:text-5xl
+                    mb-1.5
+                    sm:mb-3
                     "
                   style={{
                     fontFamily: "'Parkinsans',sans-serif",
@@ -863,9 +877,12 @@ export default function HomePage() {
                 <h3
                   className="
                     text-white
-                    text-5xl
+                    text-[22px]
+                    sm:text-4xl
+                    lg:text-5xl
                     leading-tight
-                    mb-5
+                    mb-2
+                    sm:mb-5
                     "
                   style={{
                     fontFamily: "'Parkinsans',sans-serif",
@@ -877,7 +894,10 @@ export default function HomePage() {
                 <p
                   className="
                     text-[#D9C9B7]
-                    mb-8
+                    mb-3
+                    sm:mb-8
+                    text-sm
+                    sm:text-base
                     "
                 >
                   {projects[0]?.category}
@@ -957,14 +977,18 @@ export default function HomePage() {
                 <div
                   className="
                   absolute
-                  left-7
-                  bottom-8
+                  left-5
+                  sm:left-7
+                  bottom-6
+                  sm:bottom-8
                   "
                 >
                   <p
                     className="
                     text-[#C79A4A]
-                    text-[28px]
+                    text-[22px]
+                    sm:text-[24px]
+                    lg:text-[28px]
                     mb-2
                     "
                     style={{
@@ -977,7 +1001,9 @@ export default function HomePage() {
                   <h4
                     className="
                     text-white
-                    text-[28px]
+                    text-[20px]
+                    sm:text-[24px]
+                    lg:text-[28px]
                     leading-tight
                     mb-2
                     "
@@ -1010,8 +1036,10 @@ export default function HomePage() {
                   absolute
                   right-6
                   bottom-6
-                  w-14
-                  h-14
+                  w-12
+                  h-12
+                  sm:w-14
+                  sm:h-14
                   rounded-full
                   border
                   border-[#C79A4A]
@@ -1019,7 +1047,8 @@ export default function HomePage() {
                   items-center
                   justify-center
                   text-[#C79A4A]
-                  text-[28px]
+                  text-[22px]
+                  sm:text-[28px]
                   backdrop-blur-sm
                   "
                 >
@@ -1163,7 +1192,7 @@ export default function HomePage() {
           </div>
 
           {/* Service Cards Grid with Slide/Hide Animation */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-3 lg:gap-8 w-full max-w-6xl mx-auto items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 w-full max-w-6xl mx-auto items-stretch">
             {services.slice(0, 3).map((service, index) => (
               <motion.div
                 key={service.id ?? index}
@@ -1220,8 +1249,8 @@ export default function HomePage() {
                       className="
                         text-[#f3bb27]
                         uppercase
-                        text-[28px]
-                        sm:text-[20px]
+                        text-[22px]
+                        sm:text-[26px]
                         lg:text-[40px]
                         "
                       style={{
@@ -1266,7 +1295,7 @@ export default function HomePage() {
                   >
                     {/* Service Title */}
                     <h4
-                      className="text-[#1a1a1a] mb-3  text-[22px] sm:text-[18px] lg:text-[22px]"
+                      className="text-[#1a1a1a] mb-3 text-[18px] sm:text-[20px] lg:text-[22px]"
                       style={{
                         fontFamily: "'Parkinsans', sans-serif",
                         // fontSize: "22px",
@@ -1279,7 +1308,7 @@ export default function HomePage() {
 
                     {/* Description - Gray text */}
                     <p
-                      className="text-[#666666] font-normal text-[17px] sm:text-[12px] lg:text-[17px]"
+                      className="text-[#666666] font-normal text-[13px] sm:text-[14px] lg:text-[17px]"
                       style={{
                         fontFamily: "'Parkinsans', sans-serif",
                         // fontSize: "17px",
@@ -1355,7 +1384,7 @@ export default function HomePage() {
           <div className="relative">
             <div className="absolute top-24 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#f3bb27]/30 to-transparent hidden lg:block" />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-10 sm:gap-12 lg:gap-16">
               {process.map((item, index) => (
                 <motion.div
                   key={index}
@@ -1387,7 +1416,7 @@ export default function HomePage() {
                     className="text-[#F5F1EA] mb-5"
                     style={{
                       fontFamily: "'Parkinsans', sans-serif",
-                      fontSize: "28px",
+                      fontSize: "clamp(22px,5.6vw,28px)",
                       fontWeight: 500,
                     }}
                   >
@@ -1397,8 +1426,8 @@ export default function HomePage() {
                     className="text-[#b8b1a8] font-light"
                     style={{
                       fontFamily: "'Parkinsans', sans-serif",
-                      fontSize: "16px",
-                      lineHeight: 1.8,
+                      fontSize: "clamp(14px,3.6vw,16px)",
+                      lineHeight: 1.7,
                     }}
                   >
                     {item.description}

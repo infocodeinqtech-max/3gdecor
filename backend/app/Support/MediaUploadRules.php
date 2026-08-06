@@ -33,6 +33,7 @@ class MediaUploadRules
         'pages/contact',
         'pages/about',
         'pages/services',
+        'pages/projects',
         'misc',
     ];
 

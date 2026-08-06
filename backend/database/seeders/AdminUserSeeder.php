@@ -35,6 +35,7 @@ class AdminUserSeeder extends Seeder
                     'about',
                     'expertise',
                     'projects',
+                    'projects-page',
                     'services',
                     'process',
                     'testimonials',

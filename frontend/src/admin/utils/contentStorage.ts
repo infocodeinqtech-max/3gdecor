@@ -13,6 +13,8 @@ const LIST_KEYS = new Set([
   "about-page-hero-features",
   "about-page-founder-members",
   "about-page-principles",
+  "projects-page-categories",
+  "projects-page-items",
 ]);
 
 /** Singleton resources */
@@ -22,6 +24,7 @@ const SINGLETON_KEYS = new Set([
   "footer",
   "site-contact",
   "contact-page",
+  "projects-page",
 ]);
 
 /** Section header keys */

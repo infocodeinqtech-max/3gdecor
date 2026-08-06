@@ -169,9 +169,8 @@ function HeroSection({ category }: { category: ProjectCategory }) {
           relative
           overflow-hidden          
           w-full
-          rounded-[24px]
+          rounded-[20px]
           md:rounded-[32px]
-          xl:rounded-[36px]
           shadow-[0_30px_80px_rgba(0,0,0,.12)]
           min-h-[75svh]
           h-[620px]
