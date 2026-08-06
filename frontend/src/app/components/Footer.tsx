@@ -108,9 +108,7 @@ export default function Footer() {
           if (fromSite.length) {
             setOffices(fromSite);
             setActiveOfficeId((current) =>
-              fromSite.some((o) => o.id === current)
-                ? current
-                : fromSite[0].id,
+              fromSite.some((o) => o.id === current) ? current : fromSite[0].id,
             );
           } else {
             const fallback = await getListContent<ContactOfficeItem>(
@@ -142,11 +140,7 @@ export default function Footer() {
     >
       {/* Luxury background */}
       <div className="absolute inset-0 opacity-10">
-        <img
-          src={footerBg}
-          className="w-full h-full object-cover"
-          alt=""
-        />
+        <img src={footerBg} className="w-full h-full object-cover" alt="" />
       </div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#2A211C]/90 to-[#17110D]" />
@@ -195,14 +189,12 @@ export default function Footer() {
           //   border-[#D4A24C]/20
           // "
           className="
-  grid
-    grid-cols-1
-    lg:grid-cols-12
-    gap-6 lg:gap-8
-    items-start
-   pb-10
-  border-b
-  border-[#D4A24C]/20"
+            grid
+            grid-cols-1
+            lg:grid-cols-12
+            gap-6 lg:gap-8
+            items-start
+            pb-10"
         >
           {/* Logo */}
           <div
@@ -222,16 +214,16 @@ export default function Footer() {
             //     w-full
             // "
             className="
-xl:col-span-3
-lg:col-span-3
-w-full
-flex
-flex-col
-items-center
-lg:items-start
-text-center
-lg:text-left
-"
+              xl:col-span-3
+              lg:col-span-3
+              w-full
+              flex
+              flex-col
+              items-center
+              lg:items-start
+              text-center
+              lg:text-left
+              "
           >
             <motion.img
               src={logo}
@@ -273,18 +265,18 @@ lg:text-left
             <p
               // className="text-[#D7D0C7] leading-8 text-sm"
               className="
-text-[#D7D0C7]
-leading-6
-text-sm
+                text-[#D7D0C7]
+                leading-6
+                text-sm
 
-max-w-sm
+                max-w-sm
 
-mx-auto
-md:mx-0
+                mx-auto
+                md:mx-0
 
-text-center
-md:text-left
-"
+                text-center
+                md:text-left
+                "
               style={{
                 fontFamily: "'Parkinsans',sans-serif",
               }}
@@ -653,7 +645,7 @@ md:text-left
 
         {/* Newsletter */}
 
-        <div
+        {/* <div
           className="
             mt-10
             border
@@ -678,7 +670,7 @@ md:text-left
             gap-6
             "
           >
-            {/* LEFT */}
+           
 
             <div
               className="
@@ -751,7 +743,7 @@ md:text-left
               </div>
             </div>
 
-            {/* RIGHT */}
+            
 
             <div
               className="
@@ -822,7 +814,7 @@ md:text-left
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Bottom */}
 
@@ -869,9 +861,7 @@ md:text-left
               fontSize: "13px",
             }}
           >
-            <p className="tracking-[0.03em]">
-              {footer.copyright}
-            </p>
+            <p className="tracking-[0.03em]">{footer.copyright}</p>
             <motion.div
               whileHover={{
                 scale: 1.02,

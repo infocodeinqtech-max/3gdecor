@@ -147,28 +147,38 @@ function HeroSection({ category }: { category: ProjectCategory }) {
 
   return (
     <section
+      // className="
+      //   bg-[#F5F1EA]
+      //   px-3
+      //   sm:px-4
+      //   lg:px-5
+      //   "
       className="
         bg-[#F5F1EA]
-        px-3
-        sm:px-4
+        px-4
         lg:px-5
-        "
+        pt-[72px]     
+        lg:pt-[80px]
+      "
       style={{
         position: "relative",
       }}
     >
       <div
         className="
-        relative
-        overflow-hidden
-        rounded-[18px] sm:rounded-[24px] md:rounded-[32px] lg:rounded-[32px]
-        w-full
-        min-h-[70svh]
-        h-[520px]
-        sm:h-[560px]
-        md:h-[600px]
-        lg:h-[650px]
-        xl:h-[700px]
+          relative
+          overflow-hidden          
+          w-full
+          rounded-[24px]
+          md:rounded-[32px]
+          xl:rounded-[36px]
+          shadow-[0_30px_80px_rgba(0,0,0,.12)]
+          min-h-[75svh]
+          h-[620px]
+          sm:h-[650px]
+          md:h-[650px]
+          lg:h-[650px]
+          xl:h-[700px]
         "
       >
         {/* ── Full-bleed background image ── */}
@@ -224,9 +234,9 @@ function HeroSection({ category }: { category: ProjectCategory }) {
               ease: [0.22, 1, 0.36, 1],
             }}
             className="absolute top-0 left-0 right-0 h-[3px] origin-left z-20"
-            style={{
-              background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-            }}
+            // style={{
+            //   background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+            // }}
           />
           {/* Glow */}
           <motion.div
@@ -695,21 +705,21 @@ export default function ProjectList() {
 
         {!showLoader && (
           <>
-        {/* Filter */}
-        <ProjectFilters
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          view={view}
-          setView={setView}
-        />
+            {/* Filter */}
+            <ProjectFilters
+              activeFilter={activeFilter}
+              setActiveFilter={setActiveFilter}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              view={view}
+              setView={setView}
+            />
 
-        {/* Project Grid */}
-        <ProjectGrid projects={filteredProjects} view={view} />
+            {/* Project Grid */}
+            <ProjectGrid projects={filteredProjects} view={view} />
 
-        {/* Pagination */}
-        <ProjectPagination />
+            {/* Pagination */}
+            <ProjectPagination />
           </>
         )}
       </div>

@@ -639,20 +639,20 @@ export default function HeroSection() {
             {hero.stats.map((stat, index) => {
               const Icon = STAT_ICONS[index % STAT_ICONS.length];
               return (
-              <div
-                key={stat.id}
-                // className="flex items-center flex-1 justify-center"
-                className="
+                <div
+                  key={stat.id}
+                  // className="flex items-center flex-1 justify-center"
+                  className="
                   flex
                   items-center
                   justify-center
                   w-full
                   sm:flex-1
                   "
-              >
-                {index !== 0 && (
-                  <div
-                    className="
+                >
+                  {index !== 0 && (
+                    <div
+                      className="
                         hidden
                         sm:block
 
@@ -664,15 +664,15 @@ export default function HeroSection() {
 
                         w-px
                       "
-                    style={{
-                      background: "rgba(255,255,255,.08)",
-                    }}
-                  />
-                )}
+                      style={{
+                        background: "rgba(255,255,255,.08)",
+                      }}
+                    />
+                  )}
 
-                <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
-                  <div
-                    className="
+                  <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
+                    <div
+                      className="
                     w-10 h-10
                     sm:w-12 sm:h-12
                     lg:w-14 lg:h-14
@@ -681,38 +681,38 @@ export default function HeroSection() {
                     items-center
                     justify-center
                     "
-                    style={{
-                      background: "rgba(216,166,75,.12)",
-                      border: "1px solid rgba(216,166,75,.25)",
-                    }}
-                  >
-                    <Icon size={24} color="#D8A64B" />
-                  </div>
-
-                  <div>
-                    <h3
-                      className="text-[#D8A64B]"
                       style={{
-                        fontFamily: "'Cormorant Garamond', serif",
-                        fontSize: "clamp(26px,4vw,46px)",
-                        lineHeight: 1,
+                        background: "rgba(216,166,75,.12)",
+                        border: "1px solid rgba(216,166,75,.25)",
                       }}
                     >
-                      {stat.number}
-                    </h3>
+                      <Icon size={24} color="#D8A64B" />
+                    </div>
 
-                    <p
-                      className="text-white/75 mt-1"
-                      style={{
-                        fontFamily: "'Parkinsans', sans-serif",
-                        fontSize: "clamp(10px,1.4vw,14px)",
-                      }}
-                    >
-                      {stat.label}
-                    </p>
+                    <div>
+                      <h3
+                        className="text-[#D8A64B]"
+                        style={{
+                          fontFamily: "'Cormorant Garamond', serif",
+                          fontSize: "clamp(26px,4vw,46px)",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {stat.number}
+                      </h3>
+
+                      <p
+                        className="text-white/75 mt-1"
+                        style={{
+                          fontFamily: "'Parkinsans', sans-serif",
+                          fontSize: "clamp(10px,1.4vw,14px)",
+                        }}
+                      >
+                        {stat.label}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
               );
             })}
           </div>

@@ -67,12 +67,14 @@ export default function Navbar({ activeNav }: NavbarProps) {
               return;
             }
           }
-          return getListContent("navigation", seedNavigation).then((fallback) => {
-            const visible = fallback
-              .filter((r) => r.visible !== false)
-              .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
-            if (visible.length) setNavItems(visible);
-          });
+          return getListContent("navigation", seedNavigation).then(
+            (fallback) => {
+              const visible = fallback
+                .filter((r) => r.visible !== false)
+                .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+              if (visible.length) setNavItems(visible);
+            },
+          );
         })
         .catch(() => undefined);
     };

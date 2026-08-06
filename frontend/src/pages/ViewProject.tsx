@@ -2,14 +2,23 @@ import Navbar from "../app/components/Navbar";
 import Footer from "../app/components/Footer";
 
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowRight, MapPin, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  MapPin,
+  ChevronRight,
+  X,
+  ChevronLeft,
+} from "lucide-react";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import techMahindraBanner from "../assets/images/tech-mahindra-office.jpeg";
 import techMahindraBanner2 from "../assets/images/tech-mahindra-banner.png";
+import creativeBanner from "../assets/images/creative-studio-workspace.jpeg";
+import diningArea from "../assets/images/executive-dining-space.jpeg";
 
 const heroSlides = [
   {
@@ -50,7 +59,13 @@ function HeroSection({
 
   return (
     <section
-      className="bg-[#F5F1EA] px-4 lg:px-5"
+      className="
+        bg-[#F5F1EA]
+        px-4
+        lg:px-5
+        pt-[72px]     
+        lg:pt-[80px]
+      "
       style={{
         position: "relative",
       }}
@@ -58,11 +73,14 @@ function HeroSection({
       <div
         className="
           relative
-          overflow-hidden
-          rounded-[20px] md:rounded-[32px]
+          overflow-hidden          
           w-full
+          rounded-[24px]
+          md:rounded-[32px]
+          xl:rounded-[36px]
+          shadow-[0_30px_80px_rgba(0,0,0,.12)]
           min-h-[75svh]
-         h-[620px]
+          h-[620px]
           sm:h-[650px]
           md:h-[650px]
           lg:h-[650px]
@@ -132,9 +150,9 @@ function HeroSection({
             ease: [0.22, 1, 0.36, 1],
           }}
           className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
-          style={{
-            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-          }}
+          // style={{
+          //   background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+          // }}
         />
 
         {/* Ambient Gold Glow */}
@@ -472,7 +490,669 @@ function HeroSection({
   );
 }
 
+function AboutProjectSection() {
+  return (
+    <section className="bg-[#F5F1EA] py-20 sm:py-24 lg:py-32">
+      <div className="max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14 xl:px-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 items-center">
+          {/* LEFT */}
+
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Heading Label */}
+
+            <div className="flex items-center gap-4 mb-7">
+              <div className="w-12 h-px bg-gradient-to-r from-[#F3BB27] to-[#EA7A12]" />
+
+              <span
+                className="
+                  uppercase
+                  tracking-[0.30em]
+                  text-[10px]
+                  sm:text-xs
+                  text-[#D49A2D]
+                "
+                style={{
+                  fontFamily: "Parkinsans",
+                }}
+              >
+                ABOUT THE PROJECT
+              </span>
+            </div>
+
+            {/* Title */}
+
+            <h2
+              className="text-[#2A231D]"
+              style={{
+                fontFamily: "Cormorant Garamond",
+                fontWeight: 500,
+                fontSize: "clamp(38px,5vw,60px)",
+                lineHeight: ".95",
+              }}
+            >
+              Tech Mahindra
+              <br />
+              Headquarters
+            </h2>
+
+            {/* Description */}
+
+            <p
+              className="
+                mt-8
+                max-w-[560px]
+
+                text-[#6C655F]
+
+                text-[15px]
+                sm:text-[16px]
+                lg:text-[17px]
+
+                leading-8
+              "
+              style={{
+                fontFamily: "Parkinsans",
+              }}
+            >
+              Designed as a future-ready workplace, the Tech Mahindra
+              Headquarters seamlessly blends modern aesthetics with
+              functionality. Every workspace has been thoughtfully planned to
+              encourage collaboration, innovation and employee wellbeing while
+              maintaining a timeless corporate identity.
+            </p>
+
+            {/* Feature List */}
+
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {[
+                "Premium Corporate Workspace",
+                "Collaborative Open Office",
+                "Sustainable Interior Design",
+                "Luxury Material Palette",
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#D49A2D]" />
+
+                  <span
+                    className="text-[#2A231D]"
+                    style={{
+                      fontFamily: "Parkinsans",
+                    }}
+                  >
+                    {item}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Statistics */}
+
+            <div
+              className="
+                mt-14
+
+                grid
+
+                grid-cols-3
+
+                gap-6
+
+                pt-8
+
+                border-t
+
+                border-[#E5DDD3]
+              "
+            >
+              <div>
+                <p
+                  className="
+                    uppercase
+                    tracking-[0.25em]
+                    text-[10px]
+                    text-[#B98A2D]
+                  "
+                  style={{
+                    fontFamily: "Parkinsans",
+                  }}
+                >
+                  Completed
+                </p>
+
+                <h3
+                  className="mt-2 text-[#2A231D]"
+                  style={{
+                    fontFamily: "Cormorant Garamond",
+                    fontSize: "34px",
+                  }}
+                >
+                  2025
+                </h3>
+              </div>
+
+              <div>
+                <p
+                  className="
+                    uppercase
+                    tracking-[0.25em]
+                    text-[10px]
+                    text-[#B98A2D]
+                  "
+                  style={{
+                    fontFamily: "Parkinsans",
+                  }}
+                >
+                  Area
+                </p>
+
+                <h3
+                  className="mt-2 text-[#2A231D]"
+                  style={{
+                    fontFamily: "Cormorant Garamond",
+                    fontSize: "34px",
+                  }}
+                >
+                  12.5K
+                </h3>
+              </div>
+
+              <div>
+                <p
+                  className="
+                    uppercase
+                    tracking-[0.25em]
+                    text-[10px]
+                    text-[#B98A2D]
+                  "
+                  style={{
+                    fontFamily: "Parkinsans",
+                  }}
+                >
+                  Duration
+                </p>
+
+                <h3
+                  className="mt-2 text-[#2A231D]"
+                  style={{
+                    fontFamily: "Cormorant Garamond",
+                    fontSize: "34px",
+                  }}
+                >
+                  8 Mo
+                </h3>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* RIGHT */}
+
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div
+              className="
+                overflow-hidden
+
+                rounded-[30px]
+
+                shadow-[0_25px_70px_rgba(0,0,0,.10)]
+              "
+            >
+              <img
+                src={creativeBanner}
+                alt="Project"
+                className="
+                  w-full
+
+                  h-[360px]
+                  sm:h-[500px]
+                  md:h-[560px]
+                  lg:h-[620px]
+
+                  object-cover
+
+                  transition-transform
+                  duration-700
+
+                  hover:scale-105
+                "
+              />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectGallerySection({
+  images,
+  onOpenGallery,
+}: {
+  images: string[];
+  onOpenGallery: (index: number) => void;
+}) {
+  return (
+    <section id="gallery" className="bg-[#F5F1EA] py-20 sm:py-24 lg:py-32">
+      <div className="max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14 xl:px-20">
+        {/* Heading */}
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-3xl mx-auto"
+        >
+          <div className="flex justify-center items-center gap-4 mb-5">
+            <div className="w-12 h-px bg-gradient-to-r from-[#F3BB27] to-[#EA7A12]" />
+
+            <span
+              className="
+                uppercase
+                tracking-[0.32em]
+                text-[10px]
+                sm:text-xs
+                text-[#D49A2D]
+              "
+              style={{
+                fontFamily: "Parkinsans",
+              }}
+            >
+              Project Gallery
+            </span>
+
+            <div className="w-12 h-px bg-gradient-to-r from-[#EA7A12] to-[#F3BB27]" />
+          </div>
+
+          <h2
+            className="text-[#2A231D]"
+            style={{
+              fontFamily: "Cormorant Garamond",
+              fontWeight: 500,
+              fontSize: "clamp(38px,5vw,58px)",
+              lineHeight: ".95",
+            }}
+          >
+            A Visual Journey
+          </h2>
+
+          <p
+            className="
+              mt-6
+              text-[#6C655F]
+              text-[15px]
+              sm:text-[16px]
+              leading-8
+            "
+            style={{
+              fontFamily: "Parkinsans",
+            }}
+          >
+            Every corner reflects our dedication to timeless design,
+            functionality and refined craftsmanship.
+          </p>
+        </motion.div>
+
+        {/* Gallery */}
+
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left */}
+
+          <motion.div
+            whileHover={{ y: -6 }}
+            onClick={() => onOpenGallery(0)}
+            className="
+              overflow-hidden
+              rounded-[28px]
+              cursor-pointer
+            "
+          >
+            <img
+              src={images[0]}
+              className="
+                w-full
+                h-[260px]
+                sm:h-[420px]
+                lg:h-[700px]
+                object-cover
+                transition-transform
+                duration-700
+                hover:scale-105
+              "
+            />
+          </motion.div>
+
+          {/* Right */}
+
+          <div className="lg:col-span-2 grid gap-6">
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="overflow-hidden rounded-[28px]"
+            >
+              <img
+                src={images[1]}
+                className="
+                  w-full
+                  h-[260px]
+                  sm:h-[300px]
+                  lg:h-[340px]
+                  object-cover
+                  transition-transform
+                  duration-700
+                  hover:scale-105
+                "
+              />
+            </motion.div>
+
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="overflow-hidden rounded-[28px]"
+            >
+              <img
+                src={images[2]}
+                className="
+                  w-full
+                  h-[260px]
+                  sm:h-[300px]
+                  lg:h-[340px]
+                  object-cover
+                  transition-transform
+                  duration-700
+                  hover:scale-105
+                "
+              />
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Button */}
+
+        <div className="flex justify-center mt-14">
+          <button
+            onClick={() => onOpenGallery(0)}
+            className="
+              px-8
+              py-4
+
+              rounded-full
+
+              border
+              border-[#D49A2D]
+
+              text-[#D49A2D]
+
+              hover:bg-[#D49A2D]
+              hover:text-white
+
+              transition-all
+              duration-300
+            "
+            style={{
+              fontFamily: "Parkinsans",
+            }}
+          >
+            View All Photos
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GalleryLightbox({
+  open,
+  images,
+  activeImage,
+  setActiveImage,
+  onClose,
+}: {
+  open: boolean;
+  images: string[];
+  activeImage: number;
+  setActiveImage: React.Dispatch<React.SetStateAction<number>>;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  const prev = () =>
+    setActiveImage((activeImage - 1 + images.length) % images.length);
+
+  const next = () => setActiveImage((activeImage + 1) % images.length);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="
+        fixed
+        inset-0
+        z-[9999]
+
+        bg-[#0B0908]/95 backdrop-blur-md
+
+        flex
+        flex-col
+      "
+    >
+      {/* Close */}
+
+      <button
+        onClick={onClose}
+        className="
+          absolute
+          top-6
+          right-6
+          lg:top-8
+          lg:right-8
+
+          z-50
+
+          w-12
+          h-12
+
+          rounded-full
+
+          bg-white/10
+          backdrop-blur-md
+
+          border
+          border-white/10
+
+          flex
+          items-center
+          justify-center
+
+          text-white
+
+          hover:bg-[#D49A2D]
+          transition-all
+          duration-300
+        "
+      >
+        <X size={30} />
+      </button>
+
+      {/* Image */}
+
+      <div className="relative flex-1 flex items-center justify-center px-4 sm:px-8 pt-20 pb-4">
+        <div className="relative">
+          <div
+            className="
+            overflow-hidden
+
+            rounded-[18px]
+            sm:rounded-[24px]
+            lg:rounded-[30px]
+
+            shadow-[0_25px_80px_rgba(0,0,0,.45)]
+
+            max-w-[1400px]
+            w-full
+          "
+          >
+            <motion.img
+              key={activeImage}
+              initial={{
+                opacity: 0,
+                scale: 0.96,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              transition={{
+                duration: 0.35,
+              }}
+              src={images[activeImage]}
+              className="
+              w-full
+
+              h-auto
+              max-h-[72vh]
+              sm:max-h-[78vh]
+              lg:max-h-[82vh]
+
+              object-cover
+              block
+            "
+            />
+          </div>
+
+          {/* Previous */}
+
+          <button
+            onClick={prev}
+            className="
+        absolute
+        left-4
+        sm:left-6
+        lg:left-8
+
+        top-1/2
+        -translate-y-1/2
+
+        w-12 h-12
+        sm:w-14 sm:h-14
+
+        rounded-full
+
+        bg-white/10
+        backdrop-blur-md
+        border border-white/10
+
+        flex items-center justify-center
+
+        hover:bg-[#D49A2D]
+        transition-all
+      "
+          >
+            <ChevronLeft size={28} className="text-white" />
+          </button>
+
+          {/* Next */}
+
+          <button
+            onClick={next}
+            className="
+        absolute
+        right-4
+        sm:right-6
+        lg:right-8
+
+        top-1/2
+        -translate-y-1/2
+
+        w-12 h-12
+        sm:w-14 sm:h-14
+
+        rounded-full
+
+        bg-white/10
+        backdrop-blur-md
+        border border-white/10
+
+        flex items-center justify-center
+
+        hover:bg-[#D49A2D]
+        transition-all
+    "
+          >
+            <ChevronRight size={28} className="text-white" />
+          </button>
+        </div>
+      </div>
+      {/* Thumbnails */}
+
+      <div
+        className="
+          flex
+
+          justify-center
+
+          gap-2 sm:gap-3
+
+          overflow-auto
+
+          px-6
+
+          pb-5
+        "
+      >
+        {images.map((image, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveImage(index)}
+            className={`
+              overflow-hidden
+
+              rounded-xl
+
+              border-2
+
+              ${
+                activeImage === index
+                  ? "border-[#D49A2D]"
+                  : "border-transparent"
+              }
+            `}
+          >
+            <img
+              src={image}
+              className="                
+                w-14 h-14
+                sm:w-16 sm:h-16
+                lg:w-20 lg:h-20
+                object-cover
+              "
+            />
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function ProjectDetail() {
+  const galleryImages = [
+    techMahindraBanner,
+    techMahindraBanner2,
+    diningArea,
+    creativeBanner,
+    creativeBanner,
+    creativeBanner,
+  ];
+
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
   const navigate = useNavigate();
   const { category, slug } = useParams();
 
@@ -496,13 +1176,26 @@ export default function ProjectDetail() {
         {/* HERO SECTION */}
         <HeroSection project={project} />
 
-        {/* <HeroSection project={project} /> */}
-
         {/* ABOUT PROJECT */}
+        <AboutProjectSection />
 
         {/* GALLERY */}
+        <ProjectGallerySection
+          images={galleryImages}
+          onOpenGallery={(index) => {
+            setActiveImage(index);
+            setGalleryOpen(true);
+          }}
+        />
 
         {/* DESIGN */}
+        <GalleryLightbox
+          open={galleryOpen}
+          images={galleryImages}
+          activeImage={activeImage}
+          setActiveImage={setActiveImage}
+          onClose={() => setGalleryOpen(false)}
+        />
       </div>
 
       <Footer />

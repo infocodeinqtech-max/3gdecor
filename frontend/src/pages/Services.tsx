@@ -54,7 +54,13 @@ const SERVICE_ICONS: Record<string, LucideIcon> = {
   Shield,
 };
 
-function ServiceIcon({ name, className = "size-6" }: { name?: string; className?: string }) {
+function ServiceIcon({
+  name,
+  className = "size-6",
+}: {
+  name?: string;
+  className?: string;
+}) {
   const Icon = SERVICE_ICONS[name || ""] || PenTool;
   return <Icon className={className} />;
 }
@@ -84,19 +90,27 @@ function AnimCounter({ target }: { target: string }) {
 function Hero({ data }: { data: ServicePageContent }) {
   return (
     <section
-      className="bg-[#F5F1EA] px-4 lg:px-5"
+      // className="bg-[#F5F1EA] px-4 lg:px-5"
+      className="
+        bg-[#F5F1EA]
+        px-4
+        lg:px-5
+        pt-[72px]     
+        lg:pt-[80px]
+      "
       style={{
         position: "relative",
-        // overflow: "hidden",
-        // background: "#0e0c0a",
-        // height: "760px",
       }}
     >
       <div className="relative overflow-hidden rounded-[20px] md:rounded-[32px] min-h-[480px] h-[min(760px,78svh)] md:h-[640px] lg:h-[760px] w-full ">
         {/* ── Full-bleed background image ── */}
         <div className="absolute inset-0 z-0">
           <img
-            src={data.heroBannerImage ? mediaUrl(data.heroBannerImage) : servicesBanner}
+            src={
+              data.heroBannerImage
+                ? mediaUrl(data.heroBannerImage)
+                : servicesBanner
+            }
             alt="3G Decorative Group reception"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
@@ -132,9 +146,9 @@ function Hero({ data }: { data: ServicePageContent }) {
           animate={{ scaleX: 1 }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
-          style={{
-            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-          }}
+          // style={{
+          //   background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+          // }}
         />
 
         {/* Ambient orb — warm left */}
@@ -302,13 +316,7 @@ function Hero({ data }: { data: ServicePageContent }) {
 }
 
 /* ─── Service Card ─── */
-function ServiceCard({
-  svc,
-  index,
-}: {
-  svc: ServiceOfferItem;
-  index: number;
-}) {
+function ServiceCard({ svc, index }: { svc: ServiceOfferItem; index: number }) {
   const [hovered, setHovered] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
@@ -435,7 +443,9 @@ function ServiceCard({
           {/* Description — always on mobile; hover-reveal on desktop */}
           <p
             className={`text-[#b0a8a0] mb-5 transition-opacity duration-300 ${
-              hovered ? "opacity-100 max-h-40" : "opacity-100 md:opacity-0 max-h-40 md:max-h-0 md:overflow-hidden"
+              hovered
+                ? "opacity-100 max-h-40"
+                : "opacity-100 md:opacity-0 max-h-40 md:max-h-0 md:overflow-hidden"
             }`}
             style={{
               fontFamily: "'Mona Sans', sans-serif",
@@ -1008,7 +1018,10 @@ function ProcessStrip({
                     />
                     <motion.div
                       animate={{
-                        color: activeStep === i ? "#0e0c0a" : s.accentColor || "#f3bb27",
+                        color:
+                          activeStep === i
+                            ? "#0e0c0a"
+                            : s.accentColor || "#f3bb27",
                         scale: activeStep === i ? 1.1 : 1,
                         rotate: activeStep === i ? 8 : 0,
                       }}
@@ -1025,7 +1038,10 @@ function ProcessStrip({
                     className="w-8 h-[2px] mb-4"
                     animate={{
                       opacity: activeStep === i ? 1 : 0.5,
-                      backgroundColor: activeStep === i ? s.accentColor || "#f3bb27" : "#f3bb27",
+                      backgroundColor:
+                        activeStep === i
+                          ? s.accentColor || "#f3bb27"
+                          : "#f3bb27",
                     }}
                     transition={{ duration: 0.4 }}
                   />

@@ -155,7 +155,14 @@ function HeroSection() {
   const navigate = useNavigate();
   return (
     <section
-      className="bg-[#F5F1EA] px-4 lg:px-5"
+      // className="bg-[#F5F1EA] px-4 lg:px-5"
+      className="
+        bg-[#F5F1EA]
+        px-4
+        lg:px-5
+        pt-[72px]     
+        lg:pt-[80px]
+      "
       style={{
         position: "relative",
       }}
@@ -230,9 +237,9 @@ function HeroSection() {
           animate={{ scaleX: 1 }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
-          style={{
-            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-          }}
+          // style={{
+          //   background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+          // }}
         />
 
         {/* Ambient orb — warm left */}
@@ -637,31 +644,31 @@ export default function Projects() {
 
         {!showLoader && (
           <>
-        {/* Category Section */}
-        <ProjectCategories />
+            {/* Category Section */}
+            <ProjectCategories />
 
-        {/* Corporate Projects */}
-        <FeaturedProjects
-          subtitle="CORPORATE INTERIORS"
-          title="Featured Projects"
-          description="Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences."
-          button="View All Corporate Projects"
-          viewAllLink="/projects/corporate"
-          projects={corporateProjects}
-        />
+            {/* Corporate Projects */}
+            <FeaturedProjects
+              subtitle="CORPORATE INTERIORS"
+              title="Featured Projects"
+              description="Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences."
+              button="View All Corporate Projects"
+              viewAllLink="/projects/corporate"
+              projects={corporateProjects}
+            />
 
-        {/* Civil Projects */}
+            {/* Civil Projects */}
 
-        <FeaturedProjects
-          title="Featured Projects"
-          description="Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality."
-          subtitle="CIVIL STRUCTURES"
-          button="View All Civil Projects"
-          viewAllLink="/projects/civil"
-          projects={civilProjects}
-        />
+            <FeaturedProjects
+              title="Featured Projects"
+              description="Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality."
+              subtitle="CIVIL STRUCTURES"
+              button="View All Civil Projects"
+              viewAllLink="/projects/civil"
+              projects={civilProjects}
+            />
 
-        {/* CTA */}
+            {/* CTA */}
           </>
         )}
       </div>
