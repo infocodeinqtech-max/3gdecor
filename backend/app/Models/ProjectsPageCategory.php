@@ -16,6 +16,7 @@ class ProjectsPageCategory extends Model
     protected function casts(): array
     {
         return [
+            'list_filters' => 'array',
             'active' => 'boolean',
         ];
     }

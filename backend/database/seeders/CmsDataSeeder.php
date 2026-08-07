@@ -282,74 +282,55 @@ class CmsDataSeeder extends Seeder
             'hero_title_highlight' => 'Projects',
             'hero_description_1' => 'Explore a curated collection of premium corporate interiors and civil infrastructure projects that reflect our passion for craftsmanship, precision, and timeless architectural excellence.',
             'hero_description_2' => 'From collaborative workspaces and executive offices to reception lounges and business environments, we combine creativity, precision, and timeless design to create spaces that leave a lasting impression.',
-            'stats' => [
-                ['id' => 1, 'number' => '250+', 'title' => 'Projects Delivered', 'icon' => 'Briefcase'],
-                ['id' => 2, 'number' => '15+', 'title' => 'Years Experience', 'icon' => 'Building2'],
-                ['id' => 3, 'number' => '100%', 'title' => 'Client Satisfaction', 'icon' => 'Award'],
-            ],
             'categories_eyebrow' => 'OUR PROJECT CATEGORIES',
             'categories_title_line1' => 'Two Domains.',
             'categories_title_line2' => 'Endless Possibilities.',
             'categories_description' => 'From inspiring interiors to iconic structures, our work spans across two core domains.',
-            'corporate_subtitle' => 'CORPORATE INTERIORS',
-            'corporate_title' => 'Featured Projects',
-            'corporate_description' => 'Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences.',
-            'corporate_button' => 'View All Corporate Projects',
-            'corporate_link' => '/projects/corporate',
-            'civil_subtitle' => 'CIVIL STRUCTURES',
-            'civil_title' => 'Featured Projects',
-            'civil_description' => 'Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality.',
-            'civil_button' => 'View All Civil Projects',
-            'civil_link' => '/projects/civil',
             'active' => true,
         ]);
 
         ProjectsPageCategory::query()->delete();
-        ProjectsPageCategory::query()->create([
+        $corporateCategory = ProjectsPageCategory::query()->create([
             'title' => 'Corporate Interiors',
-            'subtitle' => 'Workspaces that inspire. Interiors that perform. Environments that elevate everyday experiences.',
+            'slug' => 'corporate',
             'image' => MediaPath::path('pages/projects', 'project-category-corporate.png'),
             'icon' => 'Building2',
             'tags' => 'Workspaces, Offices, Showrooms, Banks',
             'button' => 'View Projects',
             'link' => '/projects/corporate',
+            'section_subtitle' => 'CORPORATE INTERIORS',
+            'section_title' => 'Featured Projects',
+            'section_description' => 'Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences.',
+            'list_banner_image' => MediaPath::path('pages/projects', 'corporate-banner.png'),
+            'list_breadcrumb' => 'Corporate Interiors',
+            'list_hero_title' => 'Corporate',
+            'list_description' => 'Exceptional workplaces begin with exceptional design. At 3G Decorative Group, we create premium corporate interiors that blend functionality, innovation, and timeless aesthetics to shape environments where businesses thrive.',
+            'list_filters' => ['All Projects', 'Offices', 'Workspaces', 'Showrooms', 'Banks', 'IT Parks'],
             'sort_order' => 1,
             'active' => true,
         ]);
-        ProjectsPageCategory::query()->create([
+        $civilCategory = ProjectsPageCategory::query()->create([
             'title' => 'Civil Structures',
-            'subtitle' => 'Strong foundations. Timeless structures. Built to shape skylines and empower communities.',
+            'slug' => 'civil',
             'image' => MediaPath::path('pages/projects', 'project-category-corporate.png'),
             'icon' => 'Landmark',
             'tags' => 'Residential, Commercial, Industrial, Infrastructure',
             'button' => 'View Projects',
             'link' => '/projects/civil',
+            'section_subtitle' => 'CIVIL STRUCTURES',
+            'section_title' => 'Featured Projects',
+            'section_description' => 'Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality.',
+            'list_banner_image' => MediaPath::path('pages/projects', 'civil-banner.png'),
+            'list_breadcrumb' => 'Civil Structures',
+            'list_hero_title' => 'Civil',
+            'list_description' => 'Explore our portfolio of residential, commercial and industrial projects engineered with quality, innovation and long-lasting excellence.',
+            'list_filters' => ['All Projects', 'Residential', 'Commercial', 'Industrial', 'Institutional', 'Infrastructure'],
             'sort_order' => 2,
             'active' => true,
         ]);
 
         ProjectsPageItem::query()->delete();
-        foreach ([
-            [1, 'corporate', 'Tech Mahindra Office', 'Kolkata, India', 'cp_int-1.jpeg', 'tech-mahindra'],
-            [2, 'corporate', 'Siemens Innovation Hub', 'Kolkata, India', 'cp-int-2.jpeg', 'siemens'],
-            [3, 'corporate', 'Executive Dining Space', 'Kolkata, India', 'cp-int-3.jpeg', 'executive-dining'],
-            [4, 'corporate', 'Creative Studio Workspace', 'Kolkata, India', 'cp-int-4.jpeg', 'creative-workspace'],
-            [5, 'corporate', 'Corporate Reception', 'Kolkata, India', 'cp-int-5.jpeg', 'reception'],
-            [6, 'civil', 'Luxury Villa', 'Bhuvaneshwar, India', 'cv_1.png', 'luxury-villa'],
-            [7, 'civil', 'Flender Drives', 'Kharagpur, India', 'cv_2.png', 'industrial-facility'],
-            [8, 'civil', 'Residential', 'Kolkata, India', 'cv_3.png', 'residential-building'],
-            [9, 'civil', 'Industrial Complex', 'Bhubaneswar, India', 'cv_4.png', 'industrial-complex'],
-        ] as [$order, $domain, $title, $location, $file, $slug]) {
-            ProjectsPageItem::query()->create([
-                'domain' => $domain,
-                'title' => $title,
-                'location' => $location,
-                'image' => MediaPath::path('pages/projects', $file),
-                'slug' => $slug,
-                'sort_order' => $order,
-                'active' => true,
-            ]);
-        }
+        $this->call(ProjectsPageItemsSeeder::class);
 
         // Footer (branding / newsletter only — contact is in site_contact_contents)
         FooterContent::query()->delete();

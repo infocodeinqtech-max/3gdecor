@@ -8,151 +8,117 @@ import { loadPublicSiteCms } from "../content/publicCms";
 import { useCmsPageGate } from "../hooks/useCmsPageGate";
 import corporateBanner from "../assets/images/corporate-banner.png";
 import civilBanner from "../assets/images/civil-banner.png";
+import office1 from "../assets/images/cp_int-1.jpeg";
+import office2 from "../assets/images/cp-int-2.jpeg";
+import office3 from "../assets/images/cp-int-3.jpeg";
+import office4 from "../assets/images/cp-int-4.jpeg";
+import office5 from "../assets/images/cp-int-5.jpeg";
+import techMahindra from "../assets/images/tech-mahindra-office.jpeg";
+import siemens from "../assets/images/siemens-innovation-hub.jpeg";
+import executiveDining from "../assets/images/executive-dining-space.jpeg";
+import creativeStudio from "../assets/images/creative-studio-workspace.jpeg";
+import hdfc from "../assets/images/hdfc-bank-branch.jpeg";
+import datasoft from "../assets/images/datasoft-it-park.jpeg";
+import mahindra from "../assets/images/mahindra-office.jpeg";
+import acme from "../assets/images/acme-headquarters.jpeg";
+import civil1 from "../assets/images/cv_1.png";
+import civil2 from "../assets/images/cv_2.png";
+import civil3 from "../assets/images/cv_3.png";
+import civil4 from "../assets/images/cv_4.png";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronRight,
-  ChevronDown,
   ChevronLeft,
-  LayoutGrid,
-  List,
   MapPin,
   ArrowRight,
 } from "lucide-react";
-import { useState } from "react";
-import techMahindra from "../assets/images/tech-mahindra-office.jpeg";
-import siemens from "../assets/images/siemens-innovation-hub.jpeg";
-import dining from "../assets/images/executive-dining-space.jpeg";
-import workspace from "../assets/images/creative-studio-workspace.jpeg";
-import bank from "../assets/images/hdfc-bank-branch.jpeg";
-import itpark from "../assets/images/datasoft-it-park.jpeg";
-import mahindra from "../assets/images/mahindra-office.jpeg";
-import acme from "../assets/images/acme-headquarters.jpeg";
+import { useMemo, useState, useEffect } from "react";
+import {
+  seedProjectsPageCategories,
+  seedProjectsPageItems,
+  type ProjectsPageCategoryItem,
+  type ProjectsPageItem,
+} from "../admin/data/seedContent";
+import { getListContent } from "../admin/utils/contentStorage";
+import { mediaUrl, preloadImage } from "../utils/mediaUrl";
 
-const projectPages = {
-  corporate: {
-    title: "Corporate",
-    breadcrumb: "Corporate Interiors",
-    banner: corporateBanner,
-    description:
-      "Exceptional workplaces begin with exceptional design. At 3G Decorative Group, we create premium corporate interiors that blend functionality, innovation, and timeless aesthetics to shape environments where businesses thrive.",
-
-    filters: [
-      "All Projects",
-      "Offices",
-      "Workspaces",
-      "Showrooms",
-      "Banks",
-      "IT Parks",
-    ],
-  },
-
-  civil: {
-    title: "Civil",
-    breadcrumb: "Civil Structures",
-    banner: civilBanner,
-    description:
-      "Explore our portfolio of residential, commercial and industrial projects engineered with quality, innovation and long-lasting excellence.",
-
-    filters: [
-      "All Projects",
-      "Residential",
-      "Commercial",
-      "Industrial",
-      "Institutional",
-      "Infrastructure",
-    ],
-  },
+const FALLBACK_BANNERS: Record<string, string> = {
+  corporate: corporateBanner,
+  civil: civilBanner,
 };
 
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Tech Mahindra Office",
-    category: "Offices",
-    location: "Kolkata, India",
-    image: techMahindra,
-    slug: "tech-mahindra-office",
-  },
-  {
-    id: 2,
-    title: "Siemens Innovation Hub",
-    category: "Workspaces",
-    location: "Kolkata, India",
-    image: siemens,
-    slug: "siemens-innovation-hub",
-  },
-  {
-    id: 3,
-    title: "Executive Dining Space",
-    category: "Hospitality",
-    location: "Kolkata, India",
-    image: dining,
-    slug: "executive-dining-space",
-  },
-  {
-    id: 4,
-    title: "Creative Studio Workspace",
-    category: "Workspaces",
-    location: "Kolkata, India",
-    image: workspace,
-    slug: "creative-studio-workspace",
-  },
-  {
-    id: 5,
-    title: "HDFC Bank Branch",
-    category: "Banks",
-    location: "Kolkata, India",
-    image: bank,
-    slug: "hdfc-bank",
-  },
-  {
-    id: 6,
-    title: "DataSoft IT Park",
-    category: "IT Parks",
-    location: "Kolkata, India",
-    image: itpark,
-    slug: "datasoft-it-park",
-  },
-  {
-    id: 7,
-    title: "Mahindra & Mahindra Office",
-    category: "Offices",
-    location: "Kolkata, India",
-    image: mahindra,
-    slug: "mahindra-office",
-  },
-  {
-    id: 8,
-    title: "Acme Corp Headquarters",
-    category: "Offices",
-    location: "Kolkata, India",
-    image: acme,
-    slug: "acme-corporate",
-  },
-];
+const FALLBACK_ITEM_IMAGES: Record<string, string> = {
+  "tech-mahindra-office": techMahindra,
+  "siemens-innovation-hub": siemens,
+  "executive-dining-space": executiveDining,
+  "creative-studio-workspace": creativeStudio,
+  "hdfc-bank": hdfc,
+  "datasoft-it-park": datasoft,
+  "mahindra-office": mahindra,
+  "acme-corporate": acme,
+  "corporate-reception": office5,
+  "premium-workspace-hub": office1,
+  "innovation-collaboration-center": office2,
+  "executive-boardroom-suite": office3,
+  "luxury-villa": civil1,
+  "industrial-facility": civil2,
+  "residential-building": civil3,
+  "industrial-complex": civil4,
+  "commercial-tower": civilBanner,
+  "institutional-campus": civilBanner,
+  "infrastructure-hub": civilBanner,
+  "skyline-residences": civil1,
+  "industrial-plant": civil2,
+  "mixed-use-development": civil3,
+  "urban-infrastructure-project": civil4,
+  "premium-commercial-block": civilBanner,
+};
 
-type Project = {
-  id: number;
+type ListProject = {
+  id: number | string;
   title: string;
-  category: string;
   location: string;
   image: string;
   slug: string;
+  filterTag?: string;
+  order?: number;
 };
 
-type ProjectCategory = keyof typeof projectPages;
+function resolveCategorySlug(category: ProjectsPageCategoryItem): string {
+  if (category.slug?.trim()) return category.slug.trim();
+  const match = category.link?.match(/\/projects\/([^/]+)/);
+  return match?.[1] || "";
+}
 
-function HeroSection({ category }: { category: ProjectCategory }) {
-  const pageData = projectPages[category];
+function resolveListBanner(category: ProjectsPageCategoryItem): string {
+  const fromDb = category.listBannerImage?.trim()
+    ? mediaUrl(category.listBannerImage)
+    : "";
+  const slug = resolveCategorySlug(category);
+  return fromDb || FALLBACK_BANNERS[slug] || corporateBanner;
+}
+
+function resolveItemImage(item: ProjectsPageItem): string {
+  const fromDb = item.image?.trim() ? mediaUrl(item.image) : "";
+  return fromDb || FALLBACK_ITEM_IMAGES[item.slug] || corporateBanner;
+}
+
+function findCategoryBySlug(
+  categories: ProjectsPageCategoryItem[],
+  slug: string,
+): ProjectsPageCategoryItem | undefined {
+  return categories.find((cat) => resolveCategorySlug(cat) === slug);
+}
+
+function HeroSection({ category }: { category: ProjectsPageCategoryItem }) {
+  const banner = resolveListBanner(category);
+  const breadcrumb =
+    category.listBreadcrumb?.trim() || category.title || "Projects";
+  const heroTitle = category.listHeroTitle?.trim() || category.title;
+  const description = category.listDescription?.trim() || "";
 
   return (
     <section
-      // className="
-      //   bg-[#F5F1EA]
-      //   px-3
-      //   sm:px-4
-      //   lg:px-5
-      //   "
       className="
         bg-[#F5F1EA]
         px-4
@@ -180,17 +146,15 @@ function HeroSection({ category }: { category: ProjectCategory }) {
           xl:h-[700px]
         "
       >
-        {/* ── Full-bleed background image ── */}
         <div className="absolute inset-0 z-0">
           <img
-            src={pageData.banner}
-            alt={pageData.title}
+            src={banner}
+            alt={heroTitle}
             className="absolute inset-0 w-full h-full object-cover"
             style={{
               filter: "brightness(1.15) contrast(1.08) saturate(1.08)",
             }}
           />
-          {/* Overlay */}
           <div
             className="absolute inset-0"
             style={{
@@ -203,7 +167,6 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 rgba(10,8,6,.12) 58%,
                 rgba(10,8,6,0) 100%
             ),
-
             linear-gradient(
                 90deg,
                 rgba(8,6,5,.82) 0%,
@@ -212,7 +175,6 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 rgba(8,6,5,.08) 60%,
                 rgba(8,6,5,0) 100%
             ),
-
             linear-gradient(
                 180deg,
                 rgba(8,6,5,.05) 0%,
@@ -224,7 +186,6 @@ function HeroSection({ category }: { category: ProjectCategory }) {
             }}
           />
 
-          {/* Gold Border */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
@@ -233,11 +194,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
               ease: [0.22, 1, 0.36, 1],
             }}
             className="absolute top-0 left-0 right-0 h-[3px] origin-left z-20"
-            // style={{
-            //   background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
-            // }}
           />
-          {/* Glow */}
           <motion.div
             animate={{
               scale: [1, 1.15, 1],
@@ -265,22 +222,13 @@ function HeroSection({ category }: { category: ProjectCategory }) {
             }}
           />
 
-          {/* Content */}
           <div className="relative z-10 h-full flex items-center">
             <div className="max-w-7xl mx-auto w-full px-5 sm:px-6 md:px-10 lg:px-16 xl:px-20">
-              {/* Breadcrumb */}
               <motion.div
                 initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
-                className="
-                    flex
-                    flex-wrap
-                    items-center
-                    gap-2
-                    sm:gap-3
-                    mb-6
-                    "
+                className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6"
               >
                 <a
                   href="/"
@@ -306,11 +254,10 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                   className="text-[#F3BB27] text-[11px] uppercase tracking-[0.25em]"
                   style={{ fontFamily: "Parkinsans" }}
                 >
-                  {pageData.breadcrumb}
+                  {breadcrumb}
                 </span>
               </motion.div>
 
-              {/* Label */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -320,21 +267,13 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 <div className="w-10 h-px bg-gradient-to-r from-[#F3BB27] to-[#EA7A12]" />
 
                 <span
-                  className="
-                    text-[#F3BB27]
-                    uppercase
-                    tracking-[0.18em]
-                    sm:tracking-[0.35em]
-                    text-[10px]
-                    sm:text-xs
-                    "
+                  className="text-[#F3BB27] uppercase tracking-[0.18em] sm:tracking-[0.35em] text-[10px] sm:text-xs"
                   style={{ fontFamily: "Parkinsans" }}
                 >
-                  {pageData.breadcrumb}
+                  {breadcrumb}
                 </span>
               </motion.div>
 
-              {/* Heading */}
               <motion.h1
                 initial={{ y: 80, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -350,7 +289,7 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                   fontWeight: 500,
                 }}
               >
-                <span className="text-white">{pageData.title}</span>
+                <span className="text-white">{heroTitle}</span>
 
                 <br />
 
@@ -365,35 +304,24 @@ function HeroSection({ category }: { category: ProjectCategory }) {
                 </span>
               </motion.h1>
 
-              {/* Description */}
-              <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: 0.7,
-                }}
-                className="
-                    mt-8
-                    max-w-md
-                    sm:max-w-lg
-                    lg:max-w-xl
-                    text-[#DDD5CB]
-                    text-[14px]
-                    sm:text-[15px]
-                    lg:text-[16px]
-                    leading-7
-                    sm:leading-8
-                    "
-                style={{
-                  fontFamily: "Parkinsans",
-                }}
-              >
-                {pageData.description}
-              </motion.p>
+              {description ? (
+                <motion.p
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: 0.7,
+                  }}
+                  className="mt-8 max-w-md sm:max-w-lg lg:max-w-xl text-[#DDD5CB] text-[14px] sm:text-[15px] lg:text-[16px] leading-7 sm:leading-8"
+                  style={{
+                    fontFamily: "Parkinsans",
+                  }}
+                >
+                  {description}
+                </motion.p>
+              ) : null}
             </div>
           </div>
 
-          {/* Bottom Fade */}
           <div
             className="absolute bottom-0 left-0 right-0 h-32"
             style={{
@@ -407,40 +335,23 @@ function HeroSection({ category }: { category: ProjectCategory }) {
 }
 
 function ProjectFilters({
+  filters,
   activeFilter,
   setActiveFilter,
   sortBy,
   setSortBy,
-  view,
-  setView,
 }: {
+  filters: string[];
   activeFilter: string;
   setActiveFilter: React.Dispatch<React.SetStateAction<string>>;
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
-  view: "grid" | "list";
-  setView: React.Dispatch<React.SetStateAction<"grid" | "list">>;
 }) {
-  const { category } = useParams();
-
-  const pageData = projectPages[category as ProjectCategory];
-  const filters = pageData.filters;
-
   return (
     <section className="bg-[#F5F1EA] py-10">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          {/* Left */}
-          <div
-            className="
-                  flex
-                  flex-wrap
-                  lg:flex-nowrap
-                  gap-3
-                  pt-2
-                  pb-2
-                "
-          >
+          <div className="flex flex-wrap lg:flex-nowrap gap-3 pt-2 pb-2">
             {filters.map((item) => (
               <button
                 key={item}
@@ -456,7 +367,6 @@ function ProjectFilters({
                       duration-300
                       hover:-translate-y-0.5
                       hover:shadow-md
-
                       ${
                         activeFilter === item
                           ? "bg-[#D89A2B] border-[#D89A2B] text-white"
@@ -469,7 +379,6 @@ function ProjectFilters({
             ))}
           </div>
 
-          {/* Right */}
           <div className="flex items-center gap-3">
             <CustomDropdown
               value={sortBy}
@@ -483,11 +392,16 @@ function ProjectFilters({
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
-  const { category } = useParams();
+function ProjectCard({
+  project,
+  categorySlug,
+}: {
+  project: ListProject;
+  categorySlug: string;
+}) {
   return (
     <Link
-      to={`/projects/${category}/${project.slug}`}
+      to={`/projects/${categorySlug}/${project.slug}`}
       className="
           group
           flex
@@ -507,6 +421,7 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="overflow-hidden rounded-t-[24px]">
         <img
           src={project.image}
+          alt={project.title}
           className="
               w-full
               aspect-[4/3]
@@ -572,18 +487,23 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-function ProjectGrid({
-  projects,
-  view,
-}: {
-  projects: Project[];
-  view: "grid" | "list";
-}) {
+function ProjectGrid({ projects }: { projects: ListProject[] }) {
+  const { category } = useParams();
+  const categorySlug = category || "";
+
   return (
     <section className="bg-[#F5F1EA] pb-16">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
-        <div
-          className="
+        {projects.length === 0 ? (
+          <p
+            className="text-center text-[#746C63] py-12"
+            style={{ fontFamily: "Parkinsans" }}
+          >
+            No projects found for this filter.
+          </p>
+        ) : (
+          <div
+            className="
               grid
               gap-8
               items-stretch
@@ -591,67 +511,113 @@ function ProjectGrid({
               lg:grid-cols-3
               xl:grid-cols-4
             "
-        >
-          <AnimatePresence mode="popLayout">
-            {projects.map((project) => (
-              <motion.div
-                layout
-                initial={{
-                  opacity: 0,
-                  y: 40,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  y: -40,
-                }}
-                transition={{
-                  duration: 0.35,
-                }}
-                key={project.id}
-              >
-                <ProjectCard project={project} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+          >
+            <AnimatePresence mode="popLayout">
+              {projects.map((project) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -40 }}
+                  transition={{ duration: 0.35 }}
+                  key={project.id}
+                >
+                  <ProjectCard
+                    project={project}
+                    categorySlug={categorySlug}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-function ProjectPagination() {
+const PAGE_SIZE = 8;
+
+function buildPageNumbers(
+  current: number,
+  total: number,
+): Array<number | "..."> {
+  if (total <= 1) return [1];
+  if (total <= 6) {
+    return Array.from({ length: total }, (_, index) => index + 1);
+  }
+
+  const pages: Array<number | "..."> = [1];
+
+  if (current > 3) pages.push("...");
+
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let page = start; page <= end; page += 1) {
+    pages.push(page);
+  }
+
+  if (current < total - 2) pages.push("...");
+
+  pages.push(total);
+  return pages;
+}
+
+function ProjectPagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages = buildPageNumbers(currentPage, totalPages);
+
   return (
     <section className="bg-[#F5F1EA] pb-24">
       <div className="flex justify-center items-center gap-3">
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+        <button
+          type="button"
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white disabled:opacity-40 flex items-center justify-center"
+        >
           <ChevronLeft size={18} />
         </button>
 
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#D89A2B] text-white">
-          1
-        </button>
+        {pages.map((page, index) =>
+          page === "..." ? (
+            <span
+              key={`ellipsis-${index}`}
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white flex items-center justify-center text-[#5A5249]"
+            >
+              ...
+            </span>
+          ) : (
+            <button
+              key={page}
+              type="button"
+              onClick={() => onPageChange(page)}
+              className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center ${
+                currentPage === page
+                  ? "bg-[#D89A2B] text-white border-[#D89A2B]"
+                  : "bg-white text-[#5A5249]"
+              }`}
+            >
+              {page}
+            </button>
+          ),
+        )}
 
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
-          2
-        </button>
-
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
-          3
-        </button>
-
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
-          ...
-        </button>
-
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
-          6
-        </button>
-
-        <button className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white">
+        <button
+          type="button"
+          disabled={currentPage >= totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+          className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border bg-white disabled:opacity-40 flex items-center justify-center"
+        >
           <ChevronRight size={18} />
         </button>
       </div>
@@ -659,33 +625,151 @@ function ProjectPagination() {
   );
 }
 
+function sortProjects(projects: ListProject[], sortBy: string): ListProject[] {
+  const rows = [...projects];
+  if (sortBy === "Oldest") {
+    return rows.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }
+  if (sortBy === "A-Z") {
+    return rows.sort((a, b) => a.title.localeCompare(b.title));
+  }
+  return rows.sort((a, b) => (b.order ?? 0) - (a.order ?? 0));
+}
+
 export default function ProjectList() {
-  const { category } = useParams();
-
+  const { category: categorySlug } = useParams();
   const [activeFilter, setActiveFilter] = useState("All Projects");
-
   const [sortBy, setSortBy] = useState("Latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [categories, setCategories] = useState<ProjectsPageCategoryItem[]>(
+    seedProjectsPageCategories,
+  );
+  const [items, setItems] = useState<ProjectsPageItem[]>(seedProjectsPageItems);
+  const [readySlug, setReadySlug] = useState<string | null>(null);
 
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const { showLoader, fading } = useCmsPageGate(async (force) => {
+    const site = await loadPublicSiteCms(force);
 
-  const { showLoader, fading } = useCmsPageGate((force) =>
-    loadPublicSiteCms(force),
+    const nextCategories = (
+      (site.projectsPageCategories as ProjectsPageCategoryItem[] | undefined)
+        ?.length
+        ? (site.projectsPageCategories as ProjectsPageCategoryItem[])
+        : await getListContent(
+            "projects-page-categories",
+            seedProjectsPageCategories,
+          )
+    ).filter((row) => row.active !== false);
+
+    const nextItems = (
+      (site.projectsPageItems as ProjectsPageItem[] | undefined)?.length
+        ? (site.projectsPageItems as ProjectsPageItem[])
+        : await getListContent("projects-page-items", seedProjectsPageItems)
+    ).filter((row) => row.active !== false);
+
+    const rows = nextCategories.length
+      ? nextCategories
+      : seedProjectsPageCategories;
+    setCategories(rows);
+    setItems(nextItems.length ? nextItems : seedProjectsPageItems);
+
+    const matched = categorySlug
+      ? findCategoryBySlug(rows, categorySlug)
+      : undefined;
+
+    if (matched) {
+      await preloadImage(resolveListBanner(matched));
+    }
+
+    setReadySlug(categorySlug || null);
+  });
+
+  const matchedCategory = useMemo(
+    () =>
+      categorySlug ? findCategoryBySlug(categories, categorySlug) : undefined,
+    [categories, categorySlug],
   );
 
-  const filteredProjects =
-    activeFilter === "All Projects"
-      ? projects
-      : projects.filter((x) => x.category === activeFilter);
-  const valid =
-    category === "corporate" || category === "civil"
-      ? (category as ProjectCategory)
-      : null;
+  const categoryProjects = useMemo(() => {
+    if (!matchedCategory) return [] as ListProject[];
 
-  if (!valid) {
+    return items
+      .filter(
+        (item) =>
+          String(item.categoryId) === String(matchedCategory.id) &&
+          item.active !== false,
+      )
+      .map((item) => ({
+        id: item.id,
+        title: item.title,
+        location: item.location,
+        image: resolveItemImage(item),
+        slug: item.slug,
+        filterTag: item.filterTag,
+        order: item.order,
+      }));
+  }, [items, matchedCategory]);
+
+  const filters = useMemo(() => {
+    const fromCategory = matchedCategory?.listFilters?.filter(Boolean) || [];
+    if (fromCategory.length) return fromCategory;
+    const tags = new Set<string>(["All Projects"]);
+    categoryProjects.forEach((item) => {
+      if (item.filterTag) tags.add(item.filterTag);
+    });
+    return [...tags];
+  }, [matchedCategory, categoryProjects]);
+
+  useEffect(() => {
+    setActiveFilter("All Projects");
+    setSortBy("Latest");
+    setCurrentPage(1);
+  }, [categorySlug]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, sortBy]);
+
+  useEffect(() => {
+    if (!filters.includes(activeFilter)) {
+      setActiveFilter(filters[0] || "All Projects");
+    }
+  }, [filters, activeFilter]);
+
+  const filteredProjects = useMemo(() => {
+    const filtered =
+      activeFilter === "All Projects"
+        ? categoryProjects
+        : categoryProjects.filter((item) => item.filterTag === activeFilter);
+    return sortProjects(filtered, sortBy);
+  }, [activeFilter, categoryProjects, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / PAGE_SIZE));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const paginatedProjects = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredProjects.slice(start, start + PAGE_SIZE);
+  }, [filteredProjects, currentPage]);
+
+  if (!categorySlug) {
     return (
       <NotFound
         title="Page not found"
-        description="This project category doesn’t exist. Choose Corporate or Civil projects from the portfolio."
+        description="This project category doesn’t exist. Choose a category from the projects page."
+      />
+    );
+  }
+
+  if (!showLoader && readySlug === categorySlug && !matchedCategory) {
+    return (
+      <NotFound
+        title="Page not found"
+        description="This project category doesn’t exist. Choose a category from the projects page."
       />
     );
   }
@@ -699,31 +783,30 @@ export default function ProjectList() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        {/* Hero */}
-        <HeroSection category={valid} />
+        {matchedCategory ? <HeroSection category={matchedCategory} /> : null}
 
-        {!showLoader && (
+        {!showLoader && matchedCategory ? (
           <>
-            {/* Filter */}
             <ProjectFilters
+              filters={filters}
               activeFilter={activeFilter}
               setActiveFilter={setActiveFilter}
               sortBy={sortBy}
               setSortBy={setSortBy}
-              view={view}
-              setView={setView}
             />
 
-            {/* Project Grid */}
-            <ProjectGrid projects={filteredProjects} view={view} />
+            <ProjectGrid projects={paginatedProjects} />
 
-            {/* Pagination */}
-            <ProjectPagination />
+            <ProjectPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </>
-        )}
+        ) : null}
       </div>
 
-      {!showLoader && <Footer />}
+      {!showLoader && matchedCategory ? <Footer /> : null}
     </>
   );
 }

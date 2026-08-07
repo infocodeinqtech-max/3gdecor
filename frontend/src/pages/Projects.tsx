@@ -23,6 +23,14 @@ import office2 from "../assets/images/cp-int-2.jpeg";
 import office3 from "../assets/images/cp-int-3.jpeg";
 import office4 from "../assets/images/cp-int-4.jpeg";
 import office5 from "../assets/images/cp-int-5.jpeg";
+import techMahindra from "../assets/images/tech-mahindra-office.jpeg";
+import siemens from "../assets/images/siemens-innovation-hub.jpeg";
+import executiveDining from "../assets/images/executive-dining-space.jpeg";
+import creativeStudio from "../assets/images/creative-studio-workspace.jpeg";
+import hdfc from "../assets/images/hdfc-bank-branch.jpeg";
+import datasoft from "../assets/images/datasoft-it-park.jpeg";
+import mahindra from "../assets/images/mahindra-office.jpeg";
+import acme from "../assets/images/acme-headquarters.jpeg";
 import civil1 from "../assets/images/cv_1.png";
 import civil2 from "../assets/images/cv_2.png";
 import civil3 from "../assets/images/cv_3.png";
@@ -32,11 +40,17 @@ import {
   seedProjectsPage,
   seedProjectsPageCategories,
   seedProjectsPageItems,
+  seedHero,
+  type HeroContent,
+  type HeroStat,
   type ProjectsPageCategoryItem,
   type ProjectsPageContent,
   type ProjectsPageItem,
 } from "../admin/data/seedContent";
 import { getContent, getListContent } from "../admin/utils/contentStorage";
+import {
+  resolveCategorySlug,
+} from "../utils/projectsCms";
 import { mediaUrl, preloadImage } from "../utils/mediaUrl";
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -49,15 +63,30 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 const FALLBACK_CATEGORY_IMAGES = [corporateCategory, corporateCategory];
 const FALLBACK_ITEM_IMAGES: Record<string, string> = {
-  "tech-mahindra": office1,
-  siemens: office2,
-  "executive-dining": office3,
-  "creative-workspace": office4,
-  reception: office5,
+  "tech-mahindra-office": techMahindra,
+  "siemens-innovation-hub": siemens,
+  "executive-dining-space": executiveDining,
+  "creative-studio-workspace": creativeStudio,
+  "hdfc-bank": hdfc,
+  "datasoft-it-park": datasoft,
+  "mahindra-office": mahindra,
+  "acme-corporate": acme,
+  "corporate-reception": office5,
+  "premium-workspace-hub": office1,
+  "innovation-collaboration-center": office2,
+  "executive-boardroom-suite": office3,
   "luxury-villa": civil1,
   "industrial-facility": civil2,
   "residential-building": civil3,
   "industrial-complex": civil4,
+  "commercial-tower": civil4,
+  "institutional-campus": civil3,
+  "infrastructure-hub": civil2,
+  "skyline-residences": civil1,
+  "industrial-plant": civil2,
+  "mixed-use-development": civil3,
+  "urban-infrastructure-project": civil4,
+  "premium-commercial-block": civil4,
 };
 
 function resolveProjectsBanner(content: ProjectsPageContent): string {
@@ -87,7 +116,27 @@ function resolveItemImage(item: ProjectsPageItem): string {
   return fromDb || FALLBACK_ITEM_IMAGES[item.slug] || office1;
 }
 
-function HeroSection({ content }: { content: ProjectsPageContent }) {
+const STAT_ICONS = [Briefcase, Building2, Award] as const;
+
+function heroStatsFromSite(
+  site: { hero?: Record<string, unknown> | null } | null | undefined,
+): HeroStat[] {
+  if (site?.hero && typeof site.hero === "object") {
+    const hero = { ...seedHero, ...(site.hero as HeroContent) };
+    if (Array.isArray(hero.stats) && hero.stats.length) {
+      return hero.stats;
+    }
+  }
+  return seedHero.stats;
+}
+
+function HeroSection({
+  content,
+  stats,
+}: {
+  content: ProjectsPageContent;
+  stats: HeroStat[];
+}) {
   const bannerImage = resolveProjectsBanner(content);
 
   return (
@@ -297,11 +346,8 @@ function HeroSection({ content }: { content: ProjectsPageContent }) {
             transition={{ delay: 1 }}
             className="flex flex-wrap gap-14 mt-16"
           >
-            {(content.stats?.length ? content.stats : seedProjectsPage.stats).map(
-              (item, index) => {
-                const Icon =
-                  ICON_MAP[item.icon || ""] ||
-                  [Briefcase, Building2, Award][index % 3];
+            {stats.map((item, index) => {
+                const Icon = STAT_ICONS[index % STAT_ICONS.length];
 
                 return (
                   <div key={item.id ?? index} className="flex items-center gap-5">
@@ -336,13 +382,12 @@ function HeroSection({ content }: { content: ProjectsPageContent }) {
                           fontSize: "14px",
                         }}
                       >
-                        {item.title}
+                        {item.label}
                       </p>
                     </div>
                   </div>
                 );
-              },
-            )}
+              })}
           </motion.div>
 
           <div
@@ -527,6 +572,7 @@ export default function Projects() {
     useState<ProjectsPageContent>(seedProjectsPage);
   const [heroContent, setHeroContent] =
     useState<ProjectsPageContent>(seedProjectsPage);
+  const [heroStats, setHeroStats] = useState<HeroStat[]>(seedHero.stats);
   const [categories, setCategories] = useState<ProjectsPageCategoryItem[]>(
     seedProjectsPageCategories,
   );
@@ -540,11 +586,6 @@ export default function Projects() {
       nextPage = {
         ...seedProjectsPage,
         ...(site.projectsPage as ProjectsPageContent),
-        stats:
-          Array.isArray((site.projectsPage as ProjectsPageContent).stats) &&
-          (site.projectsPage as ProjectsPageContent).stats.length
-            ? (site.projectsPage as ProjectsPageContent).stats
-            : seedProjectsPage.stats,
       };
     } else {
       nextPage = await getContent<ProjectsPageContent>(
@@ -556,6 +597,7 @@ export default function Projects() {
     await preloadImage(resolveProjectsBanner(nextPage));
     setPageContent(nextPage);
     setHeroContent(nextPage);
+    setHeroStats(heroStatsFromSite(site));
 
     const nextCategories = (
       (site.projectsPageCategories as ProjectsPageCategoryItem[] | undefined)
@@ -576,25 +618,20 @@ export default function Projects() {
     setItems(nextItems.length ? nextItems : seedProjectsPageItems);
   });
 
-  const corporateProjects = items
-    .filter((p) => p.domain === "corporate")
-    .map((p) => ({
-      id: Number(p.id) || 0,
-      title: p.title,
-      location: p.location,
-      image: resolveItemImage(p),
-      slug: p.slug,
-    }));
+  const sortedCategories = [...categories].sort(
+    (a, b) => (a.order ?? 0) - (b.order ?? 0),
+  );
 
-  const civilProjects = items
-    .filter((p) => p.domain === "civil")
-    .map((p) => ({
-      id: Number(p.id) || 0,
-      title: p.title,
-      location: p.location,
-      image: resolveItemImage(p),
-      slug: p.slug,
-    }));
+  const projectsForCategory = (categoryId: number | string) =>
+    items
+      .filter((p) => String(p.categoryId) === String(categoryId))
+      .map((p) => ({
+        id: Number(p.id) || 0,
+        title: p.title,
+        location: p.location,
+        image: resolveItemImage(p),
+        slug: p.slug,
+      }));
 
   return (
     <>
@@ -605,7 +642,7 @@ export default function Projects() {
         className="w-full overflow-x-hidden"
         style={{ fontFamily: "'Parkinsans', sans-serif" }}
       >
-        <HeroSection content={heroContent} />
+        <HeroSection content={heroContent} stats={heroStats} />
 
         {!showLoader && (
           <>
@@ -614,47 +651,38 @@ export default function Projects() {
               categories={categories}
             />
 
-            <FeaturedProjects
-              subtitle={pageContent.corporateSubtitle}
-              title={pageContent.corporateTitle}
-              description={pageContent.corporateDescription}
-              button={pageContent.corporateButton}
-              viewAllLink={pageContent.corporateLink || "/projects/corporate"}
-              projects={
-                corporateProjects.length
-                  ? corporateProjects
-                  : seedProjectsPageItems
-                      .filter((p) => p.domain === "corporate")
-                      .map((p) => ({
-                        id: Number(p.id),
-                        title: p.title,
-                        location: p.location,
-                        image: resolveItemImage(p),
-                        slug: p.slug,
-                      }))
-              }
-            />
+            {sortedCategories.map((category) => {
+              const categoryProjects = projectsForCategory(category.id);
+              const fallbackSeed = seedProjectsPageItems.filter(
+                (p) => String(p.categoryId) === String(category.id),
+              );
 
-            <FeaturedProjects
-              title={pageContent.civilTitle}
-              description={pageContent.civilDescription}
-              subtitle={pageContent.civilSubtitle}
-              button={pageContent.civilButton}
-              viewAllLink={pageContent.civilLink || "/projects/civil"}
-              projects={
-                civilProjects.length
-                  ? civilProjects
-                  : seedProjectsPageItems
-                      .filter((p) => p.domain === "civil")
-                      .map((p) => ({
-                        id: Number(p.id),
-                        title: p.title,
-                        location: p.location,
-                        image: resolveItemImage(p),
-                        slug: p.slug,
-                      }))
-              }
-            />
+              return (
+                <FeaturedProjects
+                  key={category.id}
+                  subtitle={category.sectionSubtitle || ""}
+                  title={category.sectionTitle || "Featured Projects"}
+                  description={category.sectionDescription || ""}
+                  button={`View All ${category.title} Projects`}
+                  viewAllLink={category.link || "/projects"}
+                  projects={
+                    categoryProjects.length
+                      ? categoryProjects.map((p) => ({
+                          ...p,
+                          categorySlug: resolveCategorySlug(category),
+                        }))
+                      : fallbackSeed.map((p) => ({
+                          id: Number(p.id),
+                          title: p.title,
+                          location: p.location,
+                          image: resolveItemImage(p),
+                          slug: p.slug,
+                          categorySlug: resolveCategorySlug(category),
+                        }))
+                  }
+                />
+              );
+            })}
           </>
         )}
       </div>

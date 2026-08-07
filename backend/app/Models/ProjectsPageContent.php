@@ -16,7 +16,6 @@ class ProjectsPageContent extends Model
     protected function casts(): array
     {
         return [
-            'stats' => 'array',
             'active' => 'boolean',
         ];
     }

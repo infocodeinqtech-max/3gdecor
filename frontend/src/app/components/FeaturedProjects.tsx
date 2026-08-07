@@ -10,6 +10,7 @@ interface Project {
   location: string;
   image: string;
   slug: string;
+  categorySlug?: string;
 }
 
 interface Props {
@@ -21,8 +22,6 @@ interface Props {
   viewAllLink: string;
 }
 export default function FeaturedProjects(props: Props) {
-  console.log(props);
-
   const { title, subtitle, description, button, projects, viewAllLink } = props;
 
   const navigate = useNavigate();
@@ -206,7 +205,16 @@ export default function FeaturedProjects(props: Props) {
                       transition={{ duration: 0.35 }}
                       className="group cursor-pointer"
                     > */}
-                    <div className="cursor-pointer">
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (project.categorySlug && project.slug) {
+                          navigate(
+                            `/projects/${project.categorySlug}/${project.slug}`,
+                          );
+                        }
+                      }}
+                    >
                       <div
                         className="
                           group

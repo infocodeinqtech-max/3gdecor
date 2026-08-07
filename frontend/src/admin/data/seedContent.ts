@@ -767,13 +767,6 @@ export const seedServiceWhyFeatures: ServiceWhyFeatureItem[] = [
 
 /* ─── Projects Page CMS ─── */
 
-export interface ProjectsPageStat {
-  id: number | string;
-  number: string;
-  title: string;
-  icon?: string;
-}
-
 export interface ProjectsPageContent {
   bannerImage: string;
   heroEyebrow: string;
@@ -781,46 +774,99 @@ export interface ProjectsPageContent {
   heroTitleHighlight: string;
   heroDescription1: string;
   heroDescription2: string;
-  stats: ProjectsPageStat[];
   categoriesEyebrow: string;
   categoriesTitleLine1: string;
   categoriesTitleLine2: string;
   categoriesDescription: string;
-  corporateSubtitle: string;
-  corporateTitle: string;
-  corporateDescription: string;
-  corporateButton: string;
-  corporateLink: string;
-  civilSubtitle: string;
-  civilTitle: string;
-  civilDescription: string;
-  civilButton: string;
-  civilLink: string;
 }
 
 export interface ProjectsPageCategoryItem {
   id: number | string;
   title: string;
-  subtitle: string;
+  slug?: string;
   image: string;
   icon: string;
   tags: string;
   button: string;
   link: string;
+  sectionSubtitle?: string;
+  sectionTitle?: string;
+  sectionDescription?: string;
+  listBannerImage?: string;
+  listBreadcrumb?: string;
+  listHeroTitle?: string;
+  listDescription?: string;
+  listFilters?: string[];
   order?: number;
   active?: boolean;
 }
 
 export interface ProjectsPageItem {
   id: number | string;
-  domain: "corporate" | "civil";
+  categoryId: number | string;
   title: string;
   location: string;
+  filterTag?: string;
   image: string;
   slug: string;
+  heroTagline?: string;
+  statusLabel?: string;
+  heroSlides?: string[];
+  aboutTitle?: string;
+  aboutDescription?: string;
+  aboutFeatures?: string[];
+  aboutImage?: string;
+  statCompleted?: string;
+  statArea?: string;
+  statDuration?: string;
+  galleryEyebrow?: string;
+  galleryTitle?: string;
+  galleryDescription?: string;
+  galleryImages?: string[];
   order?: number;
   active?: boolean;
 }
+
+const defaultProjectDetail = (title: string) => ({
+  heroTagline:
+    "A future-ready space crafted to inspire collaboration, creativity, and productivity while reflecting innovative design excellence.",
+  statusLabel: "Completed Project",
+  aboutTitle: title,
+  aboutDescription: `Designed with precision and crafted for lasting impact, ${title} showcases our commitment to quality interiors, thoughtful planning and refined architectural detail.`,
+  aboutFeatures: [
+    "Premium Design Language",
+    "Collaborative Planning",
+    "Sustainable Material Palette",
+    "Precision Execution",
+  ],
+  statCompleted: "2025",
+  statArea: "12.5K",
+  statDuration: "8 Mo",
+  galleryEyebrow: "Project Gallery",
+  galleryTitle: "A Visual Journey",
+  galleryDescription:
+    "Every corner reflects our dedication to timeless design, functionality and refined craftsmanship.",
+});
+
+const seedProjectItem = (
+  id: number,
+  categoryId: number,
+  title: string,
+  location: string,
+  filterTag: string,
+  slug: string,
+  order: number,
+): ProjectsPageItem => ({
+  id,
+  categoryId,
+  title,
+  location,
+  filterTag,
+  image: "",
+  slug,
+  ...defaultProjectDetail(title),
+  order,
+});
 
 export const seedProjectsPage: ProjectsPageContent = {
   bannerImage: "",
@@ -831,137 +877,93 @@ export const seedProjectsPage: ProjectsPageContent = {
     "Explore a curated collection of premium corporate interiors and civil infrastructure projects that reflect our passion for craftsmanship, precision, and timeless architectural excellence.",
   heroDescription2:
     "From collaborative workspaces and executive offices to reception lounges and business environments, we combine creativity, precision, and timeless design to create spaces that leave a lasting impression.",
-  stats: [
-    { id: 1, number: "250+", title: "Projects Delivered", icon: "Briefcase" },
-    { id: 2, number: "15+", title: "Years Experience", icon: "Building2" },
-    { id: 3, number: "100%", title: "Client Satisfaction", icon: "Award" },
-  ],
   categoriesEyebrow: "OUR PROJECT CATEGORIES",
   categoriesTitleLine1: "Two Domains.",
   categoriesTitleLine2: "Endless Possibilities.",
   categoriesDescription:
     "From inspiring interiors to iconic structures, our work spans across two core domains.",
-  corporateSubtitle: "CORPORATE INTERIORS",
-  corporateTitle: "Featured Projects",
-  corporateDescription:
-    "Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences.",
-  corporateButton: "View All Corporate Projects",
-  corporateLink: "/projects/corporate",
-  civilSubtitle: "CIVIL STRUCTURES",
-  civilTitle: "Featured Projects",
-  civilDescription:
-    "Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality.",
-  civilButton: "View All Civil Projects",
-  civilLink: "/projects/civil",
 };
 
 export const seedProjectsPageCategories: ProjectsPageCategoryItem[] = [
   {
     id: 1,
     title: "Corporate Interiors",
-    subtitle:
-      "Workspaces that inspire. Interiors that perform. Environments that elevate everyday experiences.",
+    slug: "corporate",
     image: "",
     icon: "Building2",
     tags: "Workspaces, Offices, Showrooms, Banks",
     button: "View Projects",
     link: "/projects/corporate",
+    sectionSubtitle: "CORPORATE INTERIORS",
+    sectionTitle: "Featured Projects",
+    sectionDescription:
+      "Thoughtfully crafted interiors that enhance productivity, reflect brand identity and create memorable experiences.",
+    listBreadcrumb: "Corporate Interiors",
+    listHeroTitle: "Corporate",
+    listDescription:
+      "Exceptional workplaces begin with exceptional design. At 3G Decorative Group, we create premium corporate interiors that blend functionality, innovation, and timeless aesthetics to shape environments where businesses thrive.",
+    listFilters: [
+      "All Projects",
+      "Offices",
+      "Workspaces",
+      "Showrooms",
+      "Banks",
+      "IT Parks",
+    ],
     order: 1,
   },
   {
     id: 2,
     title: "Civil Structures",
-    subtitle:
-      "Strong foundations. Timeless structures. Built to shape skylines and empower communities.",
+    slug: "civil",
     image: "",
     icon: "Landmark",
     tags: "Residential, Commercial, Industrial, Infrastructure",
     button: "View Projects",
     link: "/projects/civil",
+    sectionSubtitle: "CIVIL STRUCTURES",
+    sectionTitle: "Featured Projects",
+    sectionDescription:
+      "Delivering durable civil infrastructure with precision engineering, sustainable practices, and uncompromising quality.",
+    listBreadcrumb: "Civil Structures",
+    listHeroTitle: "Civil",
+    listDescription:
+      "Explore our portfolio of residential, commercial and industrial projects engineered with quality, innovation and long-lasting excellence.",
+    listFilters: [
+      "All Projects",
+      "Residential",
+      "Commercial",
+      "Industrial",
+      "Institutional",
+      "Infrastructure",
+    ],
     order: 2,
   },
 ];
 
 export const seedProjectsPageItems: ProjectsPageItem[] = [
-  {
-    id: 1,
-    domain: "corporate",
-    title: "Tech Mahindra Office",
-    location: "Kolkata, India",
-    image: "",
-    slug: "tech-mahindra",
-    order: 1,
-  },
-  {
-    id: 2,
-    domain: "corporate",
-    title: "Siemens Innovation Hub",
-    location: "Kolkata, India",
-    image: "",
-    slug: "siemens",
-    order: 2,
-  },
-  {
-    id: 3,
-    domain: "corporate",
-    title: "Executive Dining Space",
-    location: "Kolkata, India",
-    image: "",
-    slug: "executive-dining",
-    order: 3,
-  },
-  {
-    id: 4,
-    domain: "corporate",
-    title: "Creative Studio Workspace",
-    location: "Kolkata, India",
-    image: "",
-    slug: "creative-workspace",
-    order: 4,
-  },
-  {
-    id: 5,
-    domain: "corporate",
-    title: "Corporate Reception",
-    location: "Kolkata, India",
-    image: "",
-    slug: "reception",
-    order: 5,
-  },
-  {
-    id: 6,
-    domain: "civil",
-    title: "Luxury Villa",
-    location: "Bhuvaneshwar, India",
-    image: "",
-    slug: "luxury-villa",
-    order: 6,
-  },
-  {
-    id: 7,
-    domain: "civil",
-    title: "Flender Drives",
-    location: "Kharagpur, India",
-    image: "",
-    slug: "industrial-facility",
-    order: 7,
-  },
-  {
-    id: 8,
-    domain: "civil",
-    title: "Residential",
-    location: "Kolkata, India",
-    image: "",
-    slug: "residential-building",
-    order: 8,
-  },
-  {
-    id: 9,
-    domain: "civil",
-    title: "Industrial Complex",
-    location: "Bhubaneswar, India",
-    image: "",
-    slug: "industrial-complex",
-    order: 9,
-  },
+  seedProjectItem(1, 1, "Tech Mahindra Office", "Kolkata, India", "Offices", "tech-mahindra-office", 1),
+  seedProjectItem(2, 1, "Siemens Innovation Hub", "Kolkata, India", "Workspaces", "siemens-innovation-hub", 2),
+  seedProjectItem(3, 1, "Executive Dining Space", "Kolkata, India", "Workspaces", "executive-dining-space", 3),
+  seedProjectItem(4, 1, "Creative Studio Workspace", "Kolkata, India", "Workspaces", "creative-studio-workspace", 4),
+  seedProjectItem(5, 1, "HDFC Bank Branch", "Kolkata, India", "Banks", "hdfc-bank", 5),
+  seedProjectItem(6, 1, "DataSoft IT Park", "Kolkata, India", "IT Parks", "datasoft-it-park", 6),
+  seedProjectItem(7, 1, "Mahindra & Mahindra Office", "Kolkata, India", "Offices", "mahindra-office", 7),
+  seedProjectItem(8, 1, "Acme Corp Headquarters", "Kolkata, India", "Offices", "acme-corporate", 8),
+  seedProjectItem(9, 1, "Corporate Reception Lounge", "Kolkata, India", "Offices", "corporate-reception", 9),
+  seedProjectItem(10, 1, "Premium Workspace Hub", "Hyderabad, India", "Workspaces", "premium-workspace-hub", 10),
+  seedProjectItem(11, 1, "Innovation Collaboration Center", "Bengaluru, India", "Workspaces", "innovation-collaboration-center", 11),
+  seedProjectItem(12, 1, "Executive Boardroom Suite", "Mumbai, India", "Offices", "executive-boardroom-suite", 12),
+  seedProjectItem(13, 2, "Luxury Villa", "Bhuvaneshwar, India", "Residential", "luxury-villa", 1),
+  seedProjectItem(14, 2, "Flender Drives", "Kharagpur, India", "Industrial", "industrial-facility", 2),
+  seedProjectItem(15, 2, "Residential Enclave", "Kolkata, India", "Residential", "residential-building", 3),
+  seedProjectItem(16, 2, "Industrial Complex", "Bhubaneswar, India", "Industrial", "industrial-complex", 4),
+  seedProjectItem(17, 2, "Commercial Tower", "Kolkata, India", "Commercial", "commercial-tower", 5),
+  seedProjectItem(18, 2, "Institutional Campus", "Howrah, India", "Institutional", "institutional-campus", 6),
+  seedProjectItem(19, 2, "Infrastructure Hub", "Durgapur, India", "Infrastructure", "infrastructure-hub", 7),
+  seedProjectItem(20, 2, "Skyline Residences", "Kolkata, India", "Residential", "skyline-residences", 8),
+  seedProjectItem(21, 2, "Industrial Plant", "Haldia, India", "Industrial", "industrial-plant", 9),
+  seedProjectItem(22, 2, "Mixed-Use Development", "Bhubaneswar, India", "Commercial", "mixed-use-development", 10),
+  seedProjectItem(23, 2, "Urban Infrastructure Project", "Kolkata, India", "Infrastructure", "urban-infrastructure-project", 11),
+  seedProjectItem(24, 2, "Premium Commercial Block", "Siliguri, India", "Commercial", "premium-commercial-block", 12),
 ];
