@@ -17,6 +17,7 @@ import {
   type AboutContent,
   type HeroFeature,
   type FounderMember,
+  type Principle,
 } from "../admin/data/seedContent";
 
 import { loadPublicCmsList, loadPublicSiteCms } from "../content/publicCms";
@@ -193,11 +194,14 @@ export default function AboutUs() {
 
   const [heroFeatures, setHeroFeatures] = useState<HeroFeature[]>([]);
   const [teamMembers, setTeamMembers] = useState<FounderMember[]>([]);
+  const [principles, setPrinciples] = useState<Principle[]>([]);
 
   const { showLoader, fading } = useCmsPageGate(async (force) => {
-    const [site, features] = await Promise.all([
+    const [site, features, members, principles] = await Promise.all([
       loadPublicSiteCms(force),
-      loadPublicCmsList<HeroFeature>("about-page-hero-features"),
+      loadPublicCmsList<HeroFeature>("about-page-hero-features",force),
+      loadPublicCmsList<FounderMember>("about-page-founder-members",force),
+      loadPublicCmsList<Principle>("about-page-principles",force),
     ]);
 
     if (site.about && typeof site.about === "object") {
@@ -207,7 +211,8 @@ export default function AboutUs() {
       });
     }
     setHeroFeatures(features);
-    setTeamMembers(teamMembers);
+    setTeamMembers(members);
+    setPrinciples(principles);
   });
 
 
@@ -227,7 +232,7 @@ export default function AboutUs() {
           <>
             <AboutSection content={aboutContent} />
             <TeamSection teamMembers={teamMembers} />
-            <PrinciplesSection />
+            <PrinciplesSection principles={principles} />
             <Footer />
           </>
         )}

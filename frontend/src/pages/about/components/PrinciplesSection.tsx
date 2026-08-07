@@ -3,32 +3,40 @@
 import { Heart, Lightbulb, Target } from "lucide-react";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
-
-const principles = [
-  {
-    icon: <Lightbulb className="size-5" />,
-    title: "Vision-Led Design",
-    description:
-      "We begin with listening — understanding your operations, brand, and people before a single line is drawn.",
-  },
-  {
-    icon: <Heart className="size-5" />,
-    title: "Built to Last",
-    description:
-      "From heavy-duty civil builds to refined corporate fit-outs, we specify materials that endure real-world use.",
-  },
-  {
-    icon: <Target className="size-5" />,
-    title: "On Time. On Budget.",
-    description:
-      "Turnkey project management from concept to handover, with zero surprises at delivery.",
-  },
-];
+import { Principle } from "../../../admin/data/seedContent";
+import { iconRegistry } from "../../../admin/data/iconOptions";
 
 
-export default function PrinciplesSection() {
+// const principles = [
+//   {
+//     icon: <Lightbulb className="size-5" />,
+//     title: "Vision-Led Design",
+//     description:
+//       "We begin with listening — understanding your operations, brand, and people before a single line is drawn.",
+//   },
+//   {
+//     icon: <Heart className="size-5" />,
+//     title: "Built to Last",
+//     description:
+//       "From heavy-duty civil builds to refined corporate fit-outs, we specify materials that endure real-world use.",
+//   },
+//   {
+//     icon: <Target className="size-5" />,
+//     title: "On Time. On Budget.",
+//     description:
+//       "Turnkey project management from concept to handover, with zero surprises at delivery.",
+//   },
+// ];
+
+type PrincipleProps = {
+  principles: Principle[];
+};
+
+export default function PrinciplesSection({ principles }: PrincipleProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.18 });
+
+  console.log("principles", principles);
 
   return (
     <section
@@ -117,7 +125,10 @@ export default function PrinciplesSection() {
                   background: "linear-gradient(135deg, #f3bb27, #ea7a12)",
                 }}
               >
-                {p.icon}
+                {(() => {
+                  const Icon = iconRegistry[p.icon];
+                  return Icon ? <Icon className="size-5" /> : null;
+                })()}
               </motion.div>
 
               <div className="w-8 h-[2px] bg-gradient-to-r from-[#f3bb27] to-[#ea7a12] mb-5" />

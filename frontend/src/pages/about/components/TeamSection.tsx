@@ -43,8 +43,6 @@ export default function TeamSection({ teamMembers }: TeamSectionProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
 
-  console.log("teamMembers:", teamMembers);
-
   return (
     <section
       ref={ref}
@@ -138,7 +136,7 @@ export default function TeamSection({ teamMembers }: TeamSectionProps) {
                 style={{ borderRadius: "16px", aspectRatio: "3/4" }}
               >
                 <img
-                  src={m.image}
+                  src={mediaUrl(m.image)}
                   alt={m.name}
                   className="w-full h-full object-cover object-top transition-transform duration-1000 ease-out group-hover:scale-108"
                 />
