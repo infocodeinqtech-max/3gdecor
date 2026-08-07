@@ -124,6 +124,9 @@ class CmsResourceController extends Controller
         }
         $this->validateListPayload($request, $resource);
         $payload = $cfg['map_in']($request->all());
+        if ($resource === 'projects-page-items') {
+            $payload = $this->partialProjectsPageItemPayload($request->all(), $payload);
+        }
         if ($resource === 'contact-offices') {
             $this->applyContactOfficeMapFallback($payload);
         }
@@ -345,5 +348,49 @@ class CmsResourceController extends Controller
             Cache::forget("cms.public.singleton.{$key}");
             Cache::forget("cms.public.section.{$key}");
         }
+    }
+
+    /** @param  array<string, mixed>  $input
+     * @param  array<string, mixed>  $mapped
+     * @return array<string, mixed>
+     */
+    private function partialProjectsPageItemPayload(array $input, array $mapped): array
+    {
+        $fieldKeys = [
+            'category_id' => ['categoryId', 'category_id'],
+            'title' => ['title'],
+            'location' => ['location'],
+            'filter_tag' => ['filterTag', 'filter_tag'],
+            'image' => ['image'],
+            'slug' => ['slug'],
+            'hero_tagline' => ['heroTagline', 'hero_tagline'],
+            'status_label' => ['statusLabel', 'status_label'],
+            'hero_slides' => ['heroSlides', 'hero_slides'],
+            'about_title' => ['aboutTitle', 'about_title'],
+            'about_description' => ['aboutDescription', 'about_description'],
+            'about_features' => ['aboutFeatures', 'about_features'],
+            'about_image' => ['aboutImage', 'about_image'],
+            'stat_completed' => ['statCompleted', 'stat_completed'],
+            'stat_area' => ['statArea', 'stat_area'],
+            'stat_duration' => ['statDuration', 'stat_duration'],
+            'gallery_eyebrow' => ['galleryEyebrow', 'gallery_eyebrow'],
+            'gallery_title' => ['galleryTitle', 'gallery_title'],
+            'gallery_description' => ['galleryDescription', 'gallery_description'],
+            'gallery_images' => ['galleryImages', 'gallery_images'],
+            'sort_order' => ['order', 'sort_order'],
+            'active' => ['active'],
+        ];
+
+        $payload = [];
+        foreach ($fieldKeys as $column => $aliases) {
+            foreach ($aliases as $alias) {
+                if (array_key_exists($alias, $input)) {
+                    $payload[$column] = $mapped[$column];
+                    break;
+                }
+            }
+        }
+
+        return $payload;
     }
 }

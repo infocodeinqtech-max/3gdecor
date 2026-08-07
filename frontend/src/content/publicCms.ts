@@ -34,6 +34,7 @@ export function getCachedPublicSiteCms(): PublicSiteCms | null {
 /** Single shared fetch for public site CMS (nav/hero/footer/homepage/contact). */
 export function loadPublicSiteCms(force = false): Promise<PublicSiteCms> {
   if (force) sitePromise = null;
+
   if (!sitePromise) {
     sitePromise = apiRequest<{ success: boolean; data: PublicSiteCms }>(
       "/cms-public/site",
@@ -43,11 +44,13 @@ export function loadPublicSiteCms(force = false): Promise<PublicSiteCms> {
         cachedSite = res.data ?? {};
         return cachedSite;
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error(err);
         sitePromise = null;
         return {} as PublicSiteCms;
       });
   }
+
   return sitePromise;
 }
 
