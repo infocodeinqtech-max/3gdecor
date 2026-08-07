@@ -1,16 +1,40 @@
 
+import React from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-
-import aboutUsBanner from "../../../assets/images/aboutus.png";
 import {Building, Building2,  ChevronRight } from "lucide-react";
 
+import aboutUsBanner from "../../../assets/images/aboutus.png";
+import { mediaUrl } from "../../../utils/mediaUrl";
+import type { AboutContent, HeroFeature } from "../../../admin/data/seedContent";
 
-export default function HeroSection() {
+type AboutHeroSectionProps = {
+  content: AboutContent;
+  heroFeatures: HeroFeature[];
+};
+
+export default function AboutHeroSection({ content, heroFeatures }: AboutHeroSectionProps) {
   const navigate = useNavigate();
+
+  const firstFeature = heroFeatures[0];
+  const secondFeature = heroFeatures[1];
+
+  const iconMap = {
+    Building,
+    Building2,
+  };
+
+  const FirstIcon = firstFeature
+    ? iconMap[firstFeature.icon as keyof typeof iconMap] ?? Building
+    : Building;
+
+  const SecondIcon = secondFeature
+    ? iconMap[secondFeature.icon as keyof typeof iconMap] ?? Building
+    : Building;
+
   return (
     <section
-      className="bg-[#F5F1EA] px-4 lg:px-5"
+      className="bg-[#F5F1EA] px-4 pt-[72px] lg:px-5 lg:pt-[80px]"
       style={{
         position: "relative",
       }}
@@ -87,7 +111,7 @@ export default function HeroSection() {
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="absolute top-0 left-0 right-0 h-[3px] origin-left z-30"
           style={{
-            background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
+            // background: "linear-gradient(90deg,#f3bb27,#ea7a12,#f3bb27)",
           }}
         />
 
@@ -154,48 +178,6 @@ export default function HeroSection() {
             </span>
           </motion.div>
 
-          {/* Main heading — matches reference: Design. Build. Deliver Excellence. */}
-          {/* <div className="max-w-2xl mb-7">
-            {[
-              { text: "Design. Build.", gold: false },
-              { text: "Deliver ", gold: false },
-            ].map(({ text }, i) => (
-              <div key={i} style={{ overflow: "hidden" }}>
-                <motion.span
-                  initial={{ y: "110%", opacity: 0 }}
-                  animate={{ y: "0%", opacity: 1 }}
-                  transition={{
-                    duration: 1,
-                    delay: 0.48 + i * 0.14,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  className="text-[#F5F1EA]"
-                  style={{
-                    display: "block",
-                    fontFamily: "'Parkinsans', sans-serif",
-                    fontSize: "clamp(44px, 6.5vw, 80px)",
-                    fontWeight: 400,
-                    lineHeight: "100%",
-                    letterSpacing: "-0.025em",
-                  }}
-                >
-                  {text}
-                  {i === 1 && (
-                    <span
-                      style={{
-                        fontStyle: "italic",
-                        background: "linear-gradient(90deg,#f3bb27,#ea7a12)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }}
-                    >
-                      Excellence.
-                    </span>
-                  )}
-                </motion.span>
-              </div>
-            ))}
-          </div> */}
 
           <div className="max-w-2xl mb-7">
             <div style={{ overflow: "hidden" }}>
@@ -230,23 +212,6 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Body copy */}
-          {/* <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.82 }}
-            className="text-[#8a8078] max-w-lg mb-10"
-            style={{
-              fontFamily: "'Parkinsans', sans-serif",
-              fontSize: "15.5px",
-              lineHeight: 1.82,
-            }}
-          >
-            At 3G Deco, we offer end-to-end design and construction solutions
-            that combine creativity, functionality, and precision to create
-            spaces that truly inspire.
-          </motion.p> */}
-
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -258,10 +223,7 @@ export default function HeroSection() {
               lineHeight: 1.75,
             }}
           >
-            We are a multidisciplinary team of interior designers and space
-            planners delivering premium corporate interiors and thoughtfully
-            designed civil spaces that inspire productivity, enhance
-            functionality, and reflect your brand identity.
+            {content.paragraph1}
           </motion.p>
 
           <motion.p
@@ -275,10 +237,7 @@ export default function HeroSection() {
               lineHeight: 1.9,
             }}
           >
-            From collaborative workspaces and executive offices to reception
-            lounges and business environments, we combine creativity, precision,
-            and timeless design to create spaces that leave a lasting
-            impression.
+            {content.paragraph2}
           </motion.p>
 
           {/* Bottom Features */}
@@ -300,7 +259,7 @@ export default function HeroSection() {
                   border: "1px solid rgba(243,187,39,.35)",
                 }}
               >
-                <Building2
+                <FirstIcon
                   className="w-10 h-10 text-[#d8a94c]"
                   strokeWidth={1.4}
                 />
@@ -317,7 +276,7 @@ export default function HeroSection() {
                     letterSpacing: ".12em",
                   }}
                 >
-                  Corporate Interiors
+                  {firstFeature?.title}
                 </h4>
 
                 <p
@@ -328,8 +287,7 @@ export default function HeroSection() {
                     lineHeight: "1.7",
                   }}
                 >
-                  Thoughtful design that enhances productivity, collaboration
-                  and well-being.
+                  {firstFeature?.description}
                 </p>
               </div>
             </div>
@@ -348,7 +306,7 @@ export default function HeroSection() {
                   border: "1px solid rgba(243,187,39,.35)",
                 }}
               >
-                <Building
+                <SecondIcon
                   className="w-10 h-10 text-[#d8a94c]"
                   strokeWidth={1.4}
                 />
@@ -364,7 +322,7 @@ export default function HeroSection() {
                     letterSpacing: ".12em",
                   }}
                 >
-                  Civil Spaces
+                  {secondFeature?.title}
                 </h4>
 
                 <p
@@ -375,8 +333,7 @@ export default function HeroSection() {
                     lineHeight: "1.7",
                   }}
                 >
-                  Well-planned layouts and efficient spaces built for long-term
-                  performance.
+                  {secondFeature?.description}
                 </p>
               </div>
             </div>

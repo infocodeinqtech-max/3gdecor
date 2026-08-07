@@ -21,6 +21,7 @@ export type PublicSiteCms = {
   process?: unknown[];
   testimonialsSection?: Record<string, unknown> | null;
   testimonials?: unknown[];
+  heroFeatures?: unknown[];
 };
 
 let sitePromise: Promise<PublicSiteCms> | null = null;
@@ -54,4 +55,56 @@ export function loadPublicSiteCms(force = false): Promise<PublicSiteCms> {
 export function clearPublicSiteCmsCache(): void {
   sitePromise = null;
   cachedSite = null;
+}
+
+
+/** Load a list of public CMS content for a given resource. */
+
+const listPromises = new Map<string, Promise<unknown[]>>();
+const listCache = new Map<string, unknown[]>();
+const listPromise = new Map<string, Promise<unknown[]>>();
+
+export async function loadPublicCmsList<T>(resource: string,force = false,): Promise<T[]> {
+  if (force) {
+    listCache.delete(resource);
+    listPromise.delete(resource);
+  }
+
+  const cached = listCache.get(resource);
+  if (cached) {
+    return cached as T[];
+  }
+
+  const pending = listPromise.get(resource);
+  if (pending) {
+    return pending as Promise<T[]>;
+  }
+
+  const promise = apiRequest<{ success: boolean; data: T[] }>(
+    `/cms-public/list/${resource}`,
+    { auth: false },
+  )
+    .then((res) => {
+      const data = res.data ?? [];
+      listCache.set(resource, data);
+      listPromise.delete(resource);
+      return data;
+    })
+    .catch(() => {
+      listPromise.delete(resource);
+      return [];
+    });
+
+  listPromise.set(resource, promise as Promise<unknown[]>);
+
+  return promise;
+}
+
+export function clearPublicCmsListCache(resource?: string) {
+  if (resource) {
+    listPromises.delete(resource);
+    return;
+  }
+
+  listPromises.clear();
 }
