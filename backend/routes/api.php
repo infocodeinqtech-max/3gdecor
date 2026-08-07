@@ -16,6 +16,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 // Public CMS reads
 Route::get('/cms-public/site', [CmsPublicController::class, 'site']);
 Route::get('/cms-lists/{resource}', [CmsResourceController::class, 'listIndex']);
+
+Route::get('/cms-public/list/{resource}', [CmsResourceController::class, 'listIndex']);
+
 Route::get('/cms-singletons/{resource}', [CmsResourceController::class, 'singletonShow']);
 Route::get('/cms-sections/{storageKey}', [CmsResourceController::class, 'sectionShow']);
 Route::post('/enquiries/otp/send', [EnquiryController::class, 'sendOtp']);
